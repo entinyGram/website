@@ -1,0 +1,57 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import EntinyGramHeader from "../../components/Header.astro";
+import EntinyGramFooter from "../../components/Footer.astro";
+
+export const prerender = false;
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=120, s-maxage=600, stale-while-revalidate=86400"
+);
+
+const langCookie = Astro.cookies.get("lang")?.value;
+const requestedLang = Astro.url.searchParams.get("lang");
+const pageLang = requestedLang === "ua" ? "uk" : requestedLang === "en" ? "en" : langCookie === "ua" ? "uk" : "en";
+const uk = pageLang === "uk";
+const questions = uk ? [
+  ["why-state-lang", "tabler:help-circle", "Чому існує entinyGram?", "InuGram дає проєкту патчсет-основу для Telegram Android. entinyGram продовжує цю роботу й додає власні інструменти приватності, керування інтерфейсом та інші патчі. Коротке порівняння опубліковане в README, детальний перелік — у FEATURES.md."],
+  ["name-and-logo", "tabler:antenna", "Звідки назва entinyGram, як вона читається і чому таке лого?", "Правильна вимова — «Ентайні» (від tiny [ˈtaɪni]), а не «ентіні». Назва виникла не від нікнейму автора заради ЧСВ: спершу планувався tinyGram, але він був зайнятий. Тоді додалося «en» — вийшло en + tiny (як калька від «a tiny», бо «atiny» звучало гірше). Можна вважати це й легендою: перші дві букви нікнейму та слово «антена» (не antenna, а entenna) + tiny (маленький). А логотип з антеною з'явився тому, що Олексій у дитинстві любив налаштовувати телевізори, антени та супутникові ресивери."],
+  ["features-from-other-clients", "tabler:git-fork", "Чим entinyGram відрізняється від InuGram?", "Проєкти мають спільну основу й частину функцій. README entinyGram позначає відмінності на рівні окремих можливостей: зокрема Ghost Mode, локальне збереження видалених повідомлень і редакцій, інструменти для захищеного контенту, переклад і транскрипцію. Матриця та посилання на джерела є на сторінці можливостей."],
+  ["feature-requests", "tabler:puzzle", "А можна додати фічу X з клієнта Y?", "Скоріш за все, ні. По-перше, не хочеться додавати все підряд, бо це виглядатиме дуже по-шішному, а шанс того, що воно працюватиме в подальшому і захочеться це підтримувати — мінімальний. По-друге, завжди можна зробити власний форк entinyGram і додавати все, що заманеться. По-третє, додатковий функціонал правильніше реалізовувати через плагіни, не перевантажуючи базовий клієнт."],
+  ["bug-report", "tabler:bug", "А в мене не працює функція X або стався баг — що робити?", "Для багрепортів існує чат спільноти <a href=\"https://t.me/entinyGramChat\" target=\"_blank\" rel=\"noopener noreferrer\">@entinyGramChat</a> — найкраще репортити саме туди. Якщо стався збій, надішліть краш-лог, а також додайте конфіг своїх налаштувань, щоб проблему можна було відтворити: <code>entinyGram settings → Additional → Sync settings → Export settings</code>."],
+  ["safety-and-bans", "tabler:shield-check", "Чи безпечно це для акаунта?", "Гарантувати відсутність обмежень або блокування неможливо. Деякі функції обходять обмеження Telegram і можуть суперечити його правилам. Це сторонній модифікований клієнт; перед використанням перевірте код, умови сервісу й прийміть ризик самостійно."],
+] : [
+  ["why-state-lang", "tabler:help-circle", "Why does entinyGram exist?", "InuGram provides the project’s patchset foundation for Telegram Android. entinyGram continues that work with its own privacy tools, interface controls, and additional patches. The README has a compact comparison; FEATURES.md has the detailed list."],
+  ["name-and-logo", "tabler:antenna", "Where did the name entinyGram come from, how is it pronounced, and why the antenna logo?", "It is pronounced \"En-tiny\" (from tiny [ˈtaɪni]), not \"entini\". The name did not come from the handle Entaytion out of ego: the original idea was tinyGram, but that was already taken. Adding \"en\" made en + tiny (like a calque of \"a tiny\", since \"atiny\" sounded awkward). It can also be seen as the first two letters of the handle plus a twist on \"antenna\" (entenna) + tiny. The antenna logo came to mind because in childhood, Oleksii loved tinkering with and tuning TVs and satellite receivers."],
+  ["features-from-other-clients", "tabler:git-fork", "How is entinyGram different from InuGram?", "The projects share a foundation and some features. entinyGram’s README marks differences at the capability level, including Ghost Mode, local deleted-message and edit history, protected-content controls, translation, and transcription. The features page links to the comparison and its sources."],
+  ["feature-requests", "tabler:puzzle", "Can you add feature X from client Y?", "Most likely not in the core patchset. First, adding everything without discretion looks like AI-generated clutter, and the chance that it continues working in future updates and anyone wants to maintain it is minimal. Second, you can always fork entinyGram and add whatever features you want. Third, specialized features are better implemented via plugins rather than bloating the core client."],
+  ["bug-report", "tabler:bug", "Feature X isn’t working or I ran into a bug — what should I do?", "For bug reports and issues, head over to the community chat at <a href=\"https://t.me/entinyGramChat\" target=\"_blank\" rel=\"noopener noreferrer\">@entinyGramChat</a> — that is the best place to report them. If the app crashed, attach the crash log and include your settings export so the bug can be reproduced: <code>entinyGram settings → Additional → Sync settings → Export settings</code>."],
+  ["safety-and-bans", "tabler:shield-check", "Is my account guaranteed to be safe?", "No guarantee against account restrictions or bans is possible. Some features bypass Telegram restrictions and may conflict with its rules. This is a modified third-party client; review the code and terms of service, then decide whether to accept the risk."],
+];
+const title = uk ? "Запитання без прикрас." : "Straight answers.";
+---
+
+<Layout title={`${uk ? "FAQ" : "FAQ"} — entinyGram`} description={uk ? "Відповіді про базу InuGram, відмінності, APK і ризики модифікованого клієнта." : "Answers about the InuGram base, feature differences, APKs, and modified-client risks."} favicon="/favicon.svg" image="/og/entinygram-banner.png" lang={pageLang}>
+  <EntinyGramHeader active="faq" />
+  <main class="faq-page">
+    <section class="faq-hero"><h1>{title}</h1><p>{uk ? "Про основу, відмінності, завантаження та межі того, що ми можемо обіцяти." : "About the foundation, differences, downloads, and what we can actually promise."}</p></section>
+    <section class="faq-list" aria-label="FAQ">{questions.map(([id, icon, question, answer]) => <details id={id} data-faq-slug={id} class="faq-item"><summary><span class="faq-title"><span class="faq-icon" aria-hidden="true"><span class="iconify" data-icon={icon}></span></span><span>{question}</span></span><span class="faq-arrow" aria-hidden="true"><span class="iconify" data-icon="tabler:chevron-down"></span></span></summary><div class="faq-body"><p set:html={answer} /></div></details>)}</section>
+  </main>
+  <EntinyGramFooter />
+</Layout>
+
+<script is:inline>
+  const renderedLanguage = ["uk", "ua"].includes(document.documentElement.lang) ? "ua" : "en";
+  window.addEventListener("site-language-change", (event) => {
+    if (event.detail?.lang === renderedLanguage) return;
+    const url = new URL(location.href);
+    url.searchParams.set("lang", event.detail.lang);
+    location.assign(url);
+  });
+</script>
+<style>
+ .faq-page{--q-bg:#fff;--q-card:#fff8f7;--q-ink:#201a19;--q-muted:#6c6260;--q-line:#e9ddda;--q-accent:#b3261e;min-height:75vh;padding-bottom:6rem;background:var(--q-bg);color:var(--q-ink)}:global([data-theme="dark"]) .faq-page{--q-bg:#151312;--q-card:#241e1d;--q-ink:#f5eeec;--q-muted:#bcb0ad;--q-line:#403634;--q-accent:#ff8a80}
+ .project-nav{max-width:1200px;margin:auto;padding:17px 28px;display:flex;gap:25px;border-bottom:1px solid var(--q-line);font-size:.83rem;font-weight:700}.project-nav a:first-child{margin-right:auto;color:var(--q-accent)}.faq-hero{max-width:1200px;margin:auto;padding:82px 28px 45px}h1{max-width:900px;margin:0 0 14px;font-size:clamp(3.2rem,7vw,6.8rem);line-height:.96;letter-spacing:-.035em}.faq-hero>p{max-width:700px;color:var(--q-muted);font-size:1.08rem;line-height:1.7}.faq-list{max-width:1144px;margin:auto;padding:0 28px}.faq-item{border-top:1px solid var(--q-line)}.faq-item:last-child{border-bottom:1px solid var(--q-line)}.faq-item summary{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 2px;list-style:none;cursor:pointer;font-size:1.06rem;font-weight:750;letter-spacing:-.025em;user-select:none}.faq-item summary::-webkit-details-marker{display:none}.faq-title{display:flex;align-items:center;gap:14px}.faq-icon{display:inline-flex;align-items:center;justify-content:center;color:var(--q-accent);font-size:1.4rem;flex-shrink:0;transition:transform .2s ease}.faq-icon .iconify{width:1.4rem;height:1.4rem}.faq-item:hover .faq-icon{transform:scale(1.12)}.faq-arrow{display:inline-flex;align-items:center;justify-content:center;color:var(--q-accent);font-size:1.3rem;flex-shrink:0;transition:transform .25s cubic-bezier(0.4,0,0.2,1);user-select:none}.faq-arrow .iconify{width:1.3rem;height:1.3rem}.faq-item[open] .faq-arrow{transform:rotate(180deg)}.faq-body{padding:0 35px 25px 38px}.faq-body p{max-width:65ch;margin:0;color:var(--q-muted);font-size:.94rem;line-height:1.8}.faq-body a{color:var(--q-accent);text-decoration:none;font-weight:700}.faq-body a:hover{text-decoration:underline}.faq-body code{padding:2px 6px;border-radius:6px;background:var(--q-card);border:1px solid var(--q-line);font-size:.85em;color:var(--q-ink)}
+ @media(max-width:760px){.faq-hero{padding-top:60px}}@media(max-width:600px){.faq-title{gap:11px}.faq-icon{font-size:1.2rem}.faq-icon .iconify{width:1.2rem;height:1.2rem}.faq-body{padding:0 2px 22px 2px}}@media(max-width:480px){.project-nav{gap:15px;font-size:.74rem}.faq-item summary{font-size:.96rem}}
+</style>

@@ -1,0 +1,22 @@
+---
+export const prerender = false;
+
+const { id } = Astro.params;
+
+const slugAliases: Record<string, string> = {
+  "1": "why-state-lang",
+  "why-state-lang": "why-state-lang",
+  "why-ukrainian": "why-state-lang",
+  "2": "features-from-other-clients",
+  "feature-x": "features-from-other-clients",
+  "features-from-other-clients": "features-from-other-clients",
+  "3": "fork-differences",
+  "fork-differences": "fork-differences",
+  "4": "safety-and-bans",
+  "safety-and-bans": "safety-and-bans",
+};
+
+const target = slugAliases[id ?? ""] || id || "why-state-lang";
+
+return Astro.redirect(`/faq#${target}`, 302);
+---

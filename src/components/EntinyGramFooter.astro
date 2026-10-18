@@ -1,0 +1,32 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="eg-shell-footer">
+  <div class="eg-footer-brand"><a href="/">entiny<span>Gram</span></a><span data-lang-key="eg_footer_note">An independent Telegram Android patchset.</span></div>
+  <nav aria-label="entinyGram footer navigation">
+    <a href="/features" data-lang-key="eg_nav_features">Features</a>
+    <a href="/changelog" data-lang-key="eg_nav_changelog">Changelog</a>
+    <a href="/faq" data-lang-key="eg_nav_faq">FAQ</a>
+    <a href="/docs" data-lang-key="eg_nav_docs">Docs</a>
+    <a href="/branding">Branding</a>
+    <a href="/downloads" data-lang-key="eg_nav_download">Downloads</a>
+    <a href="/donate" style="color:var(--shell-accent); font-weight:800;" data-lang-key="eg_nav_donate">Support</a>
+    <a href="https://github.com/entaytion/entinyGram" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+  </nav>
+  <small>© {year} entinyGram</small>
+</footer>
+
+<style is:global>
+  .eg-shell-footer { --shell-ink:#201a19; --shell-muted:#756b68; --shell-accent:#b3261e; --shell-line:#eee3e0; max-width:1440px; min-height:112px; margin:0 auto; padding:25px 5.2vw; border-top:1px solid var(--shell-line); display:flex; align-items:center; gap:32px; color:var(--shell-muted); font-family:var(--font-main,"Nata Sans",sans-serif); }
+  [data-theme="dark"] .eg-shell-footer { --shell-ink:#f5eeec; --shell-muted:#bcb0ad; --shell-accent:#ff8a80; --shell-line:#403634; }
+  .eg-footer-brand { display:flex; flex-direction:column; gap:7px; margin-right:auto; }
+  .eg-footer-brand>a { color:var(--shell-ink); text-decoration:none; font-size:1.05rem; font-weight:850; letter-spacing:-.03em; }
+  .eg-footer-brand>a span { color:var(--shell-accent); }
+  .eg-footer-brand>span { font-size:.8rem; }
+  .eg-shell-footer nav { display:flex; align-items:center; flex-wrap:wrap; gap:22px; }
+  .eg-shell-footer nav a { color:var(--shell-muted); text-decoration:none; font-size:.82rem; font-weight:700; }
+  .eg-shell-footer nav a:hover { color:var(--shell-accent); }
+  .eg-shell-footer>small { font-size:.78rem; }
+  @media(max-width:640px) { .eg-shell-footer { padding:23px 7vw; flex-wrap:wrap; gap:18px; } .eg-footer-brand { width:100%; } .eg-shell-footer nav { gap:15px; } .eg-shell-footer>small { margin-left:auto; } }
+</style>

@@ -1,0 +1,127 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import EntinyGramHeader from "../../components/Header.astro";
+import EntinyGramFooter from "../../components/Footer.astro";
+import { docGroups, docs, type DocLang } from "../../lib/docs";
+
+export const prerender = false;
+
+Astro.response.headers.set("Cache-Control", "public, max-age=120, s-maxage=600, stale-while-revalidate=86400");
+
+const langCookie = Astro.cookies.get("lang")?.value;
+const requestedLang = Astro.url.searchParams.get("lang");
+const pageLang = requestedLang === "ua" ? "uk" : requestedLang === "en" ? "en" : langCookie === "ua" ? "uk" : "en";
+const lang: DocLang = pageLang === "uk" ? "uk" : "en";
+const uk = lang === "uk";
+
+const copy = uk
+  ? {
+      title: "Документація плагінів",
+      lead: "Усе, щоб написати, зібрати й опублікувати плагін для entinyGram та Inugram: від першого кроку до хуків на рівні JVM.",
+      start: "Почати зі вступу",
+      quick: "Швидкий старт",
+      facts: [
+        ["tabler:brand-javascript", "JavaScript і TypeScript", "Один файл .inu.js, що працює в ізольованому рушії QuickJS."],
+        ["tabler:shield-check", "Дозволи на кожен виклик", "Користувач бачить, що саме просить плагін, ще до встановлення."],
+        ["tabler:antenna", "Каталог у Telegram", "Плагіни публікуються в каналі й ставляться з Маркетплейсу в застосунку."],
+      ],
+      about: "Ці документи пояснюють ідеї та причини. Точні сигнатури читайте в типах пакета @inugram/plugin-types. Плагіни Inugram поки експериментальні: API з позначкою experimental може змінитися.",
+    }
+  : {
+      title: "Plugin documentation",
+      lead: "Everything you need to write, build and publish a plugin for entinyGram and Inugram, from the first step to JVM-level hooks.",
+      start: "Start with the introduction",
+      quick: "Quick start",
+      facts: [
+        ["tabler:brand-javascript", "JavaScript and TypeScript", "One .inu.js file running in an isolated QuickJS engine."],
+        ["tabler:shield-check", "Permissions per call", "Users see what a plugin asks for before they install it."],
+        ["tabler:antenna", "A catalog inside Telegram", "Plugins ship in a channel and install from the app's Marketplace."],
+      ],
+      about: "These pages explain the ideas and the reasons. For exact signatures read the typings in @inugram/plugin-types. Inugram plugins are experimental as a whole: APIs marked experimental may change.",
+    };
+---
+
+<Layout
+  title={`${copy.title} — entinyGram`}
+  description={copy.lead}
+  favicon="/favicon.svg"
+  image="/og/entinygram-banner.png"
+  lang={pageLang}
+>
+  <EntinyGramHeader active="docs" />
+  <main class="docs-home">
+    <section class="docs-hero">
+      <p class="docs-eyebrow">entinyGram · Plugins</p>
+      <h1>{copy.title}</h1>
+      <p>{copy.lead}</p>
+      <div class="docs-actions">
+        <a class="docs-primary" href="/docs/introduction">{copy.start}</a>
+        <a class="docs-ghost" href="/docs/quick-start">{copy.quick}</a>
+      </div>
+    </section>
+
+    <section class="docs-facts">
+      {copy.facts.map(([icon, title, text]) => (
+        <div class="docs-fact"><span class="iconify" data-icon={icon}></span><h2>{title}</h2><p>{text}</p></div>
+      ))}
+    </section>
+
+    <section class="docs-sections">
+      {docGroups.map((group) => (
+        <div class="docs-block">
+          <h2>{group.title[lang]}</h2>
+          <div class="docs-cards">
+            {docs.filter((entry) => entry.group === group.id).map((entry) => (
+              <a class="docs-card" href={`/docs/${entry.slug}`}>
+                <span class="iconify" data-icon={entry.icon}></span>
+                <strong>{entry.title[lang]}</strong>
+                <small>{entry.summary[lang]}</small>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+    </section>
+    <p class="docs-about">{copy.about}</p>
+  </main>
+  <EntinyGramFooter />
+</Layout>
+
+<script is:inline>
+  const renderedLanguage = ["uk", "ua"].includes(document.documentElement.lang) ? "ua" : "en";
+  window.addEventListener("site-language-change", (event) => {
+    if (event.detail?.lang === renderedLanguage) return;
+    const url = new URL(location.href);
+    url.searchParams.set("lang", event.detail.lang);
+    location.assign(url);
+  });
+</script>
+
+<style is:global>
+  .docs-home { --d-bg:#fff; --d-card:#fff8f7; --d-ink:#201a19; --d-muted:#6c6260; --d-line:#e9ddda; --d-accent:#b3261e; max-width:1200px; margin:0 auto; padding:34px 28px 100px; color:var(--d-ink); }
+  [data-theme="dark"] .docs-home { --d-bg:#151312; --d-card:#241e1d; --d-ink:#f5eeec; --d-muted:#bcb0ad; --d-line:#403634; --d-accent:#ff8a80; }
+  .docs-hero { padding:48px 0 38px; }
+  .docs-eyebrow { margin:0 0 14px; color:var(--d-accent); font-size:.8rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+  .docs-hero h1 { max-width:900px; margin:0 0 16px; font-size:clamp(2.8rem,6.4vw,5.6rem); line-height:.98; letter-spacing:-.04em; }
+  .docs-hero > p:not(.docs-eyebrow) { max-width:680px; margin:0; color:var(--d-muted); font-size:1.12rem; line-height:1.7; }
+  .docs-actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:28px; }
+  .docs-primary, .docs-ghost { padding:13px 24px; border-radius:999px; font-weight:800; text-decoration:none; transition:transform .15s, filter .15s; }
+  .docs-primary { color:#fff; background:var(--d-accent); }
+  .docs-ghost { color:var(--d-accent); background:var(--d-card); border:1px solid var(--d-line); }
+  .docs-primary:hover, .docs-ghost:hover { transform:translateY(-1px); filter:brightness(1.06); }
+  .docs-facts { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; margin:12px 0 56px; }
+  .docs-fact { padding:22px; border:1px solid var(--d-line); border-radius:18px; background:var(--d-card); }
+  .docs-fact .iconify { width:1.8rem; height:1.8rem; color:var(--d-accent); }
+  .docs-fact h2 { margin:12px 0 6px; font-size:1.05rem; letter-spacing:-.01em; }
+  .docs-fact p { margin:0; color:var(--d-muted); font-size:.92rem; line-height:1.6; }
+  .docs-block { margin-bottom:44px; }
+  .docs-block > h2 { margin:0 0 16px; padding-bottom:10px; border-bottom:1px solid var(--d-line); font-size:1.3rem; letter-spacing:-.02em; }
+  .docs-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:14px; }
+  .docs-card { display:flex; flex-direction:column; gap:6px; padding:18px; border:1px solid var(--d-line); border-radius:16px; color:var(--d-ink); text-decoration:none; transition:border-color .15s, background .15s, transform .15s; }
+  .docs-card:hover { border-color:var(--d-accent); background:var(--d-card); transform:translateY(-2px); }
+  .docs-card .iconify { width:1.5rem; height:1.5rem; color:var(--d-accent); }
+  .docs-card strong { font-size:1rem; letter-spacing:-.01em; }
+  .docs-card small { color:var(--d-muted); font-size:.85rem; line-height:1.5; }
+  .docs-about { max-width:760px; margin:0; color:var(--d-muted); font-size:.9rem; line-height:1.7; }
+  @media(max-width:600px) { .docs-home { padding:20px 18px 70px; } }
+</style>

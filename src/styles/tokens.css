@@ -1,0 +1,61 @@
+:root {
+    /*
+     MINIMAL — DM Sans only (Regular 400 + Medium 500)
+     Palette: #0A0A0A · #FFFFFF · #F20C3C
+    */
+
+    /* Colors */
+    --clr-bg: #FFFFFF;
+    --clr-surface: #F7F7F7;
+    --clr-text: #0A0A0A;
+    --clr-text-muted: #666666;
+    --clr-accent: #D90B35;
+    --clr-accent-hover: #B8092C;
+    --clr-accent-text: #FFFFFF;
+    --clr-border: #EBEBEB;
+    --clr-white: #FFFFFF;
+    --clr-hover: #F2F2F2;
+    --clr-active-bg: #0A0A0A;
+    --clr-active-text: #FFFFFF;
+
+    /* Spacing */
+    --sp-xs:  8px;
+    --sp-sm:  16px;
+    --sp-md:  32px;
+    --sp-lg:  64px;
+    --sp-xl:  96px;
+
+    /* Typography — DM Sans, 400 Regular + 500 Medium only */
+    --font-main:    'Nata Sans', -apple-system, sans-serif;
+
+    --font-size-display: clamp(3.5rem, 12vw, 10rem);
+    --fs-h1:      clamp(2rem, 6vw, 4rem);
+    --fs-h2:      clamp(1.5rem, 4vw, 2.5rem);
+    --fs-h3:      1.1rem;
+    --fs-body:    1rem;
+    --fs-small:   0.875rem;
+    --fs-tiny:    0.75rem;
+
+    /* UI */
+    --radius-sm:   2px;
+    --radius-md:   4px;
+    --radius-pill: 100px;
+
+    --trans-fast:   0.15s ease;
+    --trans-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+
+    --header-height: 80px;
+    --container-max: 1200px;
+}
+
+[data-theme="dark"] {
+    --clr-bg:          #090909;
+    --clr-surface:     #111111;
+    --clr-text:        #EFEFEF;
+    --clr-text-muted:  #A3A3A3;
+    --clr-accent:      #FF3B5C;
+    --clr-border:      #1C1C1C;
+    --clr-hover:       #151515;
+    --clr-active-bg:   #EFEFEF;
+    --clr-active-text: #090909;
+}

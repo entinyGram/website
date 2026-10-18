@@ -1,0 +1,50 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import EntinyGramHeader from "../../components/Header.astro";
+import EntinyGramFooter from "../../components/Footer.astro";
+import { getEntinyReleases } from "../../lib/entinygram";
+
+export const prerender = false;
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=120, s-maxage=600, stale-while-revalidate=86400"
+);
+
+const releases = await getEntinyReleases();
+const unavailable = releases.length === 0;
+
+const langCookie = Astro.cookies.get("lang")?.value;
+const requestedLang = Astro.url.searchParams.get("lang");
+const pageLang = requestedLang === "ua" ? "uk" : requestedLang === "en" ? "en" : langCookie === "ua" ? "uk" : "en";
+const uk = pageLang === "uk";
+const dateOptions: Intl.DateTimeFormatOptions = { year: "numeric", month: "long", day: "numeric" };
+---
+
+<Layout title={uk ? "Завантаження — entinyGram" : "Downloads — entinyGram"} description={uk ? "Завантажуйте APK entinyGram з офіційних GitHub Releases." : "Download entinyGram APKs from the official GitHub Releases page."} favicon="/favicon.svg" image="/og/entinygram-banner.png" lang={pageLang}>
+  <EntinyGramHeader active="downloads" />
+  <main class="downloads-page">
+    <section class="download-hero"><h1 data-lang-key="eg_downloads_title">{uk ? "Оберіть свою збірку." : "Choose your build."}</h1><p data-lang-key="eg_downloads_intro">{uk ? "Версії надходять напряму з GitHub Releases. Відкрийте реліз, щоб переглянути примітки та доступні APK." : "Versions are listed directly from GitHub Releases. Open a release for notes and available APKs."}</p><a class="release-link" data-lang-key="eg_downloads_all_releases" href="https://github.com/entaytion/entinyGram/releases" target="_blank" rel="noopener noreferrer">All releases on GitHub ↗</a></section>
+    {unavailable ? <section class="release-empty"><h2 data-lang-key="eg_downloads_unavailable_title">GitHub is temporarily unavailable</h2><p data-lang-key="eg_downloads_unavailable_copy">The release list could not load. Open the releases page directly.</p><a class="download-button" data-lang-key="eg_downloads_open_github" href="https://github.com/entaytion/entinyGram/releases" target="_blank" rel="noopener noreferrer">Open GitHub Releases</a></section> : releases.length === 0 ? <section class="release-empty"><h2 data-lang-key="eg_downloads_empty_title">No published builds yet</h2><p data-lang-key="eg_downloads_empty_copy">Check the releases page again later.</p></section> : <section class="release-list" aria-label={uk ? "Опубліковані релізи" : "Published releases"}>
+      {releases.map((release, index) => <article class:list={["release-card", index === 0 && !release.prerelease && "is-latest"]}>
+        <div class="release-meta"><span class:list={["release-state", release.prerelease ? "is-preview" : ""]} data-lang-key={release.prerelease ? "eg_downloads_preview" : index === 0 ? "eg_downloads_latest" : "eg_downloads_stable"}>{release.prerelease ? "Pre-release" : index === 0 ? "Latest release" : "Stable release"}</span><time datetime={release.published_at}>{new Date(release.published_at).toLocaleDateString(uk ? "uk-UA" : "en-US", dateOptions)}</time></div>
+        <h2>{release.name || release.tag_name}</h2><p class="release-tag">{release.tag_name}</p>
+        {release.assets.filter((asset) => asset.name.toLowerCase().endsWith(".apk")).length > 0 ? <div class="asset-list">{release.assets.filter((asset) => asset.name.toLowerCase().endsWith(".apk")).map((asset) => <a class="asset" href={asset.browser_download_url}><span><strong>{asset.name}</strong><small>{asset.size ? `${(asset.size / 1024 / 1024).toFixed(1)} MB · ` : ""}APK</small></span><span class="asset-arrow" aria-hidden="true">↗</span></a>)}</div> : <p class="no-apk" data-lang-key="eg_downloads_no_apk">No APK files are attached to this release.</p>}
+        <details class="release-notes" open={index === 0}>
+          <summary><span data-lang-key="eg_downloads_changed">What’s changed</span><span class="notes-chevron" aria-hidden="true">⌄</span></summary>
+          {release.body ? <div class="changelog-body" set:html={release.body} /> : <p class="notes-empty" data-lang-key="eg_downloads_notes_empty">Full release notes are available on GitHub.</p>}
+          <a class="notes-link" data-lang-key="eg_downloads_full_release" href={release.html_url} target="_blank" rel="noopener noreferrer">Full release on GitHub ↗</a>
+        </details>
+      </article>)}
+    </section>}
+    <p class="download-footnote" data-lang-key="eg_downloads_footnote">Installing a third-party APK and using a modified client is your choice. Check the file source and release notes.</p>
+  </main>
+  <EntinyGramFooter />
+</Layout>
+
+<style>
+  .downloads-page{--d-bg:#fff;--d-card:#fff8f7;--d-ink:#201a19;--d-muted:#6c6260;--d-line:#e9ddda;--d-accent:#b3261e;min-height:75vh;padding-bottom:6rem;background:var(--d-bg);color:var(--d-ink)}.downloads-page *,.downloads-page *::before,.downloads-page *::after{box-sizing:border-box}:global([data-theme="dark"]) .downloads-page{--d-bg:#151312;--d-card:#241e1d;--d-ink:#f5eeec;--d-muted:#bcb0ad;--d-line:#403634;--d-accent:#ff8a80}
+  .download-hero{max-width:1200px;margin:auto;padding:82px 28px 46px}h1{max-width:900px;margin:0 0 14px;font-size:clamp(3.2rem,7vw,6.8rem);line-height:.96;letter-spacing:-.035em}.download-hero>p{max-width:690px;color:var(--d-muted);font-size:1.08rem;line-height:1.7}.release-link,.notes-link{display:inline-block;margin-top:13px;color:var(--d-accent);font-size:.85rem;font-weight:750}
+  .release-list{max-width:1200px;margin:auto;padding:12px 28px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.release-card,.release-empty{padding:25px;border:1px solid var(--d-line);border-radius:21px;background:var(--d-card)}.release-card.is-latest{grid-column:1/-1;padding:30px}.release-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--d-muted);font-size:.8rem}.release-state{color:var(--d-accent);font-weight:800}.release-state.is-preview{color:#8b6500}.release-card h2,.release-empty h2{margin:16px 0 3px;font-size:1.45rem;letter-spacing:-.025em}.release-tag{margin:0;color:var(--d-muted);font-size:.82rem}.asset-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:9px;margin-top:20px}.asset{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:15px 16px;border:1px solid var(--d-line);border-radius:14px;background:var(--d-bg);transition:border-color .18s,transform .18s}.asset:hover{border-color:var(--d-accent);transform:translateY(-2px)}.asset strong,.asset small{display:block;overflow-wrap:anywhere}.asset strong{font-size:.85rem}.asset small{margin-top:5px;color:var(--d-muted);font-size:.78rem}.asset-arrow{color:var(--d-accent);font-size:1.1rem}.no-apk,.download-footnote,.release-empty p,.notes-empty{color:var(--d-muted);font-size:.85rem;line-height:1.65}.release-empty{max-width:1144px;margin:12px auto 0}.download-button{display:inline-block;padding:12px 17px;border-radius:999px;background:var(--d-ink);color:var(--d-bg);font-weight:750;font-size:.82rem}.download-footnote{max-width:min(65ch,calc(100% - 48px));margin:24px auto;padding:0 24px}.release-notes{margin-top:19px;border-top:1px solid var(--d-line)}.release-notes>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 0 8px;list-style:none;cursor:pointer;font-size:.84rem;font-weight:800}.release-notes>summary::-webkit-details-marker{display:none}.notes-chevron{color:var(--d-accent);transition:transform .18s}.release-notes[open] .notes-chevron{transform:rotate(180deg)}.changelog-body{max-width:65ch;max-height:330px;overflow:auto;padding:7px 12px 10px 0;color:var(--d-muted);font-size:.82rem;line-height:1.7}.changelog-body :global(h1),.changelog-body :global(h2),.changelog-body :global(h3),.changelog-body :global(h4){margin:17px 0 7px;font-size:1rem;font-weight:800;line-height:1.35;letter-spacing:-.02em;color:var(--d-ink)}.changelog-body :global(p){margin:8px 0}.changelog-body :global(ul),.changelog-body :global(ol){padding-left:21px;margin:8px 0 15px}.changelog-body :global(li){padding:3px 0}.changelog-body :global(a){color:var(--d-accent);overflow-wrap:anywhere;text-decoration:underline;text-underline-offset:2px}.changelog-body :global(strong){font-weight:800;color:var(--d-ink)}.changelog-body :global(blockquote){margin:12px 0;padding:10px 14px;border:1px solid var(--d-line);border-radius:10px;background:var(--d-bg)}.changelog-body :global(hr){height:1px;margin:16px 0;border:0;background:var(--d-line)}.changelog-body :global(code){padding:2px 5px;border-radius:5px;background:var(--d-bg);font-size:.9em}.changelog-body :global(img){display:none}.changelog-body :global(pre){overflow:auto;padding:12px;border-radius:10px;background:var(--d-bg)}
+  @media(max-width:760px){.release-list{grid-template-columns:1fr}.release-card.is-latest{grid-column:auto}.download-hero{padding-top:60px}}@media(max-width:480px){.release-card,.release-card.is-latest{padding:20px}.release-meta{align-items:flex-start;flex-direction:column}}
+</style>

@@ -1,0 +1,250 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import EntinyGramHeader from "../../components/Header.astro";
+import EntinyGramFooter from "../../components/Footer.astro";
+
+export const prerender = false;
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=120, s-maxage=600, stale-while-revalidate=86400"
+);
+
+const langCookie = Astro.cookies.get("lang")?.value;
+const requestedLang = Astro.url.searchParams.get("lang");
+const pageLang = requestedLang === "ua" ? "uk" : requestedLang === "en" ? "en" : langCookie === "ua" ? "uk" : "en";
+const uk = pageLang === "uk";
+
+const SQUIRCLE = "M50,2 C12,2 2,12 2,50 C2,88 12,98 50,98 C88,98 98,88 98,50 C98,12 88,2 50,2 Z";
+const parts = [
+  { n: 1, color: "#FF2855", d: "M4 10a7.31 7.31 0 0 0 10 10Z", name: uk ? "Тарілка" : "Dish", note: uk ? "Заповнена чверть кола, радіус 7.31. Це основа впізнаваності." : "A closed quarter-arc, radius 7.31. The anchor of the mark." },
+  { n: 2, color: "var(--b-ink)", fg: "var(--b-bg)", d: "m9 15 3-3", name: uk ? "Опора" : "Feed arm", note: uk ? "Коротка діагональ, що з’єднує тарілку з хвилями." : "A short diagonal tying the dish to the signal." },
+  { n: 3, color: "#9b5de5", d: "M17 13a6 6 0 0 0-6-6", name: uk ? "Внутрішня хвиля" : "Inner wave", note: uk ? "Дуга радіуса 6 з центром у тарілці." : "Radius-6 arc centred on the dish." },
+  { n: 4, color: "#D4A3FF", fg: "#201a19", d: "M21 13A10 10 0 0 0 11 3", name: uk ? "Зовнішня хвиля" : "Outer wave", note: uk ? "Дуга радіуса 10, закриває композицію." : "Radius-10 arc that closes the composition." },
+];
+const specs = uk ? [
+  ["Полотно", "Вектор · viewBox 100"], ["Гліф", "60 × 60 · зсув 20"], ["Сітка гліфа", "24 × 24"], ["Штрих", "1.8 · round caps/joins"], ["Поле", "20 % з кожного боку"],
+] : [
+  ["Canvas", "Vector · viewBox 100"], ["Glyph", "60 × 60 · offset 20"], ["Glyph grid", "24 × 24"], ["Stroke", "1.8 · round caps/joins"], ["Padding", "20 % each side"],
+];
+const swatches = [
+  { name: "Entiny Red", hex: "#FF2855", note: uk ? "Градієнт іконки, початок" : "Icon gradient, start" },
+  { name: "Entiny Deep", hex: "#D6002A", note: uk ? "Градієнт іконки, кінець" : "Icon gradient, end" },
+  { name: "Inu Lavender", hex: "#D4A3FF", note: uk ? "Плоский фон Inu-tribute" : "Flat Inu-tribute background" },
+  { name: "Glyph White", hex: "#FFFFFF", note: uk ? "Колір гліфа" : "Glyph colour" },
+  { name: "Ink", hex: "#201A19", note: uk ? "Текст на сайті" : "Site text" },
+];
+const icons = [
+  { id: "classic", name: "Classic", tag: uk ? "Поточна" : "Current" },
+  { id: "inutribute", name: "Inu-tribute", tag: uk ? "Лавандовий уклін до InuGram" : "A lavender nod to InuGram" },
+  { id: "radar", name: "Radar" }, { id: "constellation", name: "Constellation" }, { id: "gold", name: "Gold" }, { id: "dish", name: "Dish" },
+  { id: "orbit", name: "Orbit", tag: uk ? "від @xiurann" : "by @xiurann" }, { id: "avatar", name: "Avatar", tag: uk ? "від @xiurann" : "by @xiurann" }, { id: "nothing", name: "Nothing", tag: uk ? "від @xiurann" : "by @xiurann" }, { id: "mono", name: "Mono", tag: uk ? "від @xiurann" : "by @xiurann" },
+  { id: "sunset", name: "Sunset", tag: uk ? "від @xiurann" : "by @xiurann" }, { id: "amethyst", name: "Amethyst", tag: uk ? "від @xiurann" : "by @xiurann" }, { id: "aurora", name: "Aurora", tag: uk ? "від @xiurann" : "by @xiurann" }, { id: "google26", name: "Google ’26", tag: uk ? "від @xiurann" : "by @xiurann" },
+  { id: "lunar", name: "Lunar", tag: uk ? "від @xiurann" : "by @xiurann" }, { id: "mathbook", name: "Math Book", tag: uk ? "від @xiurann" : "by @xiurann" }, { id: "jungle", name: "Jungle", tag: uk ? "від @xiurann" : "by @xiurann" },
+  { id: "blush", name: "Blush", tag: uk ? "від @xiurann" : "by @xiurann" }, { id: "noxsky", name: "Nox Sky", tag: uk ? "від @xiurann" : "by @xiurann" }, { id: "inverse", name: "Inverse", tag: uk ? "від @xiurann" : "by @xiurann" }, { id: "osu", name: "osu!", tag: uk ? "від @xiurann" : "by @xiurann" }, { id: "amongus", name: "Among Us", tag: uk ? "від @xiurann" : "by @xiurann" }, { id: "crimson", name: "Crimson", tag: uk ? "від @mkr_infinity" : "by @mkr_infinity" },
+];
+
+const title = `${uk ? "Брендинг" : "Branding"} — entinyGram`;
+const description = uk ? "Розбір іконки entinyGram, палітра та вихідні файли концептів: SVG, PNG і zip." : "The entinyGram icon taken apart: construction, palette, and downloadable concept files in SVG, PNG and zip.";
+---
+
+<Layout title={title} description={description} image="/branding/png/classic.png" lang={pageLang}>
+  <EntinyGramHeader active="branding" />
+  <main class="brand-page">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">{uk ? "Брендинг" : "Branding"}</span>
+        <h1>{uk ? "Іконка, розібрана до пікселя." : "The icon, taken apart."}</h1>
+        <p>{uk ? "Один гліф, чотири штрихи й заокруглення в стилі Google. Тут усе: як це збудовано, які кольори, і вихідники всіх концептів, які ми показували." : "One glyph, four strokes, and a Google-style squircle. Here is how it is built, the colours behind it, and the source files for every concept we showed."}</p>
+        <div class="actions">
+          <a class="btn primary" href="/branding/entinygram-branding.zip" download>{uk ? "Завантажити все (.zip)" : "Download everything (.zip)"}</a>
+          <a class="btn" href="/branding/glyph.svg" download>{uk ? "Тільки гліф (.svg)" : "Glyph only (.svg)"}</a>
+        </div>
+      </div>
+      <div class="hero-icon" aria-hidden="true"><img src="/branding/icons/classic.svg" alt="" width="320" height="320" /></div>
+    </section>
+
+    <section class="block" id="anatomy">
+      <div class="head"><h2>{uk ? "Розбір іконки" : "Anatomy"}</h2><p>{uk ? "Чотири контури на сітці 24 × 24, вписані в squircle 100 × 100 з полем 20 %." : "Four strokes on a 24 × 24 grid, centred in a 100 × 100 squircle with 20 % padding."}</p></div>
+      <div class="anatomy">
+        <figure class="diagram">
+          <svg viewBox="0 0 100 100" role="img" aria-label={uk ? "Схема побудови іконки" : "Icon construction diagram"}>
+            <path d={SQUIRCLE} class="sq" />
+            <g class="guides">
+              <rect x="20" y="20" width="60" height="60" />
+              <path d="M50 2V98M2 50H98M20 20L80 80M80 20L20 80" />
+              <circle cx="50" cy="50" r="30" />
+            </g>
+            <svg x="20" y="20" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              {parts.map((p) => <path d={p.d} style={`stroke:${p.color}`} />)}
+            </svg>
+            <g class="pins">
+              <path d="M24 84L34 64" /><circle cx="22" cy="86" r="3.6" /><text x="22" y="87.4">1</text>
+              <path d="M30 30L46 51" /><circle cx="28" cy="28" r="3.6" /><text x="28" y="29.4">2</text>
+              <path d="M76 66L60 46" /><circle cx="78" cy="68" r="3.6" /><text x="78" y="69.4">3</text>
+              <path d="M88 32L78 41" /><circle cx="90" cy="30" r="3.6" /><text x="90" y="31.4">4</text>
+            </g>
+          </svg>
+        </figure>
+        <div class="anatomy-side">
+          <ol class="parts">
+            {parts.map((p) => <li><span class="dot" style={`--c:${p.color};color:${p.fg ?? "#fff"}`}>{p.n}</span><div><strong>{p.name}</strong><p>{p.note}</p><code>{p.d}</code></div></li>)}
+          </ol>
+          <dl class="specs">
+            {specs.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+          </dl>
+        </div>
+      </div>
+      <div class="squircle-note">
+        <div><h3>{uk ? "Squircle як у Google" : "The Google-style squircle"}</h3><p>{uk ? "Чотири кубічні криві з контрольними точками біля кутів дають м’якше заокруглення, ніж звичайний радіус." : "Four cubic curves with control points pulled toward the corners give a softer shape than a plain corner radius."}</p></div>
+        <pre><code>{SQUIRCLE}</code></pre>
+      </div>
+    </section>
+
+    <section class="block" id="colour">
+      <div class="head"><h2>{uk ? "Палітра" : "Colour"}</h2><p>{uk ? "Натисни на колір, щоб скопіювати HEX." : "Click a swatch to copy its HEX."}</p></div>
+      <div class="swatches">
+        {swatches.map((s) => <button type="button" class="swatch" data-hex={s.hex} style={`--c:${s.hex}`}><span class="chip"></span><strong>{s.name}</strong><code>{s.hex}</code><small>{s.note}</small></button>)}
+      </div>
+    </section>
+
+    <section class="block" id="concepts">
+      <div class="head"><h2>{uk ? "Концепти іконок" : "Icon concepts"}</h2><p>{uk ? "Це чернетки для голосування, а не фінальні іконки застосунку. SVG масштабується без втрат, PNG можна експортувати в будь-якому розмірі до 4096 px." : "These are concepts for the community vote, not final app icons. SVG scales without loss, and PNG exports at any size up to 4096 px."}</p></div>
+      <div class="sizes" role="group" aria-label={uk ? "Розмір PNG" : "PNG size"}>
+        <span>{uk ? "Розмір PNG" : "PNG size"}</span>
+        {[512, 1024, 2048, 4096].map((n) => <button type="button" class:list={["size", { on: n === 1024 }]} data-size={n}>{n}</button>)}
+        <label><input id="customSize" type="number" min="16" max="4096" step="1" placeholder={uk ? "інше" : "custom"} /> px</label>
+      </div>
+      <div class="gallery">
+        {icons.map((i) => (
+          <figure class="card">
+            <div class="thumb"><img src={`/branding/icons/${i.id}.svg`} alt={`${i.name} icon`} width="160" height="160" loading="lazy" /></div>
+            <figcaption><strong>{i.name}</strong>{i.tag && <em>{i.tag}</em>}<span class="dl"><a href={`/branding/icons/${i.id}.svg`} download>SVG</a><button type="button" data-png={i.id}>PNG</button></span></figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+
+    <section class="block" id="usage">
+      <div class="head"><h2>{uk ? "Як користуватися" : "Usage"}</h2></div>
+      <div class="rules">
+        <article><h3>{uk ? "Так" : "Do"}</h3><ul><li>{uk ? "Залишай поле 20 % навколо гліфа." : "Keep the 20 % padding around the glyph."}</li><li>{uk ? "Став гліф білим або однотонним на чистому фоні." : "Use a white or single-colour glyph on a clean background."}</li><li>{uk ? "Показуй squircle, а не квадрат чи коло." : "Show the squircle, not a square or circle."}</li></ul></article>
+        <article><h3>{uk ? "Не треба" : "Don’t"}</h3><ul><li>{uk ? "Не розтягуй і не обертай гліф." : "Don’t stretch or rotate the glyph."}</li><li>{uk ? "Не змінюй товщину штриха та закруглення кінців." : "Don’t change stroke weight or end caps."}</li><li>{uk ? "Не додавай текст усередину іконки." : "Don’t put text inside the icon."}</li></ul></article>
+      </div>
+    </section>
+  </main>
+  <EntinyGramFooter />
+</Layout>
+
+<script is:inline>
+  const renderedLanguage = ["uk", "ua"].includes(document.documentElement.lang) ? "ua" : "en";
+  window.addEventListener("site-language-change", (event) => {
+    if (event.detail?.lang === renderedLanguage) return;
+    const url = new URL(location.href);
+    url.searchParams.set("lang", event.detail.lang);
+    location.assign(url);
+  });
+  let pngSize = 1024;
+  const sizeBtns = [...document.querySelectorAll(".size")];
+  const custom = document.getElementById("customSize");
+  sizeBtns.forEach((b) => b.addEventListener("click", () => {
+    pngSize = +b.dataset.size; custom.value = "";
+    sizeBtns.forEach((x) => x.classList.toggle("on", x === b));
+  }));
+  custom.addEventListener("input", () => {
+    const v = Math.max(16, Math.min(4096, Math.round(+custom.value) || 0));
+    if (!v) return;
+    pngSize = v; sizeBtns.forEach((x) => x.classList.remove("on"));
+  });
+  document.querySelectorAll("[data-png]").forEach((btn) => btn.addEventListener("click", async () => {
+    const id = btn.dataset.png, size = pngSize, label = btn.textContent;
+    btn.disabled = true; btn.textContent = "…";
+    try {
+      const svg = await (await fetch(`/branding/icons/${id}.svg`)).text();
+      const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
+      const img = new Image(); img.src = url; await img.decode();
+      const c = document.createElement("canvas"); c.width = c.height = size;
+      c.getContext("2d").drawImage(img, 0, 0, size, size);
+      URL.revokeObjectURL(url);
+      const blob = await new Promise((r) => c.toBlob(r, "image/png"));
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `entinygram-${id}-${size}.png`; a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    } catch { location.href = `/branding/png/${id}.png`; }
+    btn.disabled = false; btn.textContent = label;
+  }));
+  document.querySelectorAll(".swatch").forEach((el) => {
+    el.addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(el.dataset.hex); } catch {}
+      el.classList.add("copied");
+      setTimeout(() => el.classList.remove("copied"), 1200);
+    });
+  });
+</script>
+
+<style>
+  .brand-page{--b-bg:#fff;--b-card:#fff8f7;--b-ink:#201a19;--b-muted:#6c6260;--b-line:#e9ddda;--b-accent:#b3261e;--b-soft:#fae8e5;max-width:1240px;margin:auto;padding:0 30px 105px;background:var(--b-bg);color:var(--b-ink)}
+  :global([data-theme="dark"]) .brand-page{--b-bg:#151312;--b-card:#241e1d;--b-ink:#f5eeec;--b-muted:#bcb0ad;--b-line:#403634;--b-accent:#ff8a80;--b-soft:#382321}
+  .hero{display:grid;grid-template-columns:1fr auto;gap:60px;align-items:center;padding:73px 0 40px}
+  .eyebrow{display:inline-block;margin-bottom:18px;padding:6px 14px;border-radius:999px;background:var(--b-soft);color:var(--b-accent);font-size:.78rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+  h1{max-width:760px;margin:0 0 17px;font-size:clamp(3rem,7vw,6.2rem);line-height:.95;letter-spacing:-.035em}
+  .hero-copy>p{max-width:560px;margin:0;color:var(--b-muted);font-size:1.08rem;line-height:1.7}
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+  .btn{display:inline-flex;align-items:center;padding:12px 20px;border:1px solid var(--b-line);border-radius:999px;color:var(--b-ink);font-size:.86rem;font-weight:800;text-decoration:none;transition:background .18s,transform .18s}
+  .btn:hover{background:var(--b-soft);transform:translateY(-1px)}
+  .btn.primary{border-color:var(--b-accent);background:var(--b-accent);color:#fff}
+  :global([data-theme="dark"]) .btn.primary{color:#151312}
+  .btn.primary:hover{filter:brightness(1.08);background:var(--b-accent)}
+  .hero-icon img{display:block;width:clamp(200px,28vw,320px);height:auto;filter:drop-shadow(0 22px 34px rgba(179,38,30,.3))}
+  .block{padding-top:96px}
+  .head{display:flex;align-items:end;justify-content:space-between;gap:38px;margin-bottom:26px}
+  .head h2{margin:0;font-size:clamp(2.2rem,5vw,4.2rem);line-height:1.05;letter-spacing:-.03em}
+  .head p{max-width:400px;margin:0 0 4px;color:var(--b-muted);font-size:.88rem;line-height:1.65}
+  .anatomy{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:26px}
+  .diagram{margin:0;padding:24px;border:1px solid var(--b-line);border-radius:22px;background:var(--b-card)}
+  .diagram svg{display:block;width:100%;height:auto;overflow:visible}
+  .sq{fill:var(--b-bg);stroke:var(--b-accent);stroke-width:.6}
+  .guides{fill:none;stroke:var(--b-muted);stroke-width:.25;stroke-dasharray:1.2 1.2;opacity:.7}
+  .pins path{stroke:var(--b-ink);stroke-width:.35;fill:none}
+  .pins circle{fill:var(--b-ink)}
+  .pins text{fill:var(--b-bg);font-size:4px;font-weight:800;text-anchor:middle;font-family:var(--font-main,"Nata Sans",sans-serif)}
+  .anatomy-side{display:flex;flex-direction:column;gap:20px}
+  .parts{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+  .parts li{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:15px 16px;border:1px solid var(--b-line);border-radius:16px;background:var(--b-card)}
+  .dot{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--c);color:var(--dot-fg,#fff);font-size:.8rem;font-weight:800}
+  .parts strong{font-size:.95rem}.parts p{margin:2px 0 8px;color:var(--b-muted);font-size:.82rem;line-height:1.55}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.74rem;color:var(--b-accent);overflow-wrap:anywhere}
+  .specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:0}
+  .specs div{padding:12px 14px;border:1px solid var(--b-line);border-radius:14px}
+  .specs dt{color:var(--b-muted);font-size:.7rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}.specs dd{margin:3px 0 0;font-size:.88rem;font-weight:700}
+  .squircle-note{display:grid;grid-template-columns:1fr 1.2fr;gap:26px;align-items:center;margin-top:26px;padding:24px;border:1px solid var(--b-line);border-radius:20px}
+  .squircle-note h3{margin:0 0 6px;font-size:1.1rem}.squircle-note p{margin:0;color:var(--b-muted);font-size:.84rem;line-height:1.65}
+  .anatomy>*,.squircle-note>*,.hero>*{min-width:0}
+  pre{margin:0;max-width:100%;padding:16px;overflow:auto;border-radius:14px;background:var(--b-card)}
+  .swatches{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+  .swatch{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:12px 12px 16px;border:1px solid var(--b-line);border-radius:18px;background:var(--b-card);color:var(--b-ink);font:inherit;text-align:left;cursor:pointer;transition:transform .18s}
+  .swatch:hover{transform:translateY(-2px)}
+  .chip{width:100%;height:96px;margin-bottom:10px;border:1px solid color-mix(in srgb,var(--b-ink) 12%,transparent);border-radius:12px;background:var(--c)}
+  .swatch small{color:var(--b-muted);font-size:.74rem;line-height:1.4}
+  .swatch.copied::after{content:"✓";position:absolute;top:20px;right:20px;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--b-ink);color:var(--b-bg);font-weight:800}
+  .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+  .card{display:flex;flex-direction:column;margin:0;border:1px solid var(--b-line);border-radius:20px;background:var(--b-card);overflow:hidden}
+  .thumb{display:grid;place-items:center;padding:26px 0 18px;background:var(--b-bg)}
+  .thumb img{display:block;width:124px;height:auto;filter:drop-shadow(0 12px 16px rgba(0,0,0,.2))}
+  figcaption{display:grid;gap:3px;padding:14px 16px 16px;border-top:1px solid var(--b-line)}
+  figcaption strong{font-size:.95rem}figcaption em{color:var(--b-muted);font-size:.74rem;font-style:normal}
+  .dl{display:flex;gap:8px;margin-top:8px}
+  .dl a{padding:5px 12px;border:1px solid var(--b-line);border-radius:999px;color:var(--b-accent);font-size:.74rem;font-weight:800;text-decoration:none}
+  .dl a,.dl button{padding:5px 12px;border:1px solid var(--b-line);border-radius:999px;background:transparent;color:var(--b-accent);font:inherit;font-size:.74rem;font-weight:800;text-decoration:none;cursor:pointer}
+  .dl a:hover,.dl button:hover{background:var(--b-soft)}
+  .sizes{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:16px;color:var(--b-muted);font-size:.8rem;font-weight:700}
+  .size{padding:7px 14px;border:1px solid var(--b-line);border-radius:999px;background:transparent;color:var(--b-ink);font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}
+  .size.on{border-color:var(--b-accent);background:var(--b-accent);color:#fff}
+  :global([data-theme="dark"]) .size.on{color:#151312}
+  .sizes label{display:inline-flex;align-items:center;gap:6px}
+  .sizes input{width:84px;padding:7px 10px;border:1px solid var(--b-line);border-radius:999px;background:var(--b-bg);color:var(--b-ink);font:inherit;font-size:.8rem}
+  .rules{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .rules article{padding:22px;border:1px solid var(--b-line);border-radius:20px;background:var(--b-card)}
+  .rules h3{margin:0 0 10px}.rules ul{margin:0;padding-left:20px;color:var(--b-muted);font-size:.86rem;line-height:1.8}
+  @media(max-width:900px){.anatomy,.squircle-note,.rules{grid-template-columns:1fr}.swatches{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{grid-template-columns:1fr;gap:34px}.hero-icon{order:-1}.head{align-items:flex-start;flex-direction:column;gap:14px}}
+  @media(max-width:520px){.brand-page{padding:0 20px 80px}.block{padding-top:72px}}
+</style>

@@ -1,0 +1,1183 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import EntinyGramHeader from "../../components/Header.astro";
+import EntinyGramFooter from "../../components/Footer.astro";
+import { getRecentDonations, getLatestBalance } from "../../lib/donations";
+
+export const prerender = false;
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=60, s-maxage=300, stale-while-revalidate=86400"
+);
+
+const [recentDonations, latestBalanceKopecks] = await Promise.all([
+  getRecentDonations(8).catch(() => []),
+  getLatestBalance().catch(() => null),
+]);
+
+const langCookie = Astro.cookies.get("lang")?.value;
+const requestedLang = Astro.url.searchParams.get("lang");
+const pageLang = requestedLang === "ua" ? "uk" : requestedLang === "en" ? "en" : langCookie === "ua" ? "uk" : "en";
+const uk = pageLang === "uk";
+
+const TARGET_UAH = 18549;
+const currentUah = latestBalanceKopecks !== null ? Math.round(latestBalanceKopecks / 100) : 0;
+const progressPercent = Math.min(100, Math.max(0, Math.round((currentUah / TARGET_UAH) * 100)));
+
+const formatUah = (kopecks: number) =>
+  `${Math.round(kopecks / 100).toLocaleString("uk-UA")} ₴`;
+
+const formatRelativeTime = (iso: string) => {
+  const diffMs = Date.now() - new Date(iso).getTime();
+  const minutes = Math.round(diffMs / 60000);
+  if (minutes < 1) return uk ? "щойно" : "just now";
+  if (minutes < 60) return uk ? `${minutes} хв тому` : `${minutes}m ago`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return uk ? `${hours} год тому` : `${hours}h ago`;
+  const days = Math.round(hours / 24);
+  return uk ? `${days} дн тому` : `${days}d ago`;
+};
+
+const cryptoWallets = [
+  {
+    coin: "ETH",
+    network: "Ethereum Mainnet",
+    address: "0x1D8cf5A876188256931a6D2FB1F4FAFCB5C03a99",
+    color: "#627eea",
+    desc: uk ? "Нативний ETH у мережі Ethereum Mainnet." : "Native ETH on Ethereum Mainnet.",
+  },
+  {
+    coin: "USDC",
+    network: "Base",
+    address: "0x1D8cf5A876188256931a6D2FB1F4FAFCB5C03a99",
+    color: "#2775ca",
+    desc: uk ? "Офіційний стейблкоїн USDC у мережі Base." : "Official USDC on Base network.",
+  },
+  {
+    coin: "GRAM / TON",
+    network: "TON network",
+    address: "UQBgCQmC-kT8W2AQfEUavuIszQEN-iuR8LUUNJkHeIN2oW5m",
+    color: "#0098ea",
+    desc: uk ? "Токени мережі The Open Network." : "Tokens on The Open Network (TON).",
+  },
+  {
+    coin: "SOL",
+    network: "Solana Mainnet",
+    address: "BWKK9NwmMFMa4N4MbRYg8yNH2A3zNJxNYNxTBSNZAzXr",
+    color: "#14f195",
+    desc: uk ? "Швидкі перекази у мережі Solana." : "Fast transfers via Solana Mainnet.",
+  },
+  {
+    coin: "BTC",
+    network: "Bitcoin Native SegWit",
+    address: "bc1qk9n4mru8skrdw94k6g5s5wcm0ucwlrwqlgxjq7",
+    color: "#f7931a",
+    desc: uk ? "Біткоїн Bech32 Native SegWit." : "Native SegWit (Bech32) Bitcoin.",
+  },
+];
+---
+
+<Layout
+  title={uk ? "Підтримати розробку — entinyGram" : "Support entinyGram Development"}
+  description={uk ? "Донат на підтримку та розвиток клієнта entinyGram: Monobank Банка, крипта, SWIFT/IBAN." : "Support entinyGram open-source development: Monobank Jar, crypto, and wire transfer."}
+  favicon="/favicon.svg"
+  image="/og/entinygram-banner.png"
+  lang={pageLang}
+>
+  <EntinyGramHeader active="donate" />
+
+  <main class="donate-page">
+    <!-- HERO SECTION -->
+    <section class="donate-hero">
+      <h1>{uk ? "Підтримай проєкт." : "Keep entinyGram Alive."}</h1>
+      <p class="donate-hero-lead">
+        {uk
+          ? "entinyGram — повністю безкоштовний патчсет із відкритим кодом. Жодної реклами, трекерів, аналітики чи платних підписок. Усі внески йдуть на оплату серверів, автоматичних CI/CD збірок та підтримку нових функцій."
+          : "entinyGram is an open-source patchset built for freedom: zero ads, zero tracking, zero paywalls. Every contribution directly funds build servers, CI pipelines, and active development."}
+      </p>
+
+      <div class="donate-origin-note">
+        <span class="note-icon" aria-hidden="true">📍</span>
+        <span>
+          {uk
+            ? "Розробка з мікрорайону Лезневе, Хмельницький. Сам з Луганщини — додому хочеться, та їхати вже нема куди."
+            : "Developed in Lezneve, Khmelnytskyi. Originally from Luhansk region — longing to return home, but there's nowhere left to go."}
+        </span>
+      </div>
+    </section>
+
+    <div class="donate-container">
+      <!-- MONOBANK HERO CARD (MAX VISIBILITY ON MOBILE & DESKTOP) -->
+      <section class="monobank-card" aria-label={uk ? "Банка Monobank" : "Monobank Jar"}>
+        <div class="card-glow" aria-hidden="true"></div>
+
+        <div class="card-top-row">
+          <div class="card-badge">
+            <span class="badge-dot"></span>
+            <span>{uk ? "🇺🇦 Основний збір" : "🇺🇦 Primary Fund"}</span>
+          </div>
+          <span class="jar-status-label">{uk ? "Наживо через Monobank" : "Live via Monobank"}</span>
+        </div>
+
+        <div class="target-row">
+          <div class="target-info">
+            <span class="target-title">{uk ? "Ціль збору на сервери" : "Server & Build Target"}</span>
+            <div class="target-nums">
+              <strong class="target-amount">{TARGET_UAH.toLocaleString("uk-UA")} ₴</strong>
+              {latestBalanceKopecks !== null && (
+                <span class="balance-tag">
+                  {uk ? "у банці:" : "in jar:"} <b>{formatUah(latestBalanceKopecks)}</b>
+                </span>
+              )}
+            </div>
+          </div>
+          <div class="progress-circle-wrap" aria-label={`Progress: ${progressPercent}%`}>
+            <span class="progress-percent">{progressPercent}%</span>
+          </div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="progress-track" role="progressbar" aria-valuenow={progressPercent} aria-valuemin="0" aria-valuemax="100">
+          <div class="progress-fill" style={`--progress: ${progressPercent / 100};`}></div>
+        </div>
+
+        <!-- Big Primary Action Button -->
+        <a
+          href="https://send.monobank.ua/jar/RGYa8zo8y"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-primary-jar"
+        >
+          <span class="jar-icon" aria-hidden="true">🏦</span>
+          <span>{uk ? "Закинути в банку Monobank ↗" : "Contribute to Monobank Jar ↗"}</span>
+        </a>
+
+        <!-- Card Number Quick Copy -->
+        <div class="card-copy-box">
+          <div class="card-copy-content">
+            <span class="card-label">{uk ? "Прямий переказ на картку Monobank" : "Direct Monobank Card"}</span>
+            <span class="card-number font-mono" id="mono-card-number">4874 1000 3949 4128</span>
+          </div>
+          <button
+            type="button"
+            class="copy-btn copy-card-action"
+            data-copy="4874100039494128"
+            aria-label={uk ? "Скопіювати номер картки" : "Copy card number"}
+          >
+            <span class="btn-text">{uk ? "Копіювати" : "Copy"}</span>
+          </button>
+        </div>
+
+        <!-- Crypto Bot (@send) Direct Link -->
+        <a
+          href="https://t.me/send?start=IVncNnKfmByl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tg-wallet-row"
+        >
+          <div class="tg-wallet-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.52 2.77-1.18 3.35-1.39 3.73-1.39.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+            </svg>
+          </div>
+          <div class="tg-wallet-text">
+            <strong>{uk ? "Донат через Crypto Bot" : "Donate via Crypto Bot"}</strong>
+            <small>{uk ? "Переказ криптовалюти через @CryptoBot у Telegram" : "Instant crypto transfer via @CryptoBot in Telegram"}</small>
+          </div>
+          <span class="tg-wallet-arrow" aria-hidden="true">↗</span>
+        </a>
+
+        <!-- Recent Donations Feed -->
+        {recentDonations && recentDonations.length > 0 && (
+          <div class="recent-feed-block">
+            <div class="recent-feed-header">
+              <span class="recent-feed-title">💌 {uk ? "Останні внески в банку" : "Recent Supporters"}</span>
+              <span class="recent-feed-count">{recentDonations.length}</span>
+            </div>
+            <div class="recent-feed-list">
+              {recentDonations.map((tx) => (
+                <div class="feed-item">
+                  <div class="feed-avatar" aria-hidden="true">✦</div>
+                  <div class="feed-details">
+                    <span class="feed-name">{tx.sender || tx.comment || (uk ? "Анонімний добродій" : "Anonymous")}</span>
+                    {tx.comment && tx.comment !== tx.sender && (
+                      <span class="feed-comment">«{tx.comment}»</span>
+                    )}
+                  </div>
+                  <div class="feed-meta">
+                    <strong class="feed-amount">{formatUah(tx.amount)}</strong>
+                    <time class="feed-time">{formatRelativeTime(tx.created_at)}</time>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
+
+      <!-- TWO-COLUMN GRID: INTERNATIONAL WIRE & CRYPTO -->
+      <div class="sub-grid">
+        <!-- INTERNATIONAL WIRE (SWIFT / IBAN) -->
+        <section class="bento-card wire-card" aria-label={uk ? "Міжнародний переказ SWIFT/IBAN" : "International Wire"}>
+          <div class="card-head">
+            <div>
+              <h2>SWIFT / IBAN</h2>
+            </div>
+            <span class="head-note">Revolut, Wise, etc.</span>
+          </div>
+
+          <p class="wire-intro">
+            {uk
+              ? "Немає української картки? Будь-який міжнародний сервіс чи банк (Revolut, Wise, Zen, банківський додаток) може переказати кошти за реквізитами IBAN/SWIFT:"
+              : "No Ukrainian bank account? Any international bank or fintech service (Revolut, Wise, normal bank app) supports direct wire transfers with these details:"}
+          </p>
+
+          <div class="wire-details">
+            <div class="wire-row">
+              <span class="wire-label">{uk ? "Одержувач" : "Beneficiary"}</span>
+              <strong class="wire-val">Kulinich Oleksii Serhiiovych</strong>
+            </div>
+
+            <div class="wire-row">
+              <span class="wire-label">{uk ? "Адреса одержувача (якщо запитує банк)" : "Beneficiary address (if required)"}</span>
+              <div class="wire-copyable">
+                <span class="wire-val">69 Soborna St, Khmelnytskyy, Khmelnytskyy Oblast, 29000, Ukraine</span>
+                <button type="button" class="copy-pill copy-card-action" data-copy="69 Soborna St, Khmelnytskyy, Khmelnytskyy Oblast, 29000, Ukraine" aria-label="Copy Address">
+                  {uk ? "Копія" : "Copy"}
+                </button>
+              </div>
+            </div>
+
+            <div class="wire-row">
+              <span class="wire-label">IBAN</span>
+              <div class="wire-copyable">
+                <strong class="wire-val font-mono">UA613220010000026204380821818</strong>
+                <button type="button" class="copy-pill copy-card-action" data-copy="UA613220010000026204380821818" aria-label="Copy IBAN">
+                  {uk ? "Копія" : "Copy"}
+                </button>
+              </div>
+            </div>
+
+            <div class="wire-row">
+              <span class="wire-label">SWIFT / BIC</span>
+              <div class="wire-copyable">
+                <strong class="wire-val font-mono">UNJSUAUKXXX</strong>
+                <button type="button" class="copy-pill copy-card-action" data-copy="UNJSUAUKXXX" aria-label="Copy SWIFT">
+                  {uk ? "Копія" : "Copy"}
+                </button>
+              </div>
+            </div>
+
+            <div class="wire-row">
+              <span class="wire-label">{uk ? "Банк" : "Bank"}</span>
+              <span class="wire-val">Universal Bank, Kyiv, Ukraine</span>
+            </div>
+
+            <div class="wire-row">
+              <span class="wire-label">{uk ? "ІПН (Tax ID)" : "Tax ID"}</span>
+              <div class="wire-copyable">
+                <strong class="wire-val font-mono">3825206378</strong>
+                <button type="button" class="copy-pill copy-card-action" data-copy="3825206378" aria-label="Copy Tax ID">
+                  {uk ? "Копія" : "Copy"}
+                </button>
+              </div>
+            </div>
+
+            <div class="wire-row">
+              <span class="wire-label">{uk ? "Призначення" : "Purpose"}</span>
+              <span class="wire-val">{uk ? "Поповнення власного рахунку" : "Account top-up"}</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- CRYPTO ASSETS -->
+        <section class="bento-card crypto-card" aria-label={uk ? "Криптовалютні донати" : "Crypto Donations"}>
+          <div class="card-head">
+            <div>
+              <h2>{uk ? "Криптогаманці" : "Direct Crypto"}</h2>
+            </div>
+            <span class="head-note">{uk ? "Перевіряйте мережу" : "Check network"}</span>
+          </div>
+
+          <div class="crypto-list">
+            {cryptoWallets.map((w) => (
+              <div class="crypto-item">
+                <div class="crypto-top">
+                  <div class="crypto-title-row">
+                    <span class="coin-badge" style={`color:${w.color}; background:color-mix(in srgb, ${w.color} 15%, transparent);`}>
+                      {w.coin}
+                    </span>
+                    <span class="network-badge">{w.network}</span>
+                  </div>
+                  <button
+                    type="button"
+                    class="copy-icon-btn copy-card-action"
+                    data-copy={w.address}
+                    title={uk ? `Скопіювати ${w.coin} адресу` : `Copy ${w.coin} address`}
+                    aria-label={`Copy ${w.coin} address`}
+                  >
+                    <span>{uk ? "Копіювати" : "Copy"}</span>
+                  </button>
+                </div>
+                <div class="crypto-address-row">
+                  <code class="crypto-code font-mono">{w.address}</code>
+                </div>
+                <p class="crypto-desc">{w.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="copy-toast" class="copy-toast" role="status" aria-live="polite">
+      <span class="toast-icon">✓</span>
+      <span class="toast-msg">{uk ? "Скопійовано в буфер!" : "Copied to clipboard!"}</span>
+    </div>
+  </main>
+
+  <EntinyGramFooter />
+</Layout>
+
+<script is:inline>
+  // Simple toast feedback for all copy buttons
+  const toast = document.getElementById("copy-toast");
+  let toastTimer;
+
+  const showToast = (message) => {
+    if (!toast) return;
+    if (message) toast.querySelector(".toast-msg").textContent = message;
+    toast.classList.add("is-visible");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toast.classList.remove("is-visible");
+    }, 2200);
+  };
+
+  document.querySelectorAll(".copy-card-action").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const text = btn.getAttribute("data-copy");
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+        const originalText = btn.textContent;
+        btn.classList.add("is-copied");
+        if (btn.querySelector(".btn-text")) {
+          btn.querySelector(".btn-text").textContent = "✓ Скопійовано";
+        }
+        showToast("Скопійовано: " + text.slice(0, 14) + (text.length > 14 ? "…" : ""));
+        setTimeout(() => {
+          btn.classList.remove("is-copied");
+          if (btn.querySelector(".btn-text")) {
+            btn.querySelector(".btn-text").textContent = originalText;
+          }
+        }, 1800);
+      } catch (err) {
+        showToast("Помилка копіювання");
+      }
+    });
+  });
+
+  const renderedLanguage = ["uk", "ua"].includes(document.documentElement.lang) ? "ua" : "en";
+  window.addEventListener("site-language-change", (event) => {
+    if (event.detail?.lang === renderedLanguage) return;
+    const url = new URL(location.href);
+    url.searchParams.set("lang", event.detail.lang);
+    location.assign(url);
+  });
+</script>
+
+<style>
+  .donate-page {
+    --dp-bg: #fff;
+    --dp-card: #fff8f7;
+    --dp-card-elevated: #ffffff;
+    --dp-ink: #201a19;
+    --dp-muted: #6c6260;
+    --dp-line: #e9ddda;
+    --dp-accent: #b3261e;
+    --dp-accent-glow: rgba(179, 38, 30, 0.12);
+    --dp-success: #1b873f;
+    min-height: 80vh;
+    padding-bottom: 7rem;
+    background: var(--dp-bg);
+    color: var(--dp-ink);
+    font-family: var(--font-main, "Nata Sans", sans-serif);
+  }
+
+  :global([data-theme="dark"]) .donate-page {
+    --dp-bg: #151312;
+    --dp-card: #241e1d;
+    --dp-card-elevated: #2c2524;
+    --dp-ink: #f5eeec;
+    --dp-muted: #bcb0ad;
+    --dp-line: #403634;
+    --dp-accent: #ff8a80;
+    --dp-accent-glow: rgba(255, 138, 128, 0.15);
+    --dp-success: #4cd964;
+  }
+
+  .donate-hero {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 72px 28px 40px;
+  }
+
+  .donate-eyebrow-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .eyebrow {
+    color: var(--dp-accent);
+    font-size: 0.72rem;
+    font-weight: 850;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .heart-pulse {
+    display: inline-block;
+    animation: heartBeat 1.8s infinite ease-in-out;
+  }
+
+  @keyframes heartBeat {
+    0%, 100% { transform: scale(1); }
+    15% { transform: scale(1.22); }
+    30% { transform: scale(1); }
+    45% { transform: scale(1.15); }
+  }
+
+  .donate-hero h1 {
+    max-width: 900px;
+    margin: 8px 0 16px;
+    font-size: clamp(3rem, 7vw, 6.2rem);
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+  }
+
+  .donate-hero-lead {
+    max-width: 65ch;
+    margin: 0;
+    color: var(--dp-muted);
+    font-size: 1.08rem;
+    line-height: 1.68;
+  }
+
+  .donate-origin-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 24px;
+    padding: 10px 18px;
+    border: 1px dashed var(--dp-line);
+    border-radius: 999px;
+    background: var(--dp-card);
+    color: var(--dp-muted);
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
+  .donate-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* MONOBANK HERO CARD */
+  .monobank-card {
+    position: relative;
+    padding: 36px 36px 32px;
+    border: 2px solid color-mix(in srgb, var(--dp-accent) 40%, var(--dp-line));
+    border-radius: 28px;
+    background: linear-gradient(170deg, var(--dp-card-elevated) 0%, var(--dp-card) 100%);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+  }
+
+  .card-glow {
+    display: none;
+  }
+
+  .card-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+
+  .card-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--dp-accent);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  @keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+  }
+
+  .jar-status-label {
+    color: var(--dp-muted);
+    font-size: 0.76rem;
+    font-weight: 700;
+  }
+
+  .target-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 18px;
+  }
+
+  .target-title {
+    display: block;
+    color: var(--dp-muted);
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .target-nums {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+
+  .target-amount {
+    font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: var(--dp-accent);
+    line-height: 1;
+  }
+
+  .balance-tag {
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: var(--dp-line);
+    color: var(--dp-ink);
+    font-size: 0.85rem;
+  }
+
+  .balance-tag b {
+    color: var(--dp-accent);
+  }
+
+  .progress-circle-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 3px solid var(--dp-accent);
+    background: var(--dp-card);
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--dp-accent);
+    shrink: 0;
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 14px;
+    border-radius: 999px;
+    background: var(--dp-line);
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+
+  .progress-fill {
+    width: 100%;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--dp-accent) 0%, color-mix(in srgb, var(--dp-accent) 75%, #ffb74d) 100%);
+    transform-origin: left center;
+    transform: scaleX(var(--progress, 0));
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .btn-primary-jar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 20px 28px;
+    border-radius: 18px;
+    background: var(--dp-accent);
+    color: #fff;
+    font-size: 1.15rem;
+    font-weight: 850;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    box-shadow: none;
+    transition: transform 0.18s ease, filter 0.18s ease;
+  }
+
+  .btn-primary-jar:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+  }
+
+  .btn-primary-jar:active {
+    transform: scale(0.99);
+  }
+
+  .jar-icon {
+    font-size: 1.35rem;
+  }
+
+  /* Card Copy Row */
+  .card-copy-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-top: 18px;
+    padding: 16px 20px;
+    border: 1px solid var(--dp-line);
+    border-radius: 16px;
+    background: var(--dp-bg);
+  }
+
+  .card-copy-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .card-label {
+    color: var(--dp-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .card-number {
+    font-size: clamp(1.05rem, 2.8vw, 1.4rem);
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    color: var(--dp-ink);
+  }
+
+  .copy-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 22px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--dp-ink);
+    color: var(--dp-bg);
+    font-size: 0.85rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.15s, background 0.15s;
+    white-space: nowrap;
+    shrink: 0;
+  }
+
+  .copy-btn:hover {
+    transform: scale(1.03);
+  }
+
+  .copy-btn.is-copied {
+    background: var(--dp-success);
+    color: #fff;
+  }
+
+  /* Crypto Bot link */
+  .tg-wallet-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 16px;
+    padding: 15px 20px;
+    border: 1px solid var(--dp-line);
+    border-radius: 16px;
+    background: var(--dp-bg);
+    color: var(--dp-ink);
+    text-decoration: none;
+    transition: border-color 0.18s, transform 0.18s;
+  }
+
+  .tg-wallet-row:hover {
+    border-color: var(--dp-accent);
+    transform: translateY(-2px);
+  }
+
+  .tg-wallet-icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(36, 161, 222, 0.12);
+    color: #24a1de;
+    shrink: 0;
+  }
+
+  .tg-wallet-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .tg-wallet-text strong {
+    font-size: 0.95rem;
+    font-weight: 800;
+  }
+
+  .tg-wallet-text small {
+    color: var(--dp-muted);
+    font-size: 0.77rem;
+    margin-top: 2px;
+  }
+
+  .tg-wallet-arrow {
+    color: var(--dp-accent);
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+
+  /* RECENT FEED */
+  .recent-feed-block {
+    margin-top: 26px;
+    padding-top: 20px;
+    border-top: 1px solid var(--dp-line);
+  }
+
+  .recent-feed-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .recent-feed-title {
+    color: var(--dp-ink);
+    font-size: 0.88rem;
+    font-weight: 850;
+  }
+
+  .recent-feed-count {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--dp-bg);
+    border: 1px solid var(--dp-line);
+    color: var(--dp-muted);
+    font-size: 0.75rem;
+    font-weight: 800;
+  }
+
+  .recent-feed-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .feed-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 15px;
+    border-radius: 12px;
+    background: var(--dp-bg);
+    border: 1px solid var(--dp-line);
+  }
+
+  .feed-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--dp-accent-glow);
+    color: var(--dp-accent);
+    display: grid;
+    place-items: center;
+    font-size: 0.8rem;
+    font-weight: 900;
+    shrink: 0;
+  }
+
+  .feed-details {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .feed-name {
+    display: block;
+    max-width: 100%;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--dp-ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .feed-comment {
+    display: block;
+    color: var(--dp-muted);
+    font-size: 0.76rem;
+    font-style: italic;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.35;
+    margin-top: 2px;
+  }
+
+  .feed-meta {
+    text-align: right;
+    shrink: 0;
+  }
+
+  .feed-amount {
+    display: block;
+    color: var(--dp-accent);
+    font-size: 0.95rem;
+    font-weight: 900;
+  }
+
+  .feed-time {
+    display: block;
+    color: var(--dp-muted);
+    font-size: 0.75rem;
+  }
+
+  /* SUB GRID: CRYPTO & WIRE */
+  .sub-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    align-items: start;
+  }
+
+  .bento-card {
+    padding: 28px;
+    border: 1px solid var(--dp-line);
+    border-radius: 24px;
+    background: var(--dp-card);
+  }
+
+  .card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+
+  .head-eyebrow {
+    display: block;
+    color: var(--dp-accent);
+    font-size: 0.72rem;
+    font-weight: 850;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .card-head h2 {
+    margin: 4px 0 0;
+    font-size: 1.6rem;
+    letter-spacing: -0.025em;
+  }
+
+  .head-note {
+    color: var(--dp-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--dp-bg);
+    border: 1px solid var(--dp-line);
+  }
+
+  /* Crypto List */
+  .crypto-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .crypto-item {
+    padding: 16px;
+    border: 1px solid var(--dp-line);
+    border-radius: 16px;
+    background: var(--dp-bg);
+    transition: border-color 0.18s;
+  }
+
+  .crypto-item:hover {
+    border-color: var(--dp-accent);
+  }
+
+  .crypto-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .crypto-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .coin-badge {
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+  }
+
+  .network-badge {
+    color: var(--dp-muted);
+    font-size: 0.76rem;
+    font-weight: 750;
+    text-transform: uppercase;
+  }
+
+  .copy-icon-btn {
+    padding: 6px 14px;
+    border: 1px solid var(--dp-line);
+    border-radius: 999px;
+    background: var(--dp-card);
+    color: var(--dp-ink);
+    font-size: 0.78rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .copy-icon-btn:hover {
+    border-color: var(--dp-accent);
+    color: var(--dp-accent);
+  }
+
+  .copy-icon-btn.is-copied {
+    background: var(--dp-success);
+    color: #fff;
+    border-color: var(--dp-success);
+  }
+
+  .crypto-address-row {
+    margin: 6px 0;
+  }
+
+  .crypto-code {
+    display: block;
+    word-break: break-all;
+    font-size: 0.8rem;
+    color: var(--dp-ink);
+    background: var(--dp-card);
+    padding: 6px 10px;
+    border-radius: 8px;
+  }
+
+  .crypto-desc {
+    margin: 6px 0 0;
+    color: var(--dp-muted);
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+
+  /* WIRE DETAILS */
+  .wire-intro {
+    max-width: 60ch;
+    margin: 0 0 18px;
+    color: var(--dp-muted);
+    font-size: 0.86rem;
+    line-height: 1.6;
+  }
+
+  .wire-details {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--dp-line);
+    border-radius: 16px;
+    background: var(--dp-bg);
+    overflow: hidden;
+  }
+
+  .wire-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--dp-line);
+  }
+
+  .wire-row:last-child {
+    border-bottom: 0;
+  }
+
+  .wire-label {
+    color: var(--dp-muted);
+    font-size: 0.75rem;
+    font-weight: 800;
+  }
+
+  .wire-val {
+    font-size: 0.88rem;
+    color: var(--dp-ink);
+    word-break: break-all;
+  }
+
+  .wire-copyable {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .copy-pill {
+    padding: 5px 12px;
+    border: 1px solid var(--dp-line);
+    border-radius: 999px;
+    background: var(--dp-card);
+    color: var(--dp-ink);
+    font-size: 0.78rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s;
+    shrink: 0;
+  }
+
+  .copy-pill:hover {
+    border-color: var(--dp-accent);
+    color: var(--dp-accent);
+  }
+
+  .copy-pill.is-copied {
+    background: var(--dp-success);
+    color: #fff;
+  }
+
+  /* TOAST */
+  .copy-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(40px);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    border-radius: 999px;
+    background: #151312;
+    color: #fff;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    font-size: 0.85rem;
+    font-weight: 800;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 9999;
+  }
+
+  .copy-toast.is-visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .toast-icon {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--dp-success);
+    color: #fff;
+    font-size: 0.7rem;
+  }
+
+  /* RESPONSIVE DESIGN - MOBILE FIRST FOCUS */
+  @media (max-width: 860px) {
+    .sub-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .donate-hero {
+      padding: 50px 20px 28px;
+    }
+
+    .donate-hero h1 {
+      font-size: clamp(2.4rem, 11vw, 3.8rem);
+    }
+
+    .donate-container {
+      padding: 0 16px;
+    }
+
+    .monobank-card {
+      padding: 24px 20px;
+      border-radius: 22px;
+    }
+
+    .target-nums {
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .btn-primary-jar {
+      padding: 18px 20px;
+      font-size: 1rem;
+    }
+
+    .card-copy-box {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+
+    .copy-btn {
+      width: 100%;
+      padding: 13px;
+    }
+
+    .bento-card {
+      padding: 20px 16px;
+      border-radius: 20px;
+    }
+  }
+</style>

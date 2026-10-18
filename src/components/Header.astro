@@ -1,0 +1,76 @@
+---
+interface Props { active?: "home" | "branding" | "features" | "changelog" | "faq" | "docs" | "downloads" | "donate" }
+const { active = "home" } = Astro.props;
+const aboutHref = active === "home" ? "#why" : "/#why";
+---
+
+<header class="eg-shell-header" id="egHeader">
+  <a class="eg-shell-brand" href="/" aria-label="entinyGram home">entiny<span>Gram</span><i>Android patchset</i></a>
+  <nav class="eg-shell-nav" id="egNav" aria-label="entinyGram navigation">
+    <a class:list={{ "is-active": active === "home" }} href={aboutHref} data-lang-key="eg_nav_about">About</a>
+    <a class:list={{ "is-active": active === "features" }} href="/features" data-lang-key="eg_nav_features">Features</a>
+    <a class:list={{ "is-active": active === "changelog" }} href="/changelog" data-lang-key="eg_nav_changelog">Changelog</a>
+    <a class:list={{ "is-active": active === "faq" }} href="/faq" data-lang-key="eg_nav_faq">FAQ</a>
+    <a class:list={{ "is-active": active === "docs" }} href="/docs" data-lang-key="eg_nav_docs">Docs</a>
+    <a class:list={["eg-shell-branding", { "is-active": active === "branding" }]} href="/branding">Branding</a>
+    <a class:list={["eg-shell-download", { "is-active": active === "downloads" }]} href="/downloads" data-lang-key="eg_nav_download">Downloads</a>
+    <a class:list={["eg-shell-donate", { "is-active": active === "donate" }]} href="/donate" data-lang-key="eg_nav_donate">Support</a>
+  </nav>
+  <div class="eg-shell-actions">
+    <button class="eg-shell-theme" id="themeToggle" type="button" aria-label="Toggle theme"><span class="iconify" data-icon="solar:moon-bold"></span></button>
+    <div class="eg-shell-language" aria-label="Choose language">
+      <button class="lang-btn" type="button" data-lang="en" aria-label="English">EN</button>
+      <span aria-hidden="true"></span>
+      <button class="lang-btn" type="button" data-lang="ua" aria-label="Українська">UA</button>
+    </div>
+    <button class="eg-shell-burger" id="egBurger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="egNav"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<script is:inline>
+  (() => {
+    const header = document.getElementById("egHeader");
+    const burger = document.getElementById("egBurger");
+    if (!header || !burger) return;
+    const set = (open) => {
+      header.classList.toggle("is-open", open);
+      burger.setAttribute("aria-expanded", String(open));
+      document.body.classList.toggle("eg-menu-open", open);
+    };
+    burger.addEventListener("click", () => set(!header.classList.contains("is-open")));
+    header.querySelectorAll(".eg-shell-nav a").forEach((link) => link.addEventListener("click", () => set(false)));
+    document.addEventListener("keydown", (event) => { if (event.key === "Escape") set(false); });
+    document.addEventListener("click", (event) => { if (!header.contains(event.target)) set(false); });
+    window.matchMedia("(min-width: 901px)").addEventListener("change", (event) => { if (event.matches) set(false); });
+  })();
+</script>
+
+<style is:global>
+  .eg-shell-header { --shell-bg:#fff; --shell-ink:#201a19; --shell-muted:#756b68; --shell-accent:#b3261e; --shell-soft:#fff0ee; --shell-line:#eee3e0; position:relative; z-index:20; max-width:1440px; height:88px; margin:0 auto; padding:0 5.2vw; display:flex; align-items:center; gap:28px; color:var(--shell-ink); background:var(--shell-bg); font-family:var(--font-main,"Nata Sans",sans-serif); }
+  [data-theme="dark"] .eg-shell-header { --shell-bg:#151312; --shell-ink:#f5eeec; --shell-muted:#bcb0ad; --shell-accent:#ff8a80; --shell-soft:#382321; --shell-line:#403634; }
+  .eg-shell-header *, .eg-shell-header *::before, .eg-shell-header *::after { box-sizing:border-box; }
+  .eg-shell-brand { position:relative; display:flex; flex-direction:column; color:var(--shell-ink); text-decoration:none; font-size:1.42rem; font-weight:850; line-height:1; letter-spacing:-.03em; white-space:nowrap; }
+  .eg-shell-brand span { color:var(--shell-accent); }
+  .eg-shell-brand i { margin-top:5px; color:var(--shell-muted); font-size:.75rem; font-style:normal; font-weight:600; letter-spacing:0; }
+  .eg-shell-nav { display:flex; align-items:center; justify-content:center; gap:clamp(14px,2.2vw,32px); margin-left:auto; font-size:.88rem; font-weight:700; }
+  .eg-shell-nav a { color:var(--shell-muted); text-decoration:none; transition:color .18s ease; }
+  .eg-shell-nav a:hover, .eg-shell-nav a.is-active { color:var(--shell-ink); }
+  .eg-shell-nav .eg-shell-download { padding:10px 18px; border-radius:999px; color:var(--shell-accent); background:var(--shell-soft); transition:background .18s, color .18s; }
+  .eg-shell-nav .eg-shell-download:hover, .eg-shell-nav .eg-shell-download.is-active { color:#fff; background:var(--shell-accent); }
+  .eg-shell-nav .eg-shell-donate { display:inline-flex; align-items:center; gap:5px; padding:10px 18px; border-radius:999px; font-weight:800; color:#fff !important; background:var(--shell-accent); text-decoration:none; white-space:nowrap; transition:transform .18s, filter .18s; }
+  .eg-shell-nav .eg-shell-donate:hover { transform:translateY(-2px); filter:brightness(1.08); }
+  .eg-shell-actions { display:flex; align-items:center; gap:16px; margin-left:20px; }
+  .eg-shell-theme { width:42px; height:42px; border:1px solid var(--shell-line); border-radius:999px; background:var(--shell-bg); color:var(--shell-ink); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; font-size:1.2rem; transition:transform .18s, border-color .18s; }
+  .eg-shell-theme:hover { transform:scale(1.06); border-color:var(--shell-accent); }
+  .eg-shell-language { display:flex; align-items:center; gap:6px; font-size:.84rem; font-weight:750; }
+  .eg-shell-language button { background:none; border:none; color:var(--shell-muted); cursor:pointer; font-weight:inherit; padding:2px 4px; transition:color .18s; }
+  .eg-shell-language button:hover, .eg-shell-language button.active { color:var(--shell-accent); }
+  .eg-shell-language span { width:1px; height:12px; background:var(--shell-line); }
+  .eg-shell-burger { display:none; flex-direction:column; justify-content:center; gap:5px; width:42px; height:42px; border:1px solid var(--shell-line); border-radius:999px; background:none; cursor:pointer; padding:10px; }
+  .eg-shell-burger span { display:block; width:100%; height:2px; background:var(--shell-ink); border-radius:2px; transition:transform .18s, opacity .18s; }
+  @media(max-width:900px) {
+    .eg-shell-burger { display:flex; }
+    .eg-shell-nav { position:fixed; top:88px; left:0; right:0; bottom:0; background:var(--shell-bg); flex-direction:column; padding:32px 24px; gap:20px; display:none; }
+    .eg-shell-header.is-open .eg-shell-nav { display:flex; }
+  }
+</style>

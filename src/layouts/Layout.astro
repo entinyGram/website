@@ -1,0 +1,63 @@
+---
+import "../styles/main.css";
+import Analytics from "@vercel/analytics/astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  favicon?: string;
+  lang?: string;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const { title, description, image, favicon = "/favicon.svg", lang = "en", jsonLd } = Astro.props;
+const siteUrl = (import.meta.env.PUBLIC_SITE_URL || "https://entiny.tech").replace(/\/$/, "");
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
+const ogImage = image ? new URL(image, siteUrl).href : undefined;
+const initialTheme = Astro.cookies.get("theme")?.value === "dark" ? "dark" : "light";
+---
+
+<!doctype html>
+<html lang={lang} data-theme={initialTheme}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content={initialTheme === "dark" ? "#151312" : "#ffffff"} />
+    <link rel="icon" type="image/svg+xml" href={favicon} />
+    <link rel="alternate icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={lang === "uk" ? "uk_UA" : "en_US"} />
+    <meta property="og:site_name" content="entinyGram" />
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:url" content={canonicalUrl} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nata+Sans:wght@400;500;700;800&display=swap" rel="stylesheet" />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    <script is:inline src="/js/theme.js"></script>
+    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js" defer></script>
+  </head>
+  <body class="eg-body">
+    <slot />
+    <script is:inline src="/js/entinygram.js"></script>
+    <Analytics />
+  </body>
+</html>
+
+<style is:global>
+  html:has(.eg-page), html:has(.feature-page), html:has(.faq-page), html:has(.downloads-page) { scroll-behavior:smooth; }
+  body.eg-body { min-height:100vh; margin:0; background:#fff; color:#201a19; font-family:var(--font-main,"Nata Sans",sans-serif); line-height:1.5; transition:background-color .2s ease,color .2s ease; }
+  [data-theme="dark"] body.eg-body { background:#151312; color:#f5eeec; }
+  body.eg-body *, body.eg-body *::before, body.eg-body *::after { box-sizing:border-box; }
+  body.eg-body :focus-visible { outline:3px solid #b3261e; outline-offset:3px; }
+  [data-theme="dark"] body.eg-body :focus-visible { outline-color:#ff8a80; }
+  body.eg-body ::selection { color:#fff; background:#a92c29; }
+  [data-theme="dark"] body.eg-body ::selection { background:#a92c29; }
+</style>

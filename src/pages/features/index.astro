@@ -1,0 +1,102 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import EntinyGramHeader from "../../components/Header.astro";
+import EntinyGramFooter from "../../components/Footer.astro";
+import { getEntinyFeatures } from "../../lib/entinygram";
+
+export const prerender = false;
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=120, s-maxage=600, stale-while-revalidate=86400"
+);
+
+const langCookie = Astro.cookies.get("lang")?.value;
+const requestedLang = Astro.url.searchParams.get("lang");
+const pageLang = requestedLang === "ua" ? "uk" : requestedLang === "en" ? "en" : langCookie === "ua" ? "uk" : "en";
+const uk = pageLang === "uk";
+const featureCopy = uk ? [
+  ["01 / приватність", "ghost mode", "Приховуй прочитання, перегляди історій, онлайн і статус набору. Є режими «прочитано після відповіді», локальне очищення бейджів і винятки для окремих чатів."],
+  ["02 / історія", "видалення не зникають", "Зберігай повідомлення та медіа, видалені співрозмовником, і переглядай історію редакцій із форматуванням та різницею тексту. Власні видалення не архівуються."],
+  ["03 / обмежений контент", "більше контролю", "Зберігай історії, копіюй і пересилай повідомлення із захищених чатів, керуй FLAG_SECURE та локальними Premium-елементами."],
+  ["04 / мови", "переклад і голос", "Перекладай чати різними провайдерами, вмикай автопереклад і транскрибуй голосові через налаштовані сервіси."],
+  ["05 / вигляд", "інтерфейс під себе", "Окремий AMOLED, заокруглення аватарів, пакети іконок, налаштовувані нижні вкладки й порядок рядків налаштувань."],
+  ["06 / щоденні інструменти", "менше зайвих кроків", "Feed каналів, швидке перемикання чатів, Forward Pro, локальні папки, керування проксі й інші інструменти з відкритого списку патчів."],
+] : [
+  ["01 / privacy", "ghost mode", "Hide read receipts, story views, online presence, and typing status. Choose read-on-reply, clear unread badges locally, and set per-chat exceptions."],
+  ["02 / history", "deletions, remembered", "Keep messages and media deleted by the other person, then browse edit history with formatting and text diffs. Your own deletions are never archived."],
+  ["03 / restricted content", "more control", "Save Stories, copy and forward from protected chats, control FLAG_SECURE, and use client-side Premium interface options."],
+  ["04 / language", "translate and transcribe", "Translate chats through multiple providers, enable auto-translation, and transcribe voice messages through configured services."],
+  ["05 / appearance", "make the interface yours", "A standalone AMOLED theme, adjustable avatar corners, icon packs, configurable bottom tabs, and reorderable settings rows."],
+  ["06 / everyday tools", "fewer extra steps", "A channel feed, recent-chat switcher, Forward Pro, local folders, proxy tools, and more from the published patch list."],
+];
+
+const comparisonRows = uk ? [
+  ["Архітектура", "Моноліт Java/C++", "StGit patchset", "StGit patchset (patches/entiny/)"],
+  ["Ghost Mode", "Ні", "Ні", "Так"],
+  ["Збереження видалених повідомлень і редакцій", "Ні", "Ні", "Так"],
+  ["Обхід захисту контенту та обмежень Stories", "Ні", "Ні", "Так"],
+  ["Блокування реклами та sponsored-контенту", "Ні", "Частково", "Повністю"],
+  ["Транскрипція голосових без Premium", "Платно", "Ні", "Так"],
+  ["Переклад чатів без Premium", "Платно", "Ні", "Так"],
+  ["AMOLED + повзунок заокруглення аватарів", "Ні", "Ні", "Так"],
+  ["Material 3 / Classic UI", "Ні", "Так", "Так"],
+] : [
+  ["Architecture", "Monolithic Java/C++", "StGit patchset", "StGit patchset (patches/entiny/)"],
+  ["Ghost Mode", "No", "No", "Yes"],
+  ["Save deleted messages and edits", "No", "No", "Yes"],
+  ["Bypass protected content and Stories restrictions", "No", "No", "Yes"],
+  ["AdBlock & sponsored content debloat", "No", "Partial", "Complete"],
+  ["Free voice-to-text without Premium", "Paid", "No", "Yes"],
+  ["Free chat translation without Premium", "Paid", "No", "Yes"],
+  ["AMOLED theme + avatar corner slider", "No", "No", "Yes"],
+  ["Material 3 / Classic UI modes", "No", "Yes", "Yes"],
+];
+
+const parsedSections = await getEntinyFeatures();
+const featuresUnavailable = parsedSections.length === 0;
+const description = uk ? "Можливості entinyGram, звірені з відкритим списком патчів та порівнянням у README." : "entinyGram features, grounded in the public patch list and the README comparison.";
+---
+
+<Layout title={`${uk ? "Можливості" : "Features"} — entinyGram`} description={description} favicon="/favicon.svg" image="/og/entinygram-banner.png" lang={pageLang}>
+  <EntinyGramHeader active="features" />
+  <main class="feature-page">
+    <section class="feature-hero"><h1>{uk ? "Не ще один набір тумблерів." : "More than another settings menu."}</h1><p>{uk ? "Патчсет додає контроль над приватністю, повідомленнями та виглядом Telegram Android. Ось конкретні речі, які можна робити." : "A patchset for more control over privacy, messages, and the look of Telegram Android. Here are the things it lets you do."}</p><div class="hero-facts"><span>{uk ? "Приватність" : "Privacy"}</span><span>{uk ? "Контент" : "Content"}</span><span>{uk ? "Інтерфейс" : "Interface"}</span></div></section>
+
+    <section class="feature-grid" aria-label={uk ? "Основні можливості" : "Feature highlights"}>
+      {featureCopy.map(([eyebrow, title, copy], i) => <article class:list={["feature-card", `feature-card-${i + 1}`]}><span class="feature-card-index">{eyebrow}</span><div class="feature-glyph" aria-hidden="true"><span class="iconify" data-icon={["tabler:ghost", "tabler:history", "tabler:shield-lock", "tabler:language", "tabler:palette", "tabler:tools"][i]}></span></div><h2>{title}</h2><p>{copy}</p></article>)}
+    </section>
+
+    <section class="comparison"><div class="section-heading"><div><h2>{uk ? "Що додає entinyGram" : "What entinyGram adds"}</h2></div><p>{uk ? "Коротка матриця з README репозиторію. Material 3 і Classic UI є також в InuGram — тут вони позначені як спільні." : "A compact matrix from the project README. Material 3 and Classic UI are also in InuGram, so they’re shown as shared."}</p></div>
+      <div class="table-scroll"><table><thead><tr><th>{uk ? "Можливість" : "Capability"}</th><th>Telegram</th><th>InuGram</th><th>entinyGram</th></tr></thead><tbody>{comparisonRows.map(([feature, telegram, inu, entiny]) => <tr><th scope="row">{feature}</th><td>{telegram}</td><td>{inu}</td><td>{entiny}</td></tr>)}</tbody></table></div>
+      <p class="source-note">{uk ? "Порівняння взято з" : "Comparison sourced from"} <a href="https://github.com/entaytion/entinyGram#comparison" target="_blank" rel="noopener noreferrer">README</a>. {uk ? "Це короткий огляд, не повний перелік відмінностей." : "This is a summary, not an exhaustive comparison."}</p>
+    </section>
+
+    <section class="full-list" id="full-list"><div class="section-heading"><div><h2>{uk ? "Повний список патчів" : "The full patch list"}</h2></div><a class="source-link" href="https://github.com/entaytion/entinyGram/blob/main/FEATURES.md" target="_blank" rel="noopener noreferrer">{uk ? "Відкрити на GitHub ↗" : "Open on GitHub ↗"}</a></div>
+      {featuresUnavailable ? <div class="source-fallback"><p>{uk ? "Список тимчасово не завантажився. Відкрий першоджерело на GitHub." : "The feature list is temporarily unavailable. Open the primary source on GitHub."}</p><a class="source-link" href="https://github.com/entaytion/entinyGram/blob/main/FEATURES.md" target="_blank" rel="noopener noreferrer">FEATURES.md ↗</a></div> : <div class="source-sections">{parsedSections.map((section, index) => <details class="source-section" open={index === 0}><summary><span class="source-title" set:html={section.title} /><span class="source-count">{section.subSections.length} {uk ? "розділів" : "sections"}</span><span class="source-chevron" aria-hidden="true">⌄</span></summary><div class="source-section-content">{section.body && <div class="markdown-prose" set:html={section.body} />}{section.subSections.map((subsection) => <details class="source-subsection"><summary><span set:html={subsection.title} /><span class="source-chevron" aria-hidden="true">⌄</span></summary><div class="markdown-prose" set:html={subsection.body} /></details>)}</div></details>)}</div>}
+      <p class="source-disclaimer">{uk ? "Автор FEATURES.md позначає перелік як не вичерпний; значок InuGram-exclusive у файлі має його ж примітку «наскільки мені відомо»." : "The author labels FEATURES.md as non-exhaustive; the file’s InuGram-exclusive marker also carries the author’s caveat, “as far as I know.”"}</p>
+    </section>
+  </main>
+  <EntinyGramFooter />
+</Layout>
+
+<script is:inline>
+  const renderedLanguage = ["uk", "ua"].includes(document.documentElement.lang) ? "ua" : "en";
+  window.addEventListener("site-language-change", (event) => {
+    if (event.detail?.lang === renderedLanguage) return;
+    const url = new URL(location.href);
+    url.searchParams.set("lang", event.detail.lang);
+    location.assign(url);
+  });
+</script>
+
+<style>
+  .feature-page{--fp-bg:#fff;--fp-card:#fff8f7;--fp-ink:#201a19;--fp-muted:#6c6260;--fp-soft:#685f5d;--fp-line:#e9ddda;--fp-accent:#b3261e;--fp-blush:#fae8e5;padding:0 0 105px;background:var(--fp-bg);color:var(--fp-ink)}
+  :global([data-theme="dark"]) .feature-page{--fp-bg:#151312;--fp-card:#241e1d;--fp-ink:#f5eeec;--fp-muted:#bcb0ad;--fp-soft:#a39692;--fp-line:#403634;--fp-accent:#ff8a80;--fp-blush:#382321}
+  .feature-hero,.feature-grid,.comparison,.full-list{max-width:1240px;margin:auto;padding-left:30px;padding-right:30px}.feature-hero{padding-top:83px;padding-bottom:47px}.feature-hero h1{max-width:920px;margin:0 0 17px;font-size:clamp(3.5rem,8vw,7.1rem);line-height:.95;letter-spacing:-.035em}.feature-hero>p{max-width:690px;margin:0;color:var(--fp-muted);font-size:1.1rem;line-height:1.72}.hero-facts{display:flex;gap:24px;margin-top:37px;padding-top:17px;border-top:1px solid var(--fp-line);color:var(--fp-muted);font-size:.82rem;font-weight:700}.hero-facts span{display:inline-flex;align-items:center;gap:6px}.hero-facts span::before{content:"•";color:var(--fp-accent)}
+  .feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.feature-card{position:relative;min-height:310px;padding:23px 23px 25px;overflow:hidden;border:1px solid var(--fp-line);border-radius:20px;background:var(--fp-card)}.feature-card::after{position:absolute;right:-35px;bottom:-70px;width:200px;height:200px;border:1px solid color-mix(in srgb,var(--fp-accent) 15%,transparent);border-radius:50%;content:""}.feature-card-index{display:block;color:var(--fp-soft);font-size:.78rem;font-weight:750;letter-spacing:.04em;text-transform:uppercase}.feature-glyph{display:inline-flex;align-items:center;justify-content:center;margin-top:39px;color:var(--fp-accent);font-size:2rem;line-height:1}.feature-glyph .iconify{width:2rem;height:2rem}.feature-card h2{position:relative;z-index:1;margin:20px 0 9px;font-size:1.25rem;letter-spacing:-.025em}.feature-card p{position:relative;z-index:1;max-width:350px;margin:0;color:var(--fp-muted);font-size:.84rem;line-height:1.7}.feature-card-1,.feature-card-4{background:var(--fp-bg)}
+  .comparison,.full-list{padding-top:106px}.section-heading{display:flex;align-items:end;justify-content:space-between;gap:38px;margin-bottom:25px}.section-heading>div{max-width:720px}.section-heading h2{margin:0;font-size:clamp(2.3rem,5vw,4.7rem);line-height:1.05;letter-spacing:-.03em}.section-heading>p{max-width:390px;margin:0 0 4px;color:var(--fp-muted);font-size:.86rem;line-height:1.65}.table-scroll{overflow:auto}table{width:100%;min-width:680px;border-collapse:separate;border-spacing:0;border:1px solid var(--fp-line);border-radius:17px;font-size:.82rem;overflow:hidden}th,td{padding:16px 19px;border-bottom:1px solid var(--fp-line);text-align:left}thead{background:var(--fp-card);font-size:.78rem;letter-spacing:.03em;text-transform:uppercase}thead th:last-child,tbody td:last-child{color:var(--fp-accent);font-weight:800}tbody th{font-weight:650}tbody td{color:var(--fp-muted)}tbody tr:last-child>*{border-bottom:0}.source-note,.source-disclaimer{max-width:65ch;margin:14px 2px 0;color:var(--fp-soft);font-size:.82rem;line-height:1.7}.source-note a,.source-link{color:var(--fp-accent);font-size:.82rem;font-weight:800;text-decoration:none}.source-link:hover{ text-decoration:underline }
+  .full-list{padding-top:105px}.full-list .section-heading{align-items:end}.source-sections{border-top:1px solid var(--fp-line)}.source-section{border-bottom:1px solid var(--fp-line)}.source-section>summary{display:flex;align-items:center;gap:17px;padding:21px 2px;list-style:none;cursor:pointer}.source-section>summary::-webkit-details-marker,.source-subsection>summary::-webkit-details-marker{display:none}.source-title{flex:1;font-size:1.05rem;font-weight:780;letter-spacing:-.025em}.source-count{color:var(--fp-soft);font-size:.78rem}.source-chevron{color:var(--fp-accent);font-size:1.2rem;transition:transform .18s}.source-section[open]>summary .source-chevron,.source-subsection[open]>summary .source-chevron{transform:rotate(180deg)}.source-section-content{padding:0 0 24px 39px}.markdown-prose{max-width:65ch;color:var(--fp-muted);font-size:.84rem;line-height:1.72}.markdown-prose :global(p){max-width:65ch;margin:0 0 15px}.markdown-prose :global(blockquote){max-width:65ch;margin:0 0 18px;padding:9px 14px;border:1px solid var(--fp-line);border-radius:12px;background:var(--fp-card)}.markdown-prose :global(ul),.markdown-prose :global(ol){max-width:65ch;margin:12px 0 20px;padding-left:22px}.markdown-prose :global(li){max-width:65ch;padding:3px 0}.markdown-prose :global(a){color:var(--fp-accent);overflow-wrap:anywhere}.markdown-prose :global(code){padding:2px 5px;border-radius:5px;background:var(--fp-card);font-size:.78em}.markdown-prose :global(pre){max-width:100%;overflow:auto;padding:15px;border-radius:12px;background:var(--fp-card)}.source-subsection{margin:13px 0;border:1px solid var(--fp-line);border-radius:13px;background:var(--fp-bg)}.source-subsection>summary{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:14px 16px;list-style:none;cursor:pointer;font-size:.86rem;font-weight:750}.source-subsection>.markdown-prose{padding:0 16px 14px}.source-disclaimer{margin-top:17px}.source-fallback{padding:23px;border:1px solid var(--fp-line);border-radius:17px;background:var(--fp-card);color:var(--fp-muted)}
+  @media(max-width:800px){.feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.section-heading{align-items:flex-start;flex-direction:column;gap:16px}.section-heading>p{max-width:640px}.feature-hero{padding-top:65px}.comparison,.full-list{padding-top:78px}}
+  @media(max-width:520px){.feature-hero,.feature-grid,.comparison,.full-list{padding-left:20px;padding-right:20px}.feature-hero h1{font-size:clamp(3rem,14vw,4.5rem)}.feature-hero>p{font-size:.97rem}.hero-facts{gap:12px;justify-content:space-between;font-size:.78rem}.feature-grid{grid-template-columns:1fr}.feature-card{min-height:265px}.feature-glyph{margin-top:26px}.source-section>summary{gap:11px}.source-title{font-size:.88rem}.source-count{font-size:.72rem}.source-section-content{padding-left:0}.source-subsection>summary{font-size:.8rem}}
+</style>

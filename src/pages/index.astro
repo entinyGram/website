@@ -1,0 +1,508 @@
+---
+import Layout from "../layouts/Layout.astro";
+import EntinyGramHeader from "../components/Header.astro";
+import EntinyGramFooter from "../components/Footer.astro";
+import { getLatestEntinyRelease } from "../lib/entinygram";
+
+export const prerender = false;
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=120, s-maxage=600, stale-while-revalidate=86400"
+);
+
+const latestRelease = await getLatestEntinyRelease();
+const releasesError = !latestRelease;
+const apk = latestRelease?.assets.find((asset) => asset.name.endsWith(".apk"));
+const downloadUrl = apk?.browser_download_url ?? latestRelease?.html_url ?? "https://github.com/entaytion/entinyGram/releases";
+const langCookie = Astro.cookies.get("lang")?.value;
+const requestedLang = Astro.url.searchParams.get("lang");
+const pageLang = requestedLang === "ua" ? "uk" : requestedLang === "en" ? "en" : langCookie === "ua" ? "uk" : "en";
+const description = pageLang === "uk"
+  ? "Кастомний патчсет для Telegram Android на базі InuGram. Налаштуй інтерфейс, отримуй свіжі релізи та переглядай відкритий код."
+  : "A customizable Telegram Android patchset built on InuGram. Tune the interface, get fresh releases, and explore the open source code.";
+
+const applicationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "entinyGram",
+  description,
+  applicationCategory: "CommunicationApplication",
+  operatingSystem: "Android",
+  url: "https://entiny.tech",
+  image: "https://entiny.tech/og/entinygram-banner.png",
+  downloadUrl: "https://github.com/entaytion/entinyGram/releases",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+};
+---
+
+<Layout
+  title="entinyGram — Telegram Android, your way"
+  description={description}
+  favicon="/favicon.svg"
+  image="/og/entinygram-banner.png"
+  lang={pageLang}
+  jsonLd={applicationJsonLd}
+>
+  <div class="eg-page" id="entinygram-page">
+    <EntinyGramHeader active="home" />
+
+    <main>
+      <section class="eg-hero" aria-labelledby="eg-title">
+        <div class="eg-hero-copy">
+          <h1 id="eg-title"><span data-lang-key="eg_hero_line1">Telegram,</span><br /><span class="eg-highlight" data-lang-key="eg_hero_line2">your way.</span></h1>
+          <p class="eg-hero-description" data-lang-key="eg_hero_description">
+            Custom-pilled patchset for Telegram Android power users. Freedom from liquid glass, bypasses, custom font stacks, and real privacy.
+          </p>
+          <div class="eg-hero-actions">
+            <md-filled-button href="/downloads" data-lang-key="eg_download_cta">Download entinyGram</md-filled-button>
+            <md-outlined-button class="eg-telegram-button" href="https://t.me/entinyGram" target="_blank" rel="noopener noreferrer" aria-label="Official Telegram channel @entinyGram"><span slot="icon" aria-hidden="true">↗</span><span data-lang-key="eg_tg_cta">Telegram @entinyGram</span></md-outlined-button>
+            <a class="eg-text-link" href="https://github.com/entaytion/entinyGram" target="_blank" rel="noopener noreferrer">
+              <span data-lang-key="eg_source_link">Explore the source</span><span class="eg-arrow" aria-hidden="true"></span>
+            </a>
+          </div>
+          <div class="eg-platform-note">
+            <span class="eg-status-dot" aria-hidden="true"></span>
+            <span data-lang-key="eg_android_note">Built for Telegram Android</span>
+          </div>
+        </div>
+
+        <div class="eg-hero-art" aria-label="Illustration of entinyGram interface settings">
+          <div class="eg-art-note eg-note-top"><span class="eg-note-dot"></span><span data-lang-key="eg_art_patchset">Your interface, tuned.</span></div>
+          <div class="eg-app-window">
+            <div class="eg-app-topbar">
+              <span class="eg-app-menu" aria-hidden="true"><i></i><i></i><i></i></span>
+              <strong>entinyGram</strong>
+              <span class="eg-app-search" aria-hidden="true"></span>
+            </div>
+            <div class="eg-chat-preview">
+              <div class="eg-chat-avatar eg-avatar-one">e</div>
+              <div class="eg-chat-copy"><b>entinyGram</b><span data-lang-key="eg_preview_message">A little more yours.</span></div>
+              <span class="eg-chat-time">12:48</span>
+            </div>
+            <div class="eg-chat-preview eg-chat-muted">
+              <div class="eg-chat-avatar eg-avatar-two">i</div>
+              <div class="eg-chat-copy"><b>InuGram</b><span data-lang-key="eg_preview_reply">Patchset ready to apply</span></div>
+              <span class="eg-chat-time">12:42</span>
+            </div>
+            <div class="eg-app-tabs"><span class="eg-tab-active"></span><span></span><span></span><span></span></div>
+          </div>
+
+          <div class="eg-art-note eg-note-bottom"><span class="eg-note-check" aria-hidden="true"></span><span data-lang-key="eg_art_control">Every detail in your control</span></div>
+          <span class="eg-art-shape eg-shape-one" aria-hidden="true"></span>
+          <span class="eg-art-shape eg-shape-two" aria-hidden="true"></span>
+        </div>
+      </section>
+
+      <section class="eg-showcase-wrap" id="features" aria-labelledby="eg-showcase-title">
+        <div class="eg-showcase">
+          <div class="eg-showcase-copy">
+            <h2 id="eg-showcase-title" data-lang-key="eg_showcase_title">Make Telegram feel like yours.</h2>
+            <p data-lang-key="eg_showcase_copy">Small details change the whole app. Shape the interface with controls inspired by Material 3.</p>
+            <a class="eg-inverse-link" href="/features"><span data-lang-key="entinygram_btn_features">All Features</span><span class="eg-arrow" aria-hidden="true"></span></a>
+            <div class="eg-showcase-pagination" aria-hidden="true"><span></span><span></span><span class="is-active"></span><span></span></div>
+          </div>
+
+          <div class="eg-settings-art">
+            <div class="eg-settings-heading">
+              <span data-lang-key="eg_settings_title">Interface</span>
+              <span class="eg-settings-section" data-lang-key="eg_settings_section">Personalization</span>
+            </div>
+            <div class="eg-setting-range">
+              <div class="eg-setting-label"><label for="avatar-radius" data-lang-key="eg_avatar_rounding">Avatar shape</label><output id="avatar-radius-value">18</output></div>
+              <div class="eg-setting-label eg-setting-endpoints"><span data-lang-key="eg_shape_square">Square</span><span data-lang-key="eg_shape_round">Round</span></div>
+              <md-slider id="avatar-radius" min="0" max="30" value="18" step="1" aria-label="Avatar corner radius"></md-slider>
+            </div>
+
+            <div class="eg-settings-preview" id="settings-preview">
+              <div class="eg-preview-toolbar"><span class="eg-mini-menu" aria-hidden="true">☰</span><b>entinyGram</b><span class="eg-preview-square"></span><span class="eg-mini-search" aria-hidden="true"></span></div>
+              <div class="eg-preview-chat"><span class="eg-preview-avatar"></span><span class="eg-preview-lines"><i></i><i></i></span><span class="eg-preview-time">now</span></div>
+              <div class="eg-alt-tabs" aria-hidden="true"><i></i><i></i><i></i></div>
+            </div>
+
+            <div class="eg-setting-list">
+              <label class="eg-setting-row" for="system-fonts"><span><b data-lang-key="eg_system_fonts">System fonts</b><small data-lang-key="eg_system_fonts_desc">Use your device’s font family</small></span><md-switch id="system-fonts" data-setting-switch="font" aria-label="Use system fonts"></md-switch></label>
+              <label class="eg-setting-row" for="no-dividers"><span><b data-lang-key="eg_hide_dividers">Hide dividers</b><small data-lang-key="eg_hide_dividers_desc">Give conversations more room</small></span><md-switch id="no-dividers" data-setting-switch="dividers" selected aria-label="Hide dividers"></md-switch></label>
+              <label class="eg-setting-row" for="alt-navigation"><span><b data-lang-key="eg_alt_navigation">Alternative navigation</b><small data-lang-key="eg_alt_navigation_desc">Keep your main tabs close</small></span><md-switch id="alt-navigation" data-setting-switch="navigation" aria-label="Alternative navigation"></md-switch></label>
+            </div>
+            <div class="eg-demo-caption"><span class="eg-caption-pulse"></span><span data-lang-key="eg_demo_caption">Live preview — try the controls</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="eg-why" id="why" aria-labelledby="eg-why-title">
+        <div class="eg-why-copy"><h2 id="eg-why-title" data-lang-key="eg_why_title">Why we made this fork.</h2><p data-lang-key="eg_why_copy">InuGram gives us a clean, patch-based foundation. entinyGram carries that work forward with its own privacy tools, interface controls, and experiments the upstream project chooses not to include.</p></div>
+        <a class="eg-why-link" href="/features"><span data-lang-key="eg_why_link">See what belongs to each project</span><span class="eg-arrow" aria-hidden="true"></span></a>
+      </section>
+
+      <section class="eg-approach" id="approach" aria-labelledby="eg-approach-title">
+        <div class="eg-approach-heading">
+          <h2 id="eg-approach-title" data-lang-key="entinygram_arch_title">Patchset, not a heavy fork.</h2>
+          <p data-lang-key="entinygram_arch_subtitle">Built as an atomic collection of patches applied over official Telegram Android.</p>
+        </div>
+        <div class="eg-approach-detail">
+          <span class="eg-detail-mark" aria-hidden="true">e/</span>
+          <div>
+            <p data-lang-key="eg_approach_detail">entinyGram builds on the InuGram patchset and adds its own layer of customization, privacy controls, and experiments.</p>
+            <a class="eg-inline-arrow" href="https://github.com/entaytion/entinyGram" target="_blank" rel="noopener noreferrer"><span data-lang-key="eg_read_repository">Read the repository</span><span class="eg-arrow" aria-hidden="true"></span></a>
+          </div>
+        </div>
+      </section>
+
+      <section class="eg-release-section" id="download" aria-labelledby="eg-release-title">
+        <div class="eg-release-intro">
+          <h2 id="eg-release-title" data-lang-key="eg_release_title">Ready when you are.</h2>
+          <p data-lang-key="eg_release_copy">The latest stable build, straight from GitHub Releases.</p>
+        </div>
+
+        {latestRelease ? (
+          <div class="eg-release-card">
+            <div class="eg-release-mark" aria-hidden="true">e</div>
+            <div class="eg-release-info">
+              <span class="eg-release-label"><span class="eg-status-dot" aria-hidden="true"></span><span data-lang-key="eg_latest_stable">Latest stable release</span></span>
+              <h3>{latestRelease.name || latestRelease.tag_name}</h3>
+              <p>{latestRelease.tag_name} · {new Date(latestRelease.published_at).toLocaleDateString(pageLang === "uk" ? "uk-UA" : "en-US", { year: "numeric", month: "short", day: "numeric" })}</p>
+            </div>
+            <md-filled-button href={downloadUrl} target="_blank" rel="noopener noreferrer" data-lang-key="entinygram_btn_download_apk">Download APK</md-filled-button>
+          </div>
+        ) : (
+          <div class="eg-release-card eg-release-fallback">
+            <div class="eg-release-mark" aria-hidden="true">e</div>
+            <div class="eg-release-info">
+              <span class="eg-release-label"><span class="eg-status-dot eg-dot-muted" aria-hidden="true"></span><span data-lang-key={releasesError ? "eg_releases_unavailable" : "eg_releases_none"}>{releasesError ? "Latest release is temporarily unavailable" : "No stable release is published yet"}</span></span>
+              <h3 data-lang-key="eg_release_fallback_title">Find releases on GitHub</h3>
+              <p data-lang-key="eg_release_fallback_copy">Browse available builds and release notes.</p>
+            </div>
+            <md-outlined-button href="https://github.com/entaytion/entinyGram/releases" target="_blank" rel="noopener noreferrer" data-lang-key="eg_open_releases">Open releases</md-outlined-button>
+          </div>
+        )}
+
+        <div class="eg-release-links">
+          <a href="/downloads" data-lang-key="eg_all_releases">All downloads <span class="eg-arrow" aria-hidden="true"></span></a>
+          <a href="/faq" data-lang-key="entinygram_btn_faq">FAQ</a>
+          <a href="/features" data-lang-key="entinygram_btn_features">All Features</a>
+          <a href="/donate" class="eg-donate-pill" data-lang-key="eg_nav_donate">Support / Донат</a>
+        </div>
+      </section>
+
+      <section class="eg-donate-banner" aria-label="Support entinyGram">
+        <div class="eg-donate-banner-content">
+          <h2>{pageLang === "uk" ? "Проєкт живе без реклами й підписок." : "Building clean tools without ads or trackers."}</h2>
+          <p>{pageLang === "uk" ? "Усі донати йдуть на оплату серверів збірок та розвиток функцій. Підтримай через банку Monobank, крипту або IBAN." : "Directly fund CI build servers and feature development via Monobank Jar, crypto, or direct wire."}</p>
+        </div>
+        <a class="eg-donate-banner-btn" href="/donate">
+          <span>{pageLang === "uk" ? "Підтримати проєкт ↗" : "Support the project ↗"}</span>
+        </a>
+      </section>
+
+      <section class="eg-community" aria-label="entinyGram community links">
+        <p data-lang-key="eg_community_title">Builds, updates, and community.</p>
+        <div class="eg-community-links">
+          <a href="https://t.me/entinyGram" target="_blank" rel="noopener noreferrer"><span data-lang-key="entinygram_tg_main_title">Main Channel</span><span>@entinyGram</span></a>
+          <a href="https://t.me/entinyGramCI" target="_blank" rel="noopener noreferrer"><span data-lang-key="entinygram_tg_ci_title">CI Builds</span><span>@entinyGramCI</span></a>
+          <a href="https://t.me/entinyGramChat" target="_blank" rel="noopener noreferrer"><span data-lang-key="entinygram_tg_chat_title">Community Chat</span><span>@entinyGramChat</span></a>
+        </div>
+      </section>
+    </main>
+
+    <EntinyGramFooter />
+  </div>
+
+  <script>
+    import "@material/web/button/filled-button.js";
+    import "@material/web/button/outlined-button.js";
+    import "@material/web/slider/slider.js";
+    import "@material/web/switch/switch.js";
+
+    const slider = document.querySelector("#avatar-radius");
+    const radiusValue = document.querySelector("#avatar-radius-value");
+    const preview = document.querySelector("#settings-preview");
+    const updateRadius = () => {
+      if (!slider || !radiusValue || !preview) return;
+      const value = Number(slider.value);
+      radiusValue.textContent = String(value);
+      preview.style.setProperty("--avatar-radius", `${Math.round(2 + value * 1.25)}px`);
+    };
+    slider?.addEventListener("input", updateRadius);
+    updateRadius();
+
+    document.querySelectorAll("md-switch[data-setting-switch]").forEach((control) => {
+      control.addEventListener("change", () => {
+        if (!preview) return;
+        const setting = control.getAttribute("data-setting-switch");
+        if (setting === "font") preview.classList.toggle("use-system-font", control.selected);
+        if (setting === "dividers") preview.classList.toggle("hide-dividers", control.selected);
+        if (setting === "navigation") preview.classList.toggle("show-alt-navigation", control.selected);
+      });
+    });
+  </script>
+
+  <style>
+    .eg-page {
+      --eg-bg: #fff;
+      --eg-surface: #fff8f7;
+      --eg-pink: #fcedeb;
+      --eg-ink: #171312;
+      --eg-muted: #625c5a;
+      --eg-soft: #685f5d;
+      --eg-red: #c13b35;
+      --eg-red-dark: #a92c29;
+      --eg-line: #e9ddda;
+      --md-sys-color-primary: #c13b35;
+      --md-sys-color-on-primary: #fff;
+      --md-sys-color-surface: #fff8f7;
+      --md-sys-color-on-surface: #201a19;
+      --md-sys-color-outline: #857370;
+      --md-sys-color-secondary: #775653;
+      --md-ref-typeface-plain: var(--font-main, "Nata Sans", sans-serif);
+      --md-ref-typeface-brand: var(--font-main, "Nata Sans", sans-serif);
+      --md-sys-typescale-label-large-font: var(--font-main, "Nata Sans", sans-serif);
+      --md-filled-button-container-shape: 999px;
+      --md-outlined-button-container-shape: 999px;
+      color: var(--eg-ink);
+      background: var(--eg-bg);
+      font-family: var(--font-main, "Nata Sans", sans-serif);
+      overflow: clip;
+    }
+
+    .eg-page *, .eg-page *::before, .eg-page *::after { box-sizing: border-box; }
+    .eg-page a { color: inherit; text-decoration: none; }
+    .eg-page button { font: inherit; }
+    .eg-header { max-width: 1440px; height: 88px; margin: 0 auto; padding: 0 5.2vw; display: flex; align-items: center; justify-content: space-between; gap: 32px; background: var(--eg-bg); }
+    .eg-wordmark { font-size: 1.42rem; font-weight: 800; letter-spacing: -0.03em; white-space: nowrap; }
+    .eg-wordmark span { color: var(--eg-red); }
+    .eg-nav { display: flex; align-items: center; gap: clamp(22px, 3.3vw, 56px); margin-left: auto; font-size: 0.94rem; font-weight: 650; }
+    .eg-nav a, .eg-footer a { transition: color 180ms ease; }
+    .eg-nav a:hover, .eg-footer a:hover { color: var(--eg-red); }
+    .eg-nav .eg-nav-download { color: var(--eg-red); background: var(--eg-pink); padding: 13px 22px; border-radius: 999px; }
+    .eg-nav .eg-nav-download:hover { color: #fff; background: var(--eg-red); }
+    .eg-header-actions { display: flex; align-items: center; gap: 14px; }
+    .eg-theme-toggle { width: 38px; height: 38px; display:grid; place-items:center; border:1px solid var(--eg-line); border-radius:50%; color:var(--eg-ink); background:transparent; cursor:pointer; }
+    .eg-theme-toggle:hover { color:var(--eg-red); background:var(--eg-pink); }
+    .eg-language { display: flex; align-items: center; gap: 10px; }
+    .eg-language > span { width: 1px; height: 17px; background: var(--eg-line); }
+    .eg-language button { border: 0; background: transparent; padding: 7px 1px; color: var(--eg-soft); font-size: 0.78rem; font-weight: 750; cursor: pointer; }
+    .eg-language button.active { color: var(--eg-red); box-shadow: inset 0 -2px var(--eg-red); }
+    .eg-mobile-download { display: none; }
+
+    .eg-hero { max-width: 1440px; min-height: 625px; margin: 0 auto; padding: 68px 5.2vw 100px; display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr); align-items: center; gap: 4vw; }
+    .eg-hero-copy { position: relative; z-index: 1; padding: 4px 0 0 2.2vw; }
+    .eg-hero h1 { margin: 0; font-size: clamp(3.8rem, 7.7vw, 7.7rem); line-height: .93; letter-spacing: -.035em; font-weight: 780; }
+    .eg-highlight { color: var(--eg-red); }
+    .eg-hero-description { max-width: 480px; margin: 28px 0 0; color: var(--eg-muted); font-size: clamp(1rem, 1.35vw, 1.18rem); line-height: 1.65; }
+    .eg-hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; margin-top: 28px; }
+    .eg-hero-actions md-filled-button { min-width: 228px; --md-filled-button-container-height: 56px; --md-filled-button-label-text-size: 1.02rem; --md-filled-button-label-text-weight: 700; --md-filled-button-leading-space: 21px; --md-filled-button-trailing-space: 21px; }
+    .eg-hero-actions .eg-telegram-button { min-width: 214px; --md-outlined-button-container-height: 56px; --md-outlined-button-label-text-size: .9rem; --md-outlined-button-label-text-weight: 750; --md-outlined-button-leading-space: 17px; --md-outlined-button-trailing-space: 17px; --md-outlined-button-outline-color: var(--eg-line); --md-outlined-button-label-text-color: var(--eg-ink); }
+    .eg-hero-actions .eg-telegram-button:hover { --md-outlined-button-outline-color: var(--eg-red); --md-outlined-button-label-text-color: var(--eg-red); }
+    .eg-text-link, .eg-inline-arrow, .eg-inverse-link { display: inline-flex; align-items: center; gap: 10px; font-size: .91rem; font-weight: 700; }
+    .eg-text-link:hover, .eg-inline-arrow:hover { color: var(--eg-red); }
+    .eg-text-link span:last-child, .eg-inline-arrow span:last-child, .eg-inverse-link span:last-child { font-size: 1.16em; }
+    .eg-arrow { position: relative; display: inline-block; width: 14px; height: 14px; flex: 0 0 auto; }
+    .eg-arrow::before { content: ""; position: absolute; top: 2px; right: 2px; width: 7px; height: 7px; border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; }
+    .eg-arrow::after { content: ""; position: absolute; left: 2px; bottom: 3px; width: 10px; height: 1.5px; background: currentColor; transform: rotate(-45deg); transform-origin: left center; }
+    .eg-platform-note { display: flex; align-items: center; gap: 9px; margin-top: 42px; color: var(--eg-soft); font-size: .84rem; font-weight: 650; letter-spacing: .015em; }
+    .eg-status-dot, .eg-caption-pulse, .eg-note-dot { width: 8px; height: 8px; flex: 0 0 auto; background: #3d9a67; border-radius: 50%; }
+
+    .eg-hero-art { min-height: 435px; display: grid; place-items: center; position: relative; isolation: isolate; }
+    .eg-hero-art::before { content: ""; position: absolute; z-index: -1; width: min(76%, 455px); aspect-ratio: 1; border-radius: 48% 52% 57% 43% / 46% 43% 57% 54%; background: var(--eg-pink); transform: rotate(-8deg); }
+    .eg-app-window { width: min(76%, 420px); padding: 17px 18px 13px; border-radius: 23px; background: #fff; border: 1px solid var(--eg-line); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06); transform: none; }
+    .eg-app-topbar { height: 43px; display: grid; grid-template-columns: 32px 1fr 32px; align-items: center; gap: 12px; padding: 0 7px 12px; border-bottom: 1px solid #eee8e6; font-size: .96rem; }
+    .eg-app-topbar strong { letter-spacing: -.03em; }
+    .eg-app-menu { display: flex; flex-direction: column; gap: 4px; width: 17px; }
+    .eg-app-menu i { height: 2px; width: 17px; border-radius: 2px; background: #938987; }
+    .eg-app-search { justify-self: end; width: 17px; height: 17px; border: 2px solid #a79d9a; border-radius: 50%; position: relative; }
+    .eg-app-search::after { content: ""; position: absolute; width: 7px; height: 2px; background: #a79d9a; right: -5px; bottom: -3px; transform: rotate(47deg); }
+    .eg-chat-preview { display: grid; grid-template-columns: 39px 1fr auto; align-items: center; gap: 11px; padding: 14px 6px; border-bottom: 1px solid #f1ebea; }
+    .eg-chat-muted { opacity: 1; }
+    .eg-chat-avatar { width: 39px; aspect-ratio: 1; border-radius: 15px; display: grid; place-items: center; background: #f3d7d4; color: #a22b27; font-size: 1.15rem; font-weight: 800; }
+    .eg-avatar-two { background: #e9e2f3; color: #65418d; border-radius: 50%; }
+    .eg-chat-copy { display: flex; min-width: 0; flex-direction: column; gap: 5px; font-size: .84rem; }
+    .eg-chat-copy b { font-size: .88rem; }
+    .eg-chat-copy span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--eg-soft); font-size: .78rem; }
+    .eg-chat-time { align-self: start; padding-top: 2px; color: var(--eg-muted); font-size: .78rem; }
+    .eg-app-tabs { display: flex; justify-content: center; gap: 9px; padding-top: 17px; }
+    .eg-app-tabs span { width: 6px; height: 6px; border-radius: 50%; background: #dbd3d1; }
+    .eg-app-tabs .eg-tab-active { width: 20px; border-radius: 9px; background: var(--eg-red); }
+    .eg-art-note { position: absolute; z-index: 2; display: flex; align-items: center; gap: 9px; padding: 10px 16px; background: #fff; border: 1px solid var(--eg-line); border-radius: 999px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); font-size: .84rem; font-weight: 700; white-space: nowrap; }
+    .eg-note-top { top: 16%; right: 4%; }
+    .eg-note-bottom { bottom: 14%; left: 3%; }
+    .eg-note-check { width: 20px; height: 20px; display: grid; place-items: center; border-radius: 50%; background: var(--eg-pink); }
+    .eg-note-check::after { content: ""; width: 7px; height: 4px; border-right: 1.5px solid var(--eg-red); border-bottom: 1.5px solid var(--eg-red); transform: rotate(45deg) translate(-1px, -1px); }
+    .eg-art-shape { position: absolute; z-index: -1; border: 1.5px solid #f5d5d2; border-radius: 50%; }
+    .eg-shape-one { width: 13px; height: 13px; top: 16%; left: 14%; }
+    .eg-shape-two { width: 22px; height: 22px; bottom: 15%; right: 10%; background: #f9e4e2; }
+
+    .eg-showcase-wrap { padding: 0 3.8vw; }
+    .eg-showcase { max-width: 1520px; min-height: 590px; margin: 0 auto; padding: 76px clamp(35px, 6vw, 110px); display: grid; grid-template-columns: minmax(0, .95fr) minmax(440px, .9fr); align-items: center; gap: 6vw; border-radius: 36px; background: #111; color: #fff; }
+    .eg-showcase-copy { max-width: 490px; align-self: center; padding: 12px 0; }
+    .eg-showcase-copy h2 { max-width: 570px; margin: 0; font-size: clamp(3rem, 5.7vw, 6.5rem); line-height: .98; letter-spacing: -.03em; font-weight: 750; }
+    .eg-showcase-copy p { max-width: 420px; margin: 23px 0 0; color: #c3bdbc; font-size: clamp(1rem, 1.3vw, 1.15rem); line-height: 1.65; }
+    .eg-inverse-link { margin-top: 23px; color: #ffb5ae; }
+    .eg-inverse-link:hover { color: #fff; }
+    .eg-showcase-pagination { display: flex; gap: 7px; align-items: center; width: fit-content; margin-top: 62px; padding: 9px 11px; background: #282525; border-radius: 999px; }
+    .eg-showcase-pagination span { width: 7px; height: 7px; border-radius: 50%; background: #514b4a; }
+    .eg-showcase-pagination span.is-active { width: 9px; height: 9px; background: #fff; }
+
+    .eg-settings-art { position: relative; z-index: 1; width: 100%; max-width: 530px; justify-self: end; margin: -30px 0; padding: 26px; border-radius: 27px; background: #fff4f2; color: #201a19; box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12); transform: none; }
+    .eg-settings-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 0 2px 18px; font-size: 1.35rem; font-weight: 760; letter-spacing: -.02em; }
+    .eg-settings-section { color: var(--eg-muted); font-size: .84rem; font-weight: 650; letter-spacing: 0; }
+    .eg-setting-range { padding: 17px 19px 13px; background: #fff; border: 1px solid #e8ddda; border-radius: 17px; }
+    .eg-setting-label { display: flex; align-items: center; gap: 9px; font-size: .85rem; font-weight: 700; }
+    .eg-setting-label output { padding: 3px 8px; border-radius: 6px; background: #eee9e8; font-size: .78rem; font-weight: 750; font-variant-numeric: tabular-nums; }
+    .eg-setting-endpoints { justify-content: space-between; margin-top: 10px; color: var(--eg-muted); font-size: .78rem; font-weight: 500; }
+    .eg-setting-range md-slider { display: block; width: 100%; margin: 3px 0 -5px; --md-slider-active-track-color: var(--eg-red); --md-slider-handle-color: var(--eg-red); --md-slider-inactive-track-color: #e4d6d3; }
+    .eg-settings-preview { margin-top: 14px; padding: 12px 15px 9px; overflow: hidden; border: 1px solid #e8ddda; border-radius: 15px; background: #fff; transition: font-family 180ms ease; }
+    .eg-settings-preview.use-system-font { font-family: system-ui, sans-serif; }
+    .eg-preview-toolbar { display: grid; grid-template-columns: 24px 1fr 19px 20px; align-items: center; gap: 11px; min-height: 32px; padding-bottom: 10px; border-bottom: 1px solid #f0e9e7; font-size: .82rem; }
+    .eg-mini-menu { display: block; width: 16px; height: 14px; font-size: 0; background: linear-gradient(to bottom, #99908e 0 2px, transparent 2px 6px, #99908e 6px 8px, transparent 8px 12px, #99908e 12px 14px); }
+    .eg-preview-square { width: 15px; height: 15px; border-radius: 4px; background: #eee8e7; }
+    .eg-mini-search { width: 15px; height: 15px; border: 1.8px solid #9f9592; border-radius: 50%; position: relative; }
+    .eg-mini-search::after { content: ""; position: absolute; width: 6px; height: 1.8px; right: -4px; bottom: -2px; transform: rotate(45deg); background: #9f9592; }
+    .eg-preview-chat { display: grid; grid-template-columns: 31px 1fr auto; align-items: center; gap: 9px; padding: 11px 0 8px; border-bottom: 1px solid #f0e9e7; }
+    .eg-alt-tabs { display: none; grid-template-columns: repeat(3, 1fr); gap: 9px; padding: 9px 11px 1px; }
+    .eg-alt-tabs i { height: 4px; max-width: 30px; border-radius: 5px; background: #ddd4d2; }
+    .eg-alt-tabs i:first-child { background: var(--eg-red); }
+    .eg-settings-preview.show-alt-navigation .eg-preview-toolbar { border-bottom: 1px solid #f0e9e7; box-shadow: inset 0 -2px var(--eg-red); }
+    .eg-settings-preview.show-alt-navigation .eg-alt-tabs { display: grid; }
+    .eg-preview-avatar { width: 31px; height: 31px; border-radius: var(--avatar-radius, 24px); background: #f0d4d1; transition: border-radius 100ms ease; }
+    .eg-preview-lines { display: flex; flex-direction: column; gap: 6px; }
+    .eg-preview-lines i { width: min(132px, 90%); height: 5px; background: #d5ccca; border-radius: 4px; }
+    .eg-preview-lines i + i { width: min(102px, 70%); background: #ebe5e4; }
+    .eg-preview-time { color: var(--eg-muted); font-size: .78rem; }
+    .eg-settings-preview.hide-dividers .eg-preview-chat { border-bottom: 0; }
+    .eg-setting-list { margin-top: 14px; padding: 0 13px; border: 1px solid #e8ddda; border-radius: 15px; background: #fff; }
+    .eg-setting-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 59px; cursor: pointer; }
+    .eg-setting-row + .eg-setting-row { border-top: 1px solid #eee8e6; }
+    .eg-setting-row > span { display: flex; flex-direction: column; gap: 3px; }
+    .eg-setting-row b { font-size: .88rem; font-weight: 690; }
+    .eg-setting-row small { color: var(--eg-muted); font-size: .78rem; }
+    .eg-setting-row md-switch { flex: 0 0 auto; --md-switch-selected-track-color: var(--eg-red); --md-switch-selected-handle-color: #fff; --md-switch-selected-icon-color: var(--eg-red); }
+    .eg-demo-caption { display: flex; align-items: center; gap: 8px; margin: 14px 3px 0; color: var(--eg-muted); font-size: .78rem; font-weight: 650; }
+    .eg-caption-pulse { width: 7px; height: 7px; background: var(--eg-red); }
+
+    .eg-approach { max-width: 1320px; margin: 0 auto; padding: 130px 7vw; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(280px, .8fr); gap: 10vw; align-items: center; }
+    .eg-why { max-width:1320px; margin:0 auto; padding:105px 7vw 65px; display:flex; align-items:end; justify-content:space-between; gap:48px; }
+    .eg-why-copy { max-width:760px; }
+    .eg-why h2 { margin:0; font-size:clamp(2.7rem,5vw,5rem); line-height:1; letter-spacing:-.03em; }
+    .eg-why p { max-width:65ch; margin:20px 0 0; color:var(--eg-muted); font-size:1.02rem; line-height:1.75; }
+    .eg-why-link { display:inline-flex; align-items:center; gap:10px; flex:0 0 auto; padding-bottom:7px; color:var(--eg-red); font-size:.86rem; font-weight:750; }
+    .eg-approach-heading h2 { max-width: 630px; margin: 0; font-size: clamp(2.9rem, 5.3vw, 5.6rem); line-height: 1.02; letter-spacing: -.03em; }
+    .eg-approach-heading p { max-width: 55ch; margin: 21px 0 0; color: var(--eg-muted); font-size: 1.04rem; line-height: 1.7; }
+    .eg-approach-detail { display: grid; grid-template-columns: 51px 1fr; align-items: start; gap: 20px; padding-top: 18px; border-top: 1px solid var(--eg-line); }
+    .eg-detail-mark { color: var(--eg-red); font-size: 1.65rem; font-weight: 800; letter-spacing: -.02em; }
+    .eg-approach-detail p { max-width: 65ch; margin: 0; color: var(--eg-muted); font-size: .95rem; line-height: 1.75; }
+    .eg-inline-arrow { margin-top: 18px; color: var(--eg-ink); }
+
+    .eg-release-section { padding: 94px max(7vw, calc((100vw - 1200px) / 2)); background: #f8f5f4; }
+    .eg-release-intro { max-width: 1200px; margin: 0 auto; }
+    .eg-release-intro h2 { margin: 0; font-size: clamp(2.8rem, 5.2vw, 5.4rem); line-height: 1; letter-spacing: -.03em; }
+    .eg-release-intro p { max-width: 65ch; margin: 17px 0 0; color: var(--eg-muted); font-size: 1rem; line-height: 1.65; }
+    .eg-release-card { max-width: 1200px; margin: 38px auto 0; padding: 27px 30px; display: grid; grid-template-columns: 58px 1fr auto; gap: 22px; align-items: center; background: #fff; border: 1px solid #e9dfdd; border-radius: 20px; }
+    .eg-release-mark { width: 54px; height: 54px; display: grid; place-items: center; border-radius: 17px; background: var(--eg-red); color: #fff; font-size: 1.9rem; font-weight: 800; letter-spacing: -.02em; }
+    .eg-release-info h3 { margin: 6px 0 3px; font-size: 1.12rem; letter-spacing: -.02em; }
+    .eg-release-info p { margin: 0; color: var(--eg-soft); font-size: .85rem; font-variant-numeric: tabular-nums; }
+    .eg-release-label { display: flex; align-items: center; gap: 8px; color: #4c785c; font-size: .8rem; font-weight: 700; }
+    .eg-release-label .eg-status-dot { width: 7px; height: 7px; }
+    .eg-release-label .eg-dot-muted { background: #a49a97; }
+    .eg-release-card md-filled-button, .eg-release-card md-outlined-button { --md-filled-button-container-height: 48px; --md-filled-button-label-text-weight: 700; --md-outlined-button-container-height: 48px; }
+    .eg-release-links { max-width: 1200px; margin: 19px auto 0; display: flex; flex-wrap: wrap; gap: 24px; color: var(--eg-soft); font-size: .85rem; font-weight: 650; }
+    .eg-release-links a:hover { color: var(--eg-red); }
+    .eg-release-links a span { padding-left: 3px; }
+    .eg-donate-pill { color: var(--eg-red) !important; font-weight: 850 !important; }
+    .eg-donate-banner { max-width: 1200px; margin: 48px auto; padding: 36px 40px; border: 1px solid var(--eg-line); border-radius: 24px; background: var(--eg-surface); display: flex; align-items: center; justify-content: space-between; gap: 28px; box-shadow: none; }
+    .eg-donate-banner-content { max-width: 60ch; }
+    .eg-donate-banner-content h2 { margin: 0 0 10px; font-size: clamp(1.4rem, 3vw, 2.2rem); letter-spacing: -0.03em; color: var(--eg-ink); line-height: 1.15; }
+    .eg-donate-banner-content p { max-width: 60ch; margin: 0; color: var(--eg-muted); font-size: 0.94rem; line-height: 1.6; }
+    .eg-donate-banner-btn { display: inline-flex; align-items: center; justify-content: center; padding: 16px 28px; border-radius: 999px; background: var(--eg-red); color: #fff !important; font-size: 0.95rem; font-weight: 850; text-decoration: none; white-space: nowrap; box-shadow: none; transition: transform 0.18s, filter 0.18s; shrink: 0; }
+    .eg-donate-banner-btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
+    .eg-community { max-width: 1200px; margin: 0 auto; padding: 55px 7vw 62px; display: grid; grid-template-columns: .8fr 1.2fr; gap: 35px; border-bottom: 1px solid var(--eg-line); }
+    .eg-community > p { margin: 0; color: var(--eg-muted); font-size: .9rem; font-weight: 700; }
+    .eg-community-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .eg-community-links a { display: flex; flex-direction: column; gap: 8px; font-size: .84rem; font-weight: 700; }
+    .eg-community-links a span + span { color: var(--eg-soft); font-size: .78rem; font-weight: 550; }
+    .eg-community-links a:hover span:first-child { color: var(--eg-red); }
+    .eg-footer { max-width: 1440px; min-height: 96px; margin: 0 auto; padding: 22px 5.2vw; display: flex; align-items: center; gap: 24px; color: var(--eg-soft); font-size: .8rem; }
+    .eg-footer .eg-wordmark { color: var(--eg-ink); font-size: 1.04rem; }
+    .eg-footer > span { margin-right: auto; }
+    .eg-footer > div { display: flex; gap: 19px; font-weight: 650; }
+
+    .eg-page :focus-visible { outline: 3px solid #b3261e; outline-offset: 4px; }
+    .eg-page ::selection { color: #fff; background: #a92c29; }
+    :global([data-theme="dark"]) .eg-page { --eg-bg:#151312; --eg-surface:#211d1c; --eg-pink:#382321; --eg-ink:#f5eeec; --eg-muted:#c2b7b4; --eg-soft:#a39692; --eg-red:#ff8a80; --eg-red-dark:#ffb4ab; --eg-line:#39312f; --md-sys-color-primary:#ff8a80; --md-sys-color-on-primary:#3b0907; --md-sys-color-surface:#211d1c; --md-sys-color-on-surface:#f5eeec; --md-sys-color-outline:#a39592; background:var(--eg-bg); color:var(--eg-ink); }
+    :global([data-theme="dark"]) .eg-page .eg-app-window, :global([data-theme="dark"]) .eg-page .eg-art-note { background:#272120; border-color:#403634; color:var(--eg-ink); }
+    :global([data-theme="dark"]) .eg-page .eg-settings-art { background:#2b211f; color:#f5eeec; }
+    :global([data-theme="dark"]) .eg-page .eg-setting-range, :global([data-theme="dark"]) .eg-page .eg-settings-preview, :global([data-theme="dark"]) .eg-page .eg-setting-list, :global([data-theme="dark"]) .eg-page .eg-release-card { background:#211d1c; border-color:#39312f; color:#f5eeec; }
+    :global([data-theme="dark"]) .eg-page .eg-release-section { background:#1b1817; }
+    :global([data-theme="dark"]) .eg-page .eg-setting-row + .eg-setting-row, :global([data-theme="dark"]) .eg-page .eg-app-topbar, :global([data-theme="dark"]) .eg-page .eg-chat-preview, :global([data-theme="dark"]) .eg-page .eg-preview-chat { border-color:#39312f; }
+    :global([data-theme="dark"]) .eg-page .eg-setting-label output { background:#403634; }
+    @media (max-width: 880px) {
+      .eg-header { height: 74px; padding: 0 5vw; }
+      .eg-nav { gap: 22px; }
+      .eg-hero { min-height: 570px; grid-template-columns: 1fr 1fr; gap: 2vw; padding: 60px 5vw 82px; }
+      .eg-hero-copy { padding-left: 0; }
+      .eg-hero h1 { font-size: clamp(3.6rem, 8vw, 6rem); }
+      .eg-hero-art { min-height: 390px; }
+      .eg-app-window { width: min(86%, 390px); }
+      .eg-note-top { right: -2%; }
+      .eg-showcase { grid-template-columns: .82fr 1fr; gap: 4vw; padding: 60px 5vw; }
+      .eg-settings-art { padding: 19px; }
+      .eg-settings-heading { font-size: 1.15rem; }
+      .eg-approach { padding-top: 100px; padding-bottom: 100px; gap: 6vw; }
+    }
+    @media (max-width: 640px) {
+      .eg-header { height: 68px; gap: 12px; }
+      .eg-wordmark { font-size: 1.24rem; }
+      .eg-nav { gap: 15px; font-size: .8rem; }
+      .eg-nav a:first-child { display: none; }
+      .eg-nav .eg-nav-download { padding: 10px 13px; }
+      .eg-header-actions { gap: 10px; }
+      .eg-language { gap: 7px; }
+      .eg-language button { font-size: .75rem; }
+      .eg-mobile-download { display: none; }
+      .eg-hero { min-height: auto; grid-template-columns: 1fr; gap: 20px; padding: 65px 7vw 70px; }
+      .eg-hero h1 { font-size: clamp(4rem, 16vw, 6.2rem); }
+      .eg-hero-description { max-width: 480px; margin-top: 20px; font-size: .98rem; }
+      .eg-hero-actions { gap: 17px; margin-top: 23px; }
+      .eg-platform-note { margin-top: 25px; }
+      .eg-hero-art { min-height: 350px; margin-top: 4px; }
+      .eg-hero-art::before { width: min(78%, 340px); }
+      .eg-app-window { width: min(78%, 345px); padding: 14px; }
+      .eg-note-top { top: 5%; right: 1%; }
+      .eg-note-bottom { bottom: 3%; left: 0; }
+      .eg-art-note { padding: 10px 13px; font-size: .78rem; }
+      .eg-showcase-wrap { padding: 0 12px; }
+      .eg-showcase { min-height: auto; grid-template-columns: 1fr; gap: 52px; padding: 46px 22px 37px; border-radius: 27px; }
+      .eg-showcase-copy h2 { max-width: 430px; font-size: clamp(3.2rem, 12vw, 4.8rem); }
+      .eg-showcase-copy p { font-size: .96rem; }
+      .eg-showcase-pagination { margin-top: 32px; }
+      .eg-settings-art { width: calc(100% - 4px); max-width: 440px; justify-self: center; padding: 16px; margin: 0 0 4px; transform: none; border-radius: 22px; }
+      .eg-settings-heading { font-size: 1.05rem; padding-bottom: 13px; }
+      .eg-settings-section { font-size: .75rem; }
+      .eg-setting-range { padding: 13px 13px 9px; }
+      .eg-setting-row { min-height: 55px; }
+      .eg-setting-row b { font-size: .82rem; }
+      .eg-setting-row small { font-size: .75rem; }
+      .eg-approach { grid-template-columns: 1fr; gap: 38px; padding: 92px 7vw; }
+      .eg-why { align-items:start; flex-direction:column; gap:24px; padding:78px 7vw 38px; }
+      .eg-approach-heading h2 { font-size: clamp(3rem, 12vw, 4.3rem); }
+      .eg-approach-heading p { font-size: .96rem; }
+      .eg-release-section { padding: 72px 7vw; }
+      .eg-release-intro h2 { font-size: clamp(3rem, 11vw, 4.6rem); }
+      .eg-release-card { grid-template-columns: 48px 1fr; gap: 15px; padding: 19px; margin-top: 27px; border-radius: 17px; }
+      .eg-release-mark { width: 47px; height: 47px; border-radius: 14px; font-size: 1.6rem; }
+      .eg-release-card md-filled-button, .eg-release-card md-outlined-button { grid-column: 1 / -1; justify-self: stretch; }
+      .eg-release-links { gap: 16px; font-size: .78rem; }
+      .eg-donate-banner { flex-direction: column; align-items: stretch; padding: 24px 20px; margin: 30px 7vw; text-align: left; }
+      .eg-donate-banner-btn { text-align: center; width: 100%; }
+      .eg-community { grid-template-columns: 1fr; gap: 21px; padding: 42px 7vw; }
+      .eg-community-links { grid-template-columns: 1fr; gap: 17px; }
+      .eg-community-links a { flex-direction: row; justify-content: space-between; align-items: center; }
+      .eg-footer { flex-wrap: wrap; gap: 12px 17px; padding: 23px 7vw; }
+      .eg-footer > span { order: 3; width: 100%; margin: 0; }
+      .eg-footer > div { margin-left: auto; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .eg-page *, .eg-page *::before, .eg-page *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+  </style>
+</Layout>
