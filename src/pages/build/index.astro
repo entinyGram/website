@@ -1,0 +1,110 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import EntinyGramHeader from "../../components/Header.astro";
+import EntinyGramFooter from "../../components/Footer.astro";
+import { renderDoc, type DocLang } from "../../lib/docs";
+
+export const prerender = false;
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=120, s-maxage=600, stale-while-revalidate=86400"
+);
+
+const langCookie = Astro.cookies.get("lang")?.value;
+const requestedLang = Astro.url.searchParams.get("lang");
+const pageLang = requestedLang === "ua" ? "uk" : requestedLang === "en" ? "en" : langCookie === "ua" ? "uk" : "en";
+const lang: DocLang = pageLang === "uk" ? "uk" : "en";
+
+const raw = import.meta.glob("/src/content/build/*/*.md", { query: "?raw", import: "default", eager: true }) as Record<string, string>;
+const markdown = raw[`/src/content/build/${lang}/build.md`] ?? raw["/src/content/build/en/build.md"];
+const { html, toc } = await renderDoc(markdown, lang);
+
+const ui = lang === "uk"
+  ? { title: "Збірка — entinyGram", description: "Інструкція зі збірки entinyGram: Windows, JDK, Android SDK, Gradle, debug/release та CI.", on: "На цій сторінці", edit: "Знайшли помилку? Напишіть у @entinyGramChat" }
+  : { title: "Build — entinyGram", description: "How to build entinyGram: Windows setup, JDK, Android SDK, Gradle, debug/release builds and CI differences.", on: "On this page", edit: "Found a mistake? Tell us in @entinyGramChat" };
+---
+
+<Layout title={ui.title} description={ui.description} favicon="/favicon.svg" image="/og/entinygram-banner.png" lang={pageLang}>
+  <EntinyGramHeader active="downloads" />
+  <div class="build-shell">
+    <main class="build-main">
+      <article class="doc-body" set:html={html} />
+      <footer class="doc-foot">
+        <p>{ui.edit}</p>
+      </footer>
+    </main>
+    {toc.length > 0 && (
+      <aside class="build-toc" aria-label={ui.on}>
+        <h2>{ui.on}</h2>
+        <nav>
+          {toc.map((item) => <a class:list={["build-toc-link", `lv${item.level}`]} href={`#${item.id}`}>{item.text}</a>)}
+        </nav>
+      </aside>
+    )}
+  </div>
+  <EntinyGramFooter />
+</Layout>
+
+<script is:inline>
+  const renderedLanguage = ["uk", "ua"].includes(document.documentElement.lang) ? "ua" : "en";
+  window.addEventListener("site-language-change", (event) => {
+    if (event.detail?.lang === renderedLanguage) return;
+    const url = new URL(location.href);
+    url.searchParams.set("lang", event.detail.lang);
+    location.assign(url);
+  });
+</script>
+
+<style is:global>
+  .build-shell { --d-bg:#fff; --d-card:#fff8f7; --d-ink:#201a19; --d-muted:#6c6260; --d-line:#e9ddda; --d-accent:#b3261e; --d-code:#1d1716; --d-code-bar:#2a2220; --d-code-ink:#f3e9e6; max-width:1440px; margin:0 auto; padding:10px 5.2vw 90px; display:grid; grid-template-columns:minmax(0,1fr) 220px; gap:44px; align-items:start; color:var(--d-ink); }
+  [data-theme="dark"] .build-shell { --d-bg:#151312; --d-card:#241e1d; --d-ink:#f5eeec; --d-muted:#bcb0ad; --d-line:#403634; --d-accent:#ff8a80; --d-code:#0f0d0c; --d-code-bar:#1c1716; }
+  .build-main { min-width:0; }
+  .build-toc { position:sticky; top:18px; max-height:calc(100vh - 36px); overflow:auto; scrollbar-width:thin; }
+  .build-toc h2 { margin:0 0 10px; color:var(--d-muted); font-size:.72rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+  .build-toc nav { display:flex; flex-direction:column; border-left:1px solid var(--d-line); }
+  .build-toc-link { padding:5px 0 5px 14px; margin-left:-1px; border-left:2px solid transparent; color:var(--d-muted); font-size:.82rem; font-weight:600; line-height:1.35; text-decoration:none; }
+  .build-toc-link.lv3 { padding-left:26px; font-size:.78rem; }
+  .build-toc-link:hover { color:var(--d-ink); }
+  .build-toc-link.is-current { color:var(--d-accent); border-left-color:var(--d-accent); }
+  .doc-body { max-width:780px; font-size:1rem; line-height:1.75; }
+  .doc-body h1 { margin:24px 0 18px; font-size:clamp(2.2rem,4.6vw,3.6rem); line-height:1.02; letter-spacing:-.035em; }
+  .doc-body h2 { position:relative; margin:54px 0 14px; padding-top:10px; font-size:1.7rem; line-height:1.15; letter-spacing:-.025em; scroll-margin-top:20px; }
+  .doc-body h3 { position:relative; margin:34px 0 10px; font-size:1.2rem; letter-spacing:-.015em; scroll-margin-top:20px; }
+  .doc-body h4 { margin:24px 0 8px; font-size:1rem; }
+  .doc-anchor { position:absolute; left:-1.1em; color:var(--d-accent); font-weight:800; text-decoration:none; opacity:0; transition:opacity .15s; }
+  .doc-body :is(h2,h3):hover .doc-anchor { opacity:.8; }
+  .doc-body p { margin:0 0 16px; color:var(--d-ink); }
+  .doc-body > p:first-of-type { color:var(--d-muted); font-size:1.12rem; line-height:1.7; }
+  .doc-body a { color:var(--d-accent); font-weight:700; text-decoration:none; }
+  .doc-body a:hover { text-decoration:underline; }
+  .doc-body ul, .doc-body ol { margin:0 0 18px; padding-left:1.4em; }
+  .doc-body li { margin:5px 0; }
+  .doc-body li > p { margin:0; }
+  .doc-body hr { margin:40px 0; border:0; border-top:1px solid var(--d-line); }
+  .doc-body :not(pre) > code { padding:2px 6px; border:1px solid var(--d-line); border-radius:6px; background:var(--d-card); font:600 .86em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
+  .doc-body blockquote { margin:0 0 18px; padding:2px 18px; border-left:3px solid var(--d-line); color:var(--d-muted); }
+  .doc-code { margin:0 0 22px; border-radius:14px; overflow:hidden; background:var(--d-code); }
+  .doc-code-bar { display:flex; align-items:center; justify-content:space-between; padding:7px 14px; background:var(--d-code-bar); color:#a99d9a; font:700 .72rem var(--font-main,"Nata Sans",sans-serif); text-transform:uppercase; letter-spacing:.06em; }
+  .doc-copy { border:0; padding:4px 10px; border-radius:8px; color:#e9ddda; background:#3a302e; font:700 .72rem var(--font-main,"Nata Sans",sans-serif); cursor:pointer; }
+  .doc-copy:hover { background:var(--d-accent); color:#fff; }
+  .doc-code pre { margin:0; padding:16px 18px; overflow:auto; scrollbar-width:thin; }
+  .doc-code code { color:var(--d-code-ink); font:500 .86rem/1.65 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; white-space:pre; }
+  .tok-c { color:#8e817e; font-style:italic; } .tok-s { color:#a5d6a7; } .tok-p { color:#90caf9; } .tok-n { color:#ffcc80; }
+  .tok-k { color:#ff8a80; } .tok-f { color:#ffe082; } .tok-i { color:#ce93d8; }
+  .doc-table { margin:0 0 22px; overflow:auto; border:1px solid var(--d-line); border-radius:12px; }
+  .doc-table table { width:100%; border-collapse:collapse; font-size:.9rem; line-height:1.5; }
+  .doc-table th { padding:10px 14px; text-align:left; background:var(--d-card); color:var(--d-muted); font-size:.74rem; letter-spacing:.06em; text-transform:uppercase; }
+  .doc-table td { padding:10px 14px; border-top:1px solid var(--d-line); vertical-align:top; }
+  .doc-callout { margin:0 0 20px; padding:14px 18px 4px; border:1px solid var(--d-line); border-left-width:4px; border-radius:12px; background:var(--d-card); }
+  .doc-callout-title { display:flex; align-items:center; gap:8px; margin-bottom:6px; font-size:.82rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+  .doc-callout-title .iconify { width:1.15rem; height:1.15rem; }
+  .doc-note { border-left-color:#1e88e5; } .doc-note .doc-callout-title { color:#1e88e5; }
+  .doc-tip { border-left-color:#43a047; } .doc-tip .doc-callout-title { color:#43a047; }
+  .doc-warning { border-left-color:#fb8c00; } .doc-warning .doc-callout-title { color:#fb8c00; }
+  .doc-danger { border-left-color:#e53935; } .doc-danger .doc-callout-title { color:#e53935; }
+  .doc-experimental { border-left-color:#8e24aa; } .doc-experimental .doc-callout-title { color:#8e24aa; }
+  .doc-foot { max-width:780px; margin-top:60px; padding-top:22px; border-top:1px solid var(--d-line); color:var(--d-muted); font-size:.88rem; }
+  @media(max-width:1180px) { .build-shell { grid-template-columns:minmax(0,1fr); } .build-toc { display:none; } }
+  @media(max-width:860px) { .doc-body h2 { font-size:1.45rem; } .doc-anchor { display:none; } }
+</style>
