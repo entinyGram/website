@@ -12,7 +12,7 @@ All of them live in one repository: [github.com/entinyGram/plugins](https://gith
 | [2GIS](https://github.com/entinyGram/plugins/tree/main/plugins/features/2gis) | map tiles and previews from 2GIS | a routine that shares state with JavaScript, a manifest with `withEntiny` |
 | [Doc Viewer](https://github.com/entinyGram/plugins/tree/main/plugins/features/doc-viewer) | opens PDF, DOCX, XLSX, code and archives inside the app | a big plugin split into modules, parsers, native views |
 | [entinyGram SDK](https://github.com/entinyGram/plugins/tree/main/plugins/core/sdk) | the settings placement engine | hooks on the app's own screens, a registry shared between plugins |
-| [No Vibration](https://github.com/entinyGram/plugins/tree/main/plugins/features/no-vibration) | turns off haptics and vibration | a short list of hooks, a community plugin kept with its author |
+| [No Vibration](https://github.com/entinyGram/plugins/tree/main/plugins/features/no-vibration) | turns off haptics and vibration | a short list of hooks behind SDK switches, based on a community plugin |
 
 ## A minimal plugin
 
@@ -270,7 +270,7 @@ The manifest needs only `fetch(api.example.com)`. Pass `signal` to `fetch` so a 
 
 ## Pattern: improving someone else's plugin
 
-Plugins are small files, so the quickest way to a good plugin is often to start from one that already does most of the job. **No Vibration** by [@akresik](https://t.me/akresik) is a good model: forty lines that switch off every kind of vibration the app can ask for. entinyGram ships it in its plugin repository, and this is how you would take it further without taking it away from its author.
+Plugins are small files, so the quickest way to a good plugin is often to start from one that already does most of the job. **No Vibration** by [@akresik](https://t.me/akresik) is a good model: forty lines that switch off every kind of vibration the app can ask for. entinyGram's own [No Vibration](https://github.com/entinyGram/plugins/tree/main/plugins/features/no-vibration) is based on it, and this is how you take such a plugin further without hiding where it came from.
 
 The original is a list of hooks that skip the call:
 
@@ -286,18 +286,18 @@ function hook(className: string, method: string, before: (ctx: any) => void): vo
 hook('android.view.View', 'performHapticFeedback', (ctx: any) => ctx.setReturnValue(false))
 ```
 
-It works while the plugin is on, and the only way to get vibration back is to switch the plugin off. A switch in the app's settings is a small improvement that fits the SDK well.
+It works while the plugin is on, and the only way to get vibration back is to switch the plugin off. Switches in the app's settings, one for each kind of vibration, are a small improvement that fits the SDK well.
 
-### 1. Keep the author, the id and the history
+### 1. Decide whose plugin it is
 
-- Leave `author` as it is, and keep the original `id`, so people who already have the plugin get your version as an update and not as a second plugin.
-- Raise `version` (for example from `1.0.0` to `1.1.0`).
-- Write what you changed in `CHANGELOG.md` and say who wrote the original in the README. If you publish through the bot, say in the message that the plugin is based on someone else's work.
-- If the author asks for a change, or does not want the plugin republished, respect it.
+- **Your own plugin based on theirs.** Give it your own id and name as author, start at `1.0.0`, put "based on X by @author" in the README, the changelog and a comment at the top of the source, and keep the author's name there. Users of the original are not affected, because it is a different plugin.
+- **An update of their plugin.** Keep the author and the id so that people who have it get your version as an update, and raise the version. Do this only with the author's agreement.
+
+Either way, list what you changed in `CHANGELOG.md`. If the author asks for a change, or does not want the plugin reused, respect it.
 
 ### 2. Ask for the placement
 
-`withEntiny` adds the SDK requirement and the placement directives to the manifest:
+`withEntiny` adds the SDK requirement and the placement directives to the manifest. Here the switches go to the end of the Device section of Behavior:
 
 ```ts
 import { defineConfig } from '@inugram/cli'
@@ -309,54 +309,58 @@ export default defineConfig({
       entry: 'src/index.ts',
       manifest: withEntiny(
         {
-          id: 'no-vibration',
+          id: 'entinygram.no-vibration',
           name: 'No Vibration',
-          author: '@akresik',
-          version: '1.1.0',
-          description: 'Disables all vibration (probably)',
+          author: 'entinyGram',
+          version: '1.0.0',
+          description: 'Turns off haptics, vibration and notification vibration, each on its own switch',
           grants: ['unsafe.jvm', 'unsafe.xposed'],
         },
-        { inline: [{ slot: 'category-chats.end', rows: ['enabled'] }] },
+        { inline: [{ slot: 'behavior.device-section.end', rows: ['haptics', 'vibrator', 'notifications'] }] },
       ),
     },
   },
 })
 ```
 
-### 3. Make the hooks ask the switch
+### 3. Make the hooks ask the switches
 
-Each hook now looks at the switch when it runs, so turning it off takes effect at once, with no reload:
+Each hook looks at its switch when it runs, so turning one off takes effect at once, with no reload. The original `hook` calls stay as they were; only the wrapper takes a kind:
 
 ```ts
 import { embed, embedChanged } from '@entiny/sdk/embed'
 
-const enabled = (): boolean => localStorage.getItem('enabled') !== 'false'
+type Kind = 'haptics' | 'vibrator' | 'notifications'
+const KINDS: Kind[] = ['haptics', 'vibrator', 'notifications']
+const blocked = (kind: Kind): boolean => localStorage.getItem(`block.${kind}`) !== 'false'
 
-function hook(className: string, method: string, before: (ctx: any) => void): void {
+function hook(kind: Kind, className: string, method: string, action: (ctx: any) => void): void {
   try {
     inu.xposed.hookAllOverloads(inu.jvm.cls(className), method, {
-      before: (ctx: any) => { if (enabled()) before(ctx) },
+      before: (ctx: any) => { if (blocked(kind)) action(ctx) },
     })
   } catch {}
 }
 
+hook('haptics', 'android.view.View', 'performHapticFeedback', (ctx: any) => ctx.setReturnValue(false))
+
 embed({
-  id: 'no-vibration',
+  id: 'entinygram.no-vibration',
   name: 'No Vibration',
-  placements: { inline: [{ slot: 'category-chats.end', rows: ['enabled'] }] },
-  rows: () => [{ id: 'enabled', type: 'check' as const, text: 'Disable all vibration', checked: enabled() }],
-  onEvent: (_row, value) => {
-    localStorage.setItem('enabled', value)
+  placements: { inline: [{ slot: 'behavior.device-section.end', rows: KINDS }] },
+  rows: () => KINDS.map(kind => ({ id: kind, type: 'check' as const, text: kind, checked: blocked(kind) })),
+  onEvent: (row, value) => {
+    localStorage.setItem(`block.${row}`, value)
     embedChanged()
   },
 })
 ```
 
-The original `hook` calls stay exactly as they were. Only the wrapper changed, so the author's list of hooks is easy to compare with yours.
+Everything is blocked until the user says otherwise, which is what the original does. The real plugin also has translated texts and a short note under each switch; see its source for the full version.
 
 ### 4. Build and test
 
-`inu check` validates the manifest, `inu dev` pushes the plugin to the phone and reloads it as you edit. Test that the switch really turns vibration on and off, that it survives restarting the app, and that the plugin installs from a repository that carries the SDK (the app installs the SDK first). On plain Inugram the plugin still installs, and the switch simply does not appear.
+`inu check` validates the manifest, `inu dev` pushes the plugin to the phone and reloads it as you edit. Test that each switch really turns its kind of vibration on and off, that the choice survives restarting the app, and that the plugin installs from a repository that carries the SDK (the app installs the SDK first). On plain Inugram the plugin still installs, and the switches simply do not appear.
 
 Use this approach for any plugin you improve: change as little as possible, keep what the author wrote visible, and say where the plugin came from.
 
