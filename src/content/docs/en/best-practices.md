@@ -122,7 +122,7 @@ It returns the platform, the app version and build, the plugin API level, the Te
 | `inu dev` says the app is not running | open the app first, and check that plugins are enabled and not in safe mode |
 | `inu dev` cannot find the phone | check `adb devices`, USB debugging, and the `-s` flag when several devices are connected |
 | A routine does not compile | read the build message. Most often it is a callback, a bare function call or a captured variable that changes |
-| The Marketplace shows nothing for a channel | the posts are not in the expected format, or the channel is empty. See [The Marketplace](/entinygram/docs/marketplace) |
+| A repository shows no plugins | the channel is not public, it has no `.inu.js` files, or their header cannot be read. See [Plugin repositories](/entinygram/docs/repositories) |
 | `fetch` fails with a grant error | add `fetch(host)` for that host, including hosts a redirect leads to |
 
 ## Ask for help

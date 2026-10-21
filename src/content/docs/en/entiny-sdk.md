@@ -1,12 +1,11 @@
 # The entinyGram SDK
 
-entinyGram builds on Inugram's plugin engine and adds a layer for plugin authors: a way to put a plugin's settings directly into the app's own screens, a Marketplace to find and install plugins, and a dependency system between plugins.
+entinyGram builds on Inugram's plugin engine and adds a layer for plugin authors: a way to put a plugin's settings directly into the app's own screens and a dependency system between plugins. Plugins themselves are found and installed from the app's [plugin repositories](/entinygram/docs/repositories).
 
-The SDK is made of three parts:
+The SDK is made of two parts:
 
-- **The SDK plugin**, `entinygram.sdk`. An ordinary plugin that carries the Marketplace and the settings placement engine. It is the one that actually draws other plugins' rows into the app's screens.
+- **The SDK plugin**, `entinygram.sdk`. An ordinary plugin that carries the settings placement engine. It is the one that actually draws other plugins' rows into the app's screens.
 - **The `@entiny/sdk` package.** What a plugin imports to ask for placement: `withEntiny`, the `embed` function and the typed list of places a setting can go.
-- **A small bridge in the app**, used by the Marketplace to list and install plugins. Plugin authors rarely touch it.
 
 The SDK adds no features of its own. A plugin that wants to change how the app behaves does it with the engine's own tools: `unsafe.jvm` and `unsafe.xposed`, ideally as [routines](/entinygram/docs/routines). The SDK only gives such a plugin a proper place for its settings.
 
@@ -27,7 +26,7 @@ A plugin that uses the SDK needs the SDK plugin installed. The plugin says so in
 - **Installing.** If `entinygram.sdk` is missing, disabled or too old, installation is refused with a message such as "Needs the plugin entinygram.sdk. Install it first".
 - **Running.** If a user disables the SDK, every plugin that depends on it is suspended at once. When the SDK is switched back on, they are restored.
 
-You do not write the `@requires` line yourself. `withEntiny` adds it.
+You do not write the `@requires` line yourself. `withEntiny` adds it. When a user installs your plugin from a repository that also carries the SDK, the app installs the SDK first.
 
 ## Using `withEntiny`
 
@@ -169,19 +168,6 @@ Everything runs in the SDK plugin, which needs `unsafe.jvm` and `unsafe.xposed`.
 
 Inugram ignores header directives it does not know, and `inu.registerSettings` still works there. A plugin that uses `withEntiny` still installs on plain Inugram, and its page opens from the plugin list. Only the placement is entinyGram only. If your plugin depends on the SDK being there, say so in the description.
 
-## Calling the bridge
-
-The Marketplace talks to the app through a small bridge class, `EntinyMarketBridge`, which exists only in entinyGram. In plain Inugram its class is missing, so the SDK runs in **standalone mode**: it still browses catalogs and embeds settings, but cannot list or install plugins itself and instead hands you a download link. A plugin that wants to use the bridge should do it defensively:
-
-```ts
-let bridge: ReturnType<typeof inu.jvm.cls> | null = null
-try {
-  bridge = inu.jvm.cls('desu.inugram.helpers.entiny.EntinyMarketBridge')
-} catch {
-  bridge = null
-}
-```
-
 ## A complete small example
 
 A plugin that adds a switch to the app's formatting section and a page of its own:
@@ -227,7 +213,6 @@ The same state backs the inline row and the plugin's own page, and `embedChanged
 - [`sdk/entiny/src/index.ts`](https://github.com/entinyGram/plugins/blob/main/sdk/entiny/src/index.ts): `withEntiny`, the `@requires` rule and the placement types
 - [`sdk/entiny/src/embed.ts`](https://github.com/entinyGram/plugins/blob/main/sdk/entiny/src/embed.ts): `embed` and its row types
 - [`sdk/entiny/src/slots.ts`](https://github.com/entinyGram/plugins/blob/main/sdk/entiny/src/slots.ts) and [`slots.json`](https://github.com/entinyGram/plugins/blob/main/sdk/entiny/slots.json): every place a setting can go
-- [`plugins/entiny-sdk/src/embed/engine.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/entiny-sdk/src/embed/engine.ts): the engine that draws the rows into the app
-- [`plugins/text-animation`](https://github.com/entinyGram/plugins/tree/main/plugins/text-animation): `screen` and `inline` placement in a real plugin
-- [`EntinyMarketBridge.kt`](https://github.com/entaytion/entinyGram/blob/main/src/fork/helpers/entiny/EntinyMarketBridge.kt): the bridge on the app side
+- [`plugins/core/sdk/src/embed/engine.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/core/sdk/src/embed/engine.ts): the engine that draws the rows into the app
+- [`plugins/features/text-animation`](https://github.com/entinyGram/plugins/tree/main/plugins/features/text-animation): `screen` and `inline` placement in a real plugin
 - [Source map](/entinygram/docs/source-map): everything in one table

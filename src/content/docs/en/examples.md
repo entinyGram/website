@@ -6,12 +6,13 @@ All of them live in one repository: [github.com/entinyGram/plugins](https://gith
 
 | Plugin | What it does | Worth reading for |
 | --- | --- | --- |
-| [Calendar Systems](https://github.com/entinyGram/plugins/tree/main/plugins/calendar-systems) | shows dates in the Hijri, Persian, Hebrew and other calendars | routine hooks, shared state, one hook per method |
-| [Call Avatar](https://github.com/entinyGram/plugins/tree/main/plugins/call-avatar) | full screen caller photo in voice calls | touching native views, tidy cleanup, a plain settings page |
-| [Text Animation](https://github.com/entinyGram/plugins/tree/main/plugins/text-animation) | typing animation in the message field | a JavaScript draw hook, settings placed with `embed` |
-| [2GIS](https://github.com/entinyGram/plugins/tree/main/plugins/2gis) | map tiles and previews from 2GIS | a routine that shares state with JavaScript, a manifest with `withEntiny` |
-| [Doc Viewer](https://github.com/entinyGram/plugins/tree/main/plugins/doc-viewer) | opens PDF, DOCX, XLSX, code and archives inside the app | a big plugin split into modules, parsers, native views |
-| [entinyGram SDK](https://github.com/entinyGram/plugins/tree/main/plugins/entiny-sdk) | the Marketplace and the settings placement engine | declarative pages, a native bottom bar, reading a channel |
+| [Calendar Systems](https://github.com/entinyGram/plugins/tree/main/plugins/features/calendar-systems) | shows dates in the Hijri, Persian, Hebrew and other calendars | routine hooks, shared state, one hook per method |
+| [Call Avatar](https://github.com/entinyGram/plugins/tree/main/plugins/features/call-avatar) | full screen caller photo in voice calls | touching native views, tidy cleanup, a plain settings page |
+| [Text Animation](https://github.com/entinyGram/plugins/tree/main/plugins/features/text-animation) | typing animation in the message field | a JavaScript draw hook, settings placed with `embed` |
+| [2GIS](https://github.com/entinyGram/plugins/tree/main/plugins/features/2gis) | map tiles and previews from 2GIS | a routine that shares state with JavaScript, a manifest with `withEntiny` |
+| [Doc Viewer](https://github.com/entinyGram/plugins/tree/main/plugins/features/doc-viewer) | opens PDF, DOCX, XLSX, code and archives inside the app | a big plugin split into modules, parsers, native views |
+| [entinyGram SDK](https://github.com/entinyGram/plugins/tree/main/plugins/core/sdk) | the settings placement engine | hooks on the app's own screens, a registry shared between plugins |
+| [No Vibration](https://github.com/entinyGram/plugins/tree/main/plugins/features/no-vibration) | turns off haptics and vibration | a short list of hooks, a community plugin kept with its author |
 
 ## A minimal plugin
 
@@ -267,33 +268,97 @@ inu.registerTranslationProvider({
 
 The manifest needs only `fetch(api.example.com)`. Pass `signal` to `fetch` so a cancelled translation stops the request, and check that the answer has as many texts as you sent.
 
-## Pattern: reading a Telegram channel and installing from it
+## Pattern: improving someone else's plugin
 
-The [entinyGram SDK plugin](https://github.com/entinyGram/plugins/tree/main/plugins/entiny-sdk/src) reads the plugins channel through the user's own account, with no server. The core of it:
+Plugins are small files, so the quickest way to a good plugin is often to start from one that already does most of the job. **No Vibration** by [@akresik](https://t.me/akresik) is a good model: forty lines that switch off every kind of vibration the app can ask for. entinyGram ships it in its plugin repository, and this is how you would take it further without taking it away from its author.
+
+The original is a list of hooks that skip the call:
 
 ```ts
-const account = inu.account()
-const peer = await account.resolvePeer('entinyGramPlugins')
-const messages: inu.Message[] = []
-for await (const message of account.iterHistory(peer, { limit: 400, batchSize: 100 })) {
-  messages.push(message)
+function hook(className: string, method: string, before: (ctx: any) => void): void {
+  try {
+    inu.xposed.hookAllOverloads(inu.jvm.cls(className), method, { before })
+  } catch (e) {
+    failed.push(`${className}#${method}: ${(e as Error).message}`)
+  }
 }
+
+hook('android.view.View', 'performHapticFeedback', (ctx: any) => ctx.setReturnValue(false))
 ```
 
-It needs `account.read(peers, history)` and, to fetch a file, `account.read(messages)`. Each post becomes a plugin version, and the file is saved with `account.downloadMediaToFile(message)`. The parser is in [`channel.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/entiny-sdk/src/channel.ts), and the format it reads is described in [The Marketplace](/entinygram/docs/marketplace#for-plugin-authors-how-your-plugin-shows-up).
+It works while the plugin is on, and the only way to get vibration back is to switch the plugin off. A switch in the app's settings is a small improvement that fits the SDK well.
 
-## Pattern: native UI from JavaScript
+### 1. Keep the author, the id and the history
 
-The Marketplace's bottom bar is a real Android view, added to the page's screen through `inu.jvm`. [`navbar.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/entiny-sdk/src/navbar.ts) shows the whole technique:
+- Leave `author` as it is, and keep the original `id`, so people who already have the plugin get your version as an update and not as a second plugin.
+- Raise `version` (for example from `1.0.0` to `1.1.0`).
+- Write what you changed in `CHANGELOG.md` and say who wrote the original in the README. If you publish through the bot, say in the message that the plugin is based on someone else's work.
+- If the author asks for a change, or does not want the plugin republished, respect it.
 
-- find the visible screen with `LaunchActivity.getSafeLastFragment()` and recognize it by its title;
-- build views with `new LinearLayout(context)`, `new TextView(context)` and so on, and set listeners with `inu.jvm.defineClass({ interfaces: [OnClickListener], … })`;
-- draw an icon from SVG with the app's own `SvgHelper.getBitmap`, and tint it with `setColorFilter`;
-- schedule work on the UI thread with a `Handler` and `inu.jvm.runnable`, with a few quick retries while the screen is still being created;
-- reserve space for the bar by giving the page's list a bottom margin, so its last row stops above the bar;
-- if anything fails, the page falls back to a plain row, so nothing breaks.
+### 2. Ask for the placement
 
-Use this only when no safe API exists. It depends on the app's own classes, so it can break when they change.
+`withEntiny` adds the SDK requirement and the placement directives to the manifest:
+
+```ts
+import { defineConfig } from '@inugram/cli'
+import { withEntiny } from '@entiny/sdk'
+
+export default defineConfig({
+  plugins: {
+    'no-vibration': {
+      entry: 'src/index.ts',
+      manifest: withEntiny(
+        {
+          id: 'no-vibration',
+          name: 'No Vibration',
+          author: '@akresik',
+          version: '1.1.0',
+          description: 'Disables all vibration (probably)',
+          grants: ['unsafe.jvm', 'unsafe.xposed'],
+        },
+        { inline: [{ slot: 'category-chats.end', rows: ['enabled'] }] },
+      ),
+    },
+  },
+})
+```
+
+### 3. Make the hooks ask the switch
+
+Each hook now looks at the switch when it runs, so turning it off takes effect at once, with no reload:
+
+```ts
+import { embed, embedChanged } from '@entiny/sdk/embed'
+
+const enabled = (): boolean => localStorage.getItem('enabled') !== 'false'
+
+function hook(className: string, method: string, before: (ctx: any) => void): void {
+  try {
+    inu.xposed.hookAllOverloads(inu.jvm.cls(className), method, {
+      before: (ctx: any) => { if (enabled()) before(ctx) },
+    })
+  } catch {}
+}
+
+embed({
+  id: 'no-vibration',
+  name: 'No Vibration',
+  placements: { inline: [{ slot: 'category-chats.end', rows: ['enabled'] }] },
+  rows: () => [{ id: 'enabled', type: 'check' as const, text: 'Disable all vibration', checked: enabled() }],
+  onEvent: (_row, value) => {
+    localStorage.setItem('enabled', value)
+    embedChanged()
+  },
+})
+```
+
+The original `hook` calls stay exactly as they were. Only the wrapper changed, so the author's list of hooks is easy to compare with yours.
+
+### 4. Build and test
+
+`inu check` validates the manifest, `inu dev` pushes the plugin to the phone and reloads it as you edit. Test that the switch really turns vibration on and off, that it survives restarting the app, and that the plugin installs from a repository that carries the SDK (the app installs the SDK first). On plain Inugram the plugin still installs, and the switch simply does not appear.
+
+Use this approach for any plugin you improve: change as little as possible, keep what the author wrote visible, and say where the plugin came from.
 
 ## Where to go next
 

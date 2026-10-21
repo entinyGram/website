@@ -66,29 +66,19 @@ Everything a plugin author touches is in [`entinyGram/plugins`](https://github.c
 
 [`plugins/`](https://github.com/entinyGram/plugins/tree/main/plugins) has one folder per plugin, each with an `inu.config.ts` and a `src`. They are the best examples of real code: see [Worked examples](/entinygram/docs/examples).
 
-The [SDK plugin](https://github.com/entinyGram/plugins/tree/main/plugins/entiny-sdk/src) is in `plugins/entiny-sdk/src`:
+The [SDK plugin](https://github.com/entinyGram/plugins/tree/main/plugins/core/sdk/src) is in `plugins/core/sdk/src`:
 
 | File | Contents |
 | --- | --- |
-| [`index.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/entiny-sdk/src/index.ts) | the Marketplace pages: Home, Plugins, Settings, the plugin page, install |
-| [`channel.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/entiny-sdk/src/channel.ts) | reading a Telegram channel as a catalog, and the post parser |
-| [`sources.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/entiny-sdk/src/sources.ts) | the list of sources and what is stored about them |
-| [`catalog.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/entiny-sdk/src/catalog.ts) | the catalog types, and how a channel file is addressed |
-| [`navbar.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/entiny-sdk/src/navbar.ts) | the native bottom bar |
-| [`embed/engine.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/entiny-sdk/src/embed/engine.ts) | the engine that draws other plugins' rows into the app's screens |
-| [`icons`](https://github.com/entinyGram/plugins/tree/main/plugins/entiny-sdk/src/icons) | the tab icons, plain SVG files |
-| [`i18n.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/entiny-sdk/src/i18n.ts) | the texts, in English, Ukrainian and Russian |
+| [`index.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/core/sdk/src/index.ts) | starts the embed engine |
+| [`embed/engine.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/core/sdk/src/embed/engine.ts) | the engine that draws other plugins' rows into the app's screens |
+| [`embed/strings.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/core/sdk/src/embed/strings.ts) | finds which settings string a row shows, so a plugin can name a slot after it |
 
-### The catalog and the scripts
+### The scripts
 
 | Path | Contents |
 | --- | --- |
-| [`index.json`](https://github.com/entinyGram/plugins/blob/main/index.json) | the catalog the Marketplace reads for official plugins |
-| [`plugins/dist`](https://github.com/entinyGram/plugins/tree/main/plugins/dist) | every published version of every official plugin, never changed once published |
-| [`user-plugins`](https://github.com/entinyGram/plugins/tree/main/user-plugins) | the second GitHub catalog, for community bundles |
-| [`scripts/build-plugin-index.ts`](https://github.com/entinyGram/plugins/blob/main/scripts/build-plugin-index.ts) | builds the plugins, hashes them and refreshes the catalog |
-| [`scripts/build-user-index.ts`](https://github.com/entinyGram/plugins/blob/main/scripts/build-user-index.ts) | the same for community bundles |
-| [`scripts/pack-release.ts`](https://github.com/entinyGram/plugins/blob/main/scripts/pack-release.ts) | packs named release files |
+| [`scripts/pack-release.ts`](https://github.com/entinyGram/plugins/blob/main/scripts/pack-release.ts) | builds every plugin into `release/`, named and ready to post to the plugins channel |
 | [`scripts/generate-slots.ts`](https://github.com/entinyGram/plugins/blob/main/scripts/generate-slots.ts) | regenerates the slot list from the app's strings |
 
 ## The client
@@ -101,7 +91,7 @@ The plugin host inside the app is Kotlin, in [`src/fork`](https://github.com/ent
 | [`helpers/plugins/PluginManager.kt`](https://github.com/entaytion/entinyGram/blob/main/src/fork/helpers/plugins/PluginManager.kt) | installing, enabling, updating and the dependency checks |
 | [`helpers/plugins/PluginImportHelper.kt`](https://github.com/entaytion/entinyGram/blob/main/src/fork/helpers/plugins/PluginImportHelper.kt) | the import and permission sheet |
 | [`helpers/plugins/ui/PluginUi.kt`](https://github.com/entaytion/entinyGram/blob/main/src/fork/helpers/plugins/ui/PluginUi.kt) | how declarative pages become native screens |
-| [`helpers/entiny/EntinyMarketBridge.kt`](https://github.com/entaytion/entinyGram/blob/main/src/fork/helpers/entiny/EntinyMarketBridge.kt) | the small bridge the Marketplace uses to list and install plugins |
+| [`helpers/plugins/PluginRepos.kt`](https://github.com/entaytion/entinyGram/blob/main/src/fork/helpers/plugins/PluginRepos.kt) | plugin repositories: reading a channel, caching headers, finding updates |
 | [`ui/settings/PluginsActivity.kt`](https://github.com/entaytion/entinyGram/blob/main/src/fork/ui/settings/PluginsActivity.kt) | the plugin list in the settings |
 | [`ui/settings/PluginSettingsActivity.kt`](https://github.com/entaytion/entinyGram/blob/main/src/fork/ui/settings/PluginSettingsActivity.kt) | the generic host of a plugin's settings page |
 
@@ -112,7 +102,7 @@ The user facing list of what entinyGram adds is [`FEATURES.md`](https://github.c
 The plugin engine, the `inu` API and the command line tool were written in [Inugram](https://github.com/teidesu/inugram). Its [`sdk`](https://github.com/teidesu/inugram/tree/main/sdk) folder holds the same three parts you saw above: [`cli`](https://github.com/teidesu/inugram/tree/main/sdk/cli), [`docs`](https://github.com/teidesu/inugram/tree/main/sdk/docs) and [`types`](https://github.com/teidesu/inugram/tree/main/sdk/types).
 
 > [!NOTE]
-> These pages are built on the Inugram plugin documentation, with entinyGram's additions: the SDK, the Marketplace, the channel catalog and publishing. Credit for the engine and the original guides goes to the Inugram authors.
+> These pages are built on the Inugram plugin documentation, with entinyGram's additions: the SDK, the plugin repositories and publishing. Credit for the engine and the original guides goes to the Inugram authors.
 
 ## Finding what to hook
 

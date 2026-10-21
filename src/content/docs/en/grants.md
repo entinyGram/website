@@ -69,7 +69,7 @@ The catalogue says which kind of scope each grant takes:
 | `unsafe.notificationCenter` | none | dangerous | watch and post the app's internal events |
 | `unsafe.disableApiFiltering` | none | dangerous | lift the account takeover filter, allowing account-critical API calls |
 
-The **level** is what the install sheet and the Marketplace use to draw attention. Neutral grants are ordinary. Caution grants let the plugin act for you or read private data. Dangerous grants bypass the plugin sandbox completely.
+The **level** is what the install sheet and the plugin page use to draw attention. Neutral grants are ordinary. Caution grants let the plugin act for you or read private data. Dangerous grants bypass the plugin sandbox completely.
 
 ### The `account.read` and `account.write` lists
 
@@ -112,7 +112,7 @@ Unsafe grants bypass the plugin sandbox, so a plugin that holds one can do almos
 | `unsafe.notificationCenter` | the app's internal event bus; requires `unsafe.jvm` |
 | `unsafe.disableApiFiltering` | lifts the takeover filter |
 
-Many useful plugins need `unsafe.jvm` and `unsafe.xposed`: they change how the app draws or behaves, and there is no safe API for that. That is fine, but it means users must trust the plugin and its author, which is why the plugin channel requires open source code and the Marketplace marks these grants with a warning.
+Many useful plugins need `unsafe.jvm` and `unsafe.xposed`: they change how the app draws or behaves, and there is no safe API for that. That is fine, but it means users must trust the plugin and its author, which is why the plugin channel requires open source code and the app marks these grants with a warning.
 
 ## Choosing grants
 
@@ -126,7 +126,7 @@ Many useful plugins need `unsafe.jvm` and `unsafe.xposed`: they change how the a
 
 When a user installs your built file, the app shows the grants with their levels and asks for a confirmation. A plugin pushed through developer mode skips that sheet, so always test a real install before you publish.
 
-The Marketplace shows the permissions of plugins that come from a Telegram channel, with unsafe grants marked, and asks for a second confirmation before installing from a channel entinyGram does not vet. See [The Marketplace](/entinygram/docs/marketplace).
+The plugin page of a repository shows the permissions of every plugin, with unsafe grants marked. See [Plugin repositories](/entinygram/docs/repositories).
 
 ## Source and further reading
 

@@ -52,7 +52,7 @@ Plugins run inside your Telegram app, next to your messages and your account, so
 
 - Every plugin lists its grants in its header. Users see the list before they install the plugin.
 - A call your grants do not cover fails with `not-granted`. There is no runtime prompt and no way to ask for more later. A plugin that wants more must ship an update that the user approves again.
-- Some grants are marked **unsafe**. They give full access to the app (`unsafe.jvm`, `unsafe.xposed`) or to every file (`unsafe.fs`). The Marketplace marks them with a warning.
+- Some grants are marked **unsafe**. They give full access to the app (`unsafe.jvm`, `unsafe.xposed`) or to every file (`unsafe.fs`). The install sheet and the plugin page mark them with a warning.
 - Calls that could take over an account, like logging in or changing the two-step password, are filtered out unless a plugin explicitly lifts the filter.
 
 [Read the grants reference](/entinygram/docs/grants).
@@ -63,7 +63,8 @@ The plugin engine, the `inu` API and the `inu` command line tool come from **Inu
 
 entinyGram adds a layer on top:
 
-- **The entinyGram SDK plugin** (`entinygram.sdk`) gives the app a Marketplace with sources, catalogs and permissions, and lets other plugins place their settings directly into the app's own screens.
+- **The entinyGram SDK plugin** (`entinygram.sdk`) lets other plugins place their settings directly into the app's own screens.
+- **Plugin repositories** are built into the app: Telegram channels where plugin files are posted, with the project's own channel always there.
 - **The `@entiny/sdk` package** is what a plugin imports to ask for that placement: `withEntiny`, the `embed` function and the typed list of places a setting can go.
 - **A plugin channel and a submission bot**, so anyone can send a plugin for review and have it published.
 
@@ -86,7 +87,7 @@ Everything entinyGram-specific is optional. A plugin that does not use `@entiny/
 
 **Low level** covers the unsafe tools: [JVM reflection](/entinygram/docs/jvm), [method hooks](/entinygram/docs/xposed) and [routines](/entinygram/docs/routines). Read these only when the safe API cannot do what you want.
 
-**entinyGram SDK** explains [the SDK](/entinygram/docs/entiny-sdk) and [the Marketplace](/entinygram/docs/marketplace).
+**entinyGram SDK** explains [the SDK](/entinygram/docs/entiny-sdk) and [the plugin repositories](/entinygram/docs/repositories).
 
 **Publishing** walks you through [sending a plugin to the catalog](/entinygram/docs/publishing) and ends with [best practices](/entinygram/docs/best-practices).
 
@@ -103,8 +104,8 @@ These pages explain concepts and reasons. For exact signatures, read the typings
 | Handle | A JavaScript object that stands for a live Java object. |
 | TL object | A Telegram API object, such as a message or a user. |
 | Routine | A small function compiled to run in Java without entering the JavaScript engine. |
-| SDK plugin | `entinygram.sdk`, the plugin that provides the Marketplace and the settings placement. |
-| Source | A place the Marketplace reads plugins from: a catalog on GitHub or a Telegram channel. |
+| SDK plugin | `entinygram.sdk`, the plugin that provides the settings placement. |
+| Repository | A Telegram channel the app reads plugins from, each `.inu.js` post being one release. |
 
 ## Source and further reading
 

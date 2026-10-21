@@ -105,7 +105,7 @@ The CLI turns the manifest into a header at the top of the built file. It is a c
 // ==/InuPlugin==
 ```
 
-The app, the Marketplace and the publishing bot all read this block, so what is in it is what users see. A few lines are written by the tool for you:
+The app, the plugin repositories and the publishing bot all read this block, so what is in it is what users see. A few lines are written by the tool for you:
 
 - `@plugin-api` is `1`. It is bumped only for major breaking changes of the API. Apps support only the latest value, so a plugin written for an older API does not run on a newer app.
 - `@platform` is `android`.

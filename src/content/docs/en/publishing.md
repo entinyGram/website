@@ -1,6 +1,6 @@
 # Publishing a plugin
 
-Anyone can send a plugin to the entinyGram catalog. You send the file to a bot, it is reviewed by hand, and once approved it is published in the **@entinyGramPlugins** channel and appears in the Marketplace of every user.
+Anyone can send a plugin to the entinyGram catalog. You send the file to a bot, it is reviewed by hand, and once approved it is published in the **@entinyGramPlugins** channel and appears in the built-in repository of every user.
 
 This page covers the rules, the whole flow, how updates work, what the published post looks like, and what to do before you send.
 
@@ -79,7 +79,7 @@ You get one of three messages:
 
 Send the new file to the bot the same way. The id must be the same, the version must be higher, and the sender must be the same person who published it first. The first person to publish an id owns it: nobody else can publish a plugin with that id.
 
-Updates are reviewed like new plugins, and the notes you write become the notes of the new version. Users of the Marketplace see the update on the Home tab and in the plugin's version history.
+Updates are reviewed like new plugins, and the notes you write become the notes of the new version. Users see the update in the Updates list of the repositories screen and in the plugin's version history.
 
 > [!TIP]
 > Always raise `@version` for any change, even a small fix. A published version is never replaced, so the same version cannot be sent twice.
@@ -105,17 +105,17 @@ author: @you
 - If your plugin requires the SDK, a line with a link to download it is added.
 - A link to the source repository is shown for the project's own plugins.
 - A footer invites the next person to suggest a plugin.
-- Hidden in the post, an invisible link carries the facts the app reads: the id, the permissions, the size and the requirements. You never see it, and it is how the Marketplace lists the plugin properly. See [The Marketplace](/entinygram/docs/marketplace#for-plugin-authors-how-your-plugin-shows-up).
+- The app reads the id, the permissions and the requirements from the header of the file itself, so the post needs nothing hidden. See [Plugin repositories](/entinygram/docs/repositories#for-plugin-authors-how-your-plugin-shows-up).
 
 ## After it is published
 
-- The plugin appears in the Marketplace, in the section of the plugins channel. The channel posts are read directly through each user's own Telegram account, so there is no server to wait for.
-- You can share the post link. Anyone with the app can install it from the Marketplace.
+- The plugin appears in the built-in **@entinyGramPlugins** repository. The channel posts are read directly through each user's own Telegram account, so there is no server to wait for.
+- You can share the post link. Anyone with the app can install it from the repository.
 - Questions, bug reports and ideas are welcome in the community chat, [@entinyGramChat](https://t.me/entinyGramChat).
 
 ## Running your own channel
 
-Anyone can run a plugin channel in the same format and let users add it as a source in the Marketplace (**Settings → Sources → Add a channel**). The format is described in [The Marketplace](/entinygram/docs/marketplace#for-plugin-authors-how-your-plugin-shows-up). The Marketplace shows a warning when a user adds a channel that entinyGram does not vet, and asks for confirmation before installing from it, so be especially careful about what you publish.
+Anyone can run a plugin channel and let users add it as a repository (**Settings → Plugins → Repositories → Add repository**). Post the `.inu.js` files there; the format is described in [Plugin repositories](/entinygram/docs/repositories#for-plugin-authors-how-your-plugin-shows-up). Users see the permissions of every plugin before installing it, so be especially careful about what you publish.
 
 ## Plugins from other sources
 
@@ -127,7 +127,7 @@ Plugins will get tags, such as `#privacy`, `#chat`, `#media`, `#ui` or `#tools`,
 
 ## Where the files live
 
-You do not need to host anything. The channel stores the file and delivers it, the Marketplace reads the channel, and the app imports the file with the usual install sheet, so the user always sees the permissions before the plugin is installed.
+You do not need to host anything. The channel stores the file and delivers it, the app reads the channel, and imports the file with the usual install sheet, so the user always sees the permissions before the plugin is installed.
 
 ## If something goes wrong
 
@@ -146,6 +146,6 @@ You do not need to host anything. The channel stores the file and delivers it, t
 
 - [@entinyGramPlugins](https://t.me/entinyGramPlugins): the channel, with real posts to look at
 - [@entinyGramBot](https://t.me/entinyGramBot): where you send plugins
-- [The Marketplace](/entinygram/docs/marketplace): the post format and how plugins are listed
+- [Plugin repositories](/entinygram/docs/repositories): how the app reads a channel and lists plugins
 - [Worked examples](/entinygram/docs/examples): a minimal plugin to try the flow with
 - [`plugins`](https://github.com/entinyGram/plugins/tree/main/plugins): the official plugins, as models of how a plugin should look
