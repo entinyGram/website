@@ -2,7 +2,7 @@
 @import "./tokens.css";
 
 @theme {
-  --font-main: 'Nata Sans', sans-serif;
+  --font-main: 'Overused Grotesk', -apple-system, sans-serif;
 
   --font-size-display: clamp(3.5rem, 12vw, 10rem);
   --font-size-h1: clamp(2rem, 6vw, 4rem);
@@ -245,7 +245,7 @@
   border-radius: 8px;
   font-family: var(--font-main, sans-serif);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   display: flex;
   align-items: center;
   gap: 10px;

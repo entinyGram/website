@@ -14,7 +14,7 @@
     const dark = document.documentElement.dataset.theme === "dark";
     document.querySelector("#themeToggle .iconify")?.setAttribute("data-icon", dark ? "solar:sun-bold" : "solar:moon-bold");
     document.querySelector("#themeToggle")?.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
-    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#151312" : "#ffffff");
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#030502" : "#ffffff");
   };
   let translationsPromise = null;
   const getTranslations = async () => {
