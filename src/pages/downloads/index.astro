@@ -485,12 +485,13 @@ const parseArch = (filename: string) => {
 
   .changelog-body {
     max-width: 100%;
-    max-height: 360px;
+    max-height: 520px;
     overflow: auto;
     padding: 12px 0 4px;
     color: var(--d-muted);
-    font-size: 0.86rem;
+    font-size: 0.88rem;
     line-height: 1.7;
+    scrollbar-width: thin;
   }
   .changelog-body :global(h1), .changelog-body :global(h2), .changelog-body :global(h3), .changelog-body :global(h4) {
     margin: 16px 0 6px;
@@ -506,12 +507,19 @@ const parseArch = (filename: string) => {
     margin: 6px 0 12px;
   }
   .changelog-body :global(li) {
-    padding: 2px 0;
+    padding: 3px 0;
+    color: var(--d-muted);
+  }
+  .changelog-body :global(strong) {
+    color: var(--d-ink);
+    font-weight: 600;
   }
   .changelog-body :global(a) {
     color: var(--d-accent);
+    text-decoration: none;
+  }
+  .changelog-body :global(a:hover) {
     text-decoration: underline;
-    text-underline-offset: 2px;
   }
   .changelog-body :global(code) {
     padding: 2px 5px;

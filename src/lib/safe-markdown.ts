@@ -31,9 +31,7 @@ export function sanitizeRenderedHtml(html: string): string {
 
 export async function renderSafeMarkdown(markdown: string): Promise<string> {
   const cleanMarkdown = (markdown || "")
-    .replace(/📡/g, '<span class="iconify eg-patch-icon eg-patch-entiny" data-icon="tabler:antenna"></span>')
-    .replace(/🐶/g, '<span class="iconify eg-patch-icon eg-patch-inu" data-icon="tabler:paw"></span>')
-    .replace(/🗑️?/g, '<span class="iconify eg-patch-icon" data-icon="tabler:trash"></span>');
+    .replace(/[📡🐶🗑️]\s*/g, "");
   const html = await marked.parse(cleanMarkdown, { gfm: true, breaks: false, async: false });
   return sanitizeRenderedHtml(html);
 }

@@ -235,12 +235,24 @@ const uk = pageLang === "uk";
     font-weight: 500;
   }
   .eg-shell-nav a {
+    position: relative;
+    padding: 4px 0;
     color: var(--shell-muted);
     text-decoration: none;
     transition: color 0.15s ease;
   }
   .eg-shell-nav a:hover, .eg-shell-nav a.is-active {
     color: var(--shell-ink);
+  }
+  .eg-shell-nav a.is-active::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--shell-accent);
+    border-radius: 1px;
   }
   .eg-shell-ext {
     display: inline-flex;
@@ -363,7 +375,10 @@ const uk = pageLang === "uk";
       display: none;
       margin-left: 0;
       border-top: 1px solid var(--shell-line);
+      z-index: 50;
     }
     .eg-shell-header.is-open .eg-shell-nav { display: flex; }
+    .eg-shell-nav a.is-active::after { display: none; }
+    .eg-shell-nav a.is-active { color: var(--shell-accent); }
   }
 </style>
