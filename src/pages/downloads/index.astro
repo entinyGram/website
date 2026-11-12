@@ -40,9 +40,9 @@ const parseArch = (filename: string) => {
 
 <Layout title={uk ? "Завантаження — entinyGram" : "Downloads — entinyGram"} description={uk ? "Офіційні збірки entinyGram для Android прямо з GitHub Releases." : "Official entinyGram Android APK builds straight from GitHub Releases."} favicon="/favicon.svg" image="/og/entinygram-banner.png" lang={pageLang}>
   <EntinyGramHeader active="downloads" />
-  <main class="downloads-page">
+  <main id="main-content" class="downloads-page">
     <section class="download-hero">
-      <h1 data-lang-key="eg_downloads_title">{uk ? "Оберіть свою збірку." : "Choose your build."}</h1>
+      <h1 data-lang-key="eg_downloads_title">{uk ? "Завантажити entinyGram" : "Download entinyGram"}</h1>
       <p data-lang-key="eg_downloads_intro">{uk ? "Версії публікуються напряму з GitHub Releases. Оберіть архітектуру вашого пристрою або перегляньте історію релізів." : "Versions are pulled directly from GitHub Releases. Select the build for your device architecture or browse notes."}</p>
       <div class="hero-actions">
         <a class="eg-tech-btn" href="https://github.com/entaytion/entinyGram/releases" target="_blank" rel="noopener noreferrer">
@@ -159,14 +159,14 @@ const parseArch = (filename: string) => {
 
 <style>
   .downloads-page {
-    --d-bg: #ffffff;
-    --d-card: #f7f7f7;
-    --d-ink: #0a0a0a;
-    --d-muted: #666666;
-    --d-soft: #888888;
-    --d-line: #ebebeb;
-    --d-accent: #f20c3c;
-    --d-accent-dark: #d10932;
+    --d-bg: var(--clr-bg);
+    --d-card: var(--clr-surface);
+    --d-ink: var(--clr-text);
+    --d-muted: var(--clr-text-muted);
+    --d-soft: var(--clr-text-muted);
+    --d-line: var(--clr-border);
+    --d-accent: var(--clr-link);
+    --d-accent-dark: var(--clr-accent-hover);
     min-height: 75vh;
     padding-bottom: 6rem;
     background: var(--d-bg);
@@ -175,16 +175,6 @@ const parseArch = (filename: string) => {
   }
   .downloads-page *, .downloads-page *::before, .downloads-page *::after {
     box-sizing: border-box;
-  }
-  :global([data-theme="dark"]) .downloads-page {
-    --d-bg: #030502;
-    --d-card: #080b07;
-    --d-ink: #f0f2f0;
-    --d-muted: #88908a;
-    --d-soft: #5e6460;
-    --d-line: #141813;
-    --d-accent: #f20c3c;
-    --d-accent-dark: #d10932;
   }
 
   .download-hero {
@@ -210,6 +200,7 @@ const parseArch = (filename: string) => {
   .hero-actions {
     margin-top: 24px;
     display: flex;
+    flex-wrap: wrap;
     gap: 12px;
   }
 
@@ -266,10 +257,11 @@ const parseArch = (filename: string) => {
   .release-card {
     padding: 28px 32px;
     border: 1px solid var(--d-line);
-    border-radius: 8px;
-    background: var(--d-card);
+    border-radius: 14px;
+    background: var(--d-bg);
     transition: border-color 0.15s ease;
   }
+  .release-card.is-latest { background: var(--d-card); }
   .release-card:hover {
     border-color: color-mix(in srgb, var(--d-accent) 30%, var(--d-line));
   }
@@ -283,7 +275,7 @@ const parseArch = (filename: string) => {
   }
   .release-title-block h2 {
     margin: 6px 0 4px;
-    font-size: 1.55rem;
+    font-size: 1.8rem;
     letter-spacing: -.025em;
     font-weight: 500;
     color: var(--d-ink);
@@ -293,7 +285,7 @@ const parseArch = (filename: string) => {
     align-items: center;
     gap: 12px;
     color: var(--d-muted);
-    font-size: 0.8rem;
+    font-size: .92rem;
   }
   .release-state {
     display: inline-flex;
@@ -330,7 +322,7 @@ const parseArch = (filename: string) => {
     border: 1px solid var(--d-line);
     background: var(--d-bg);
     color: var(--d-muted);
-    font-size: 0.8rem;
+    font-size: .92rem;
     font-weight: 500;
     text-decoration: none;
     transition: color 0.15s ease, border-color 0.15s ease;
@@ -402,7 +394,7 @@ const parseArch = (filename: string) => {
   }
   .asset-desc {
     color: var(--d-muted);
-    font-size: 0.8rem;
+    font-size: .92rem;
   }
   .asset-filename {
     color: var(--d-soft);
@@ -433,8 +425,8 @@ const parseArch = (filename: string) => {
     color: var(--d-accent);
   }
   .asset-btn.is-primary {
-    background: var(--d-accent);
-    border-color: var(--d-accent);
+    background: var(--clr-action);
+    border-color: var(--clr-action);
     color: #ffffff !important;
   }
   .asset-btn.is-primary:hover {
@@ -492,6 +484,7 @@ const parseArch = (filename: string) => {
     font-size: 0.88rem;
     line-height: 1.7;
     scrollbar-width: thin;
+    overflow-wrap: anywhere;
   }
   .changelog-body :global(h1), .changelog-body :global(h2), .changelog-body :global(h3), .changelog-body :global(h4) {
     margin: 16px 0 6px;
@@ -565,5 +558,13 @@ const parseArch = (filename: string) => {
     .asset-icon { display: none; }
     .asset-size { margin-left: 0; }
     .asset-btn { justify-content: center; width: 100%; }
+  }
+  @media (max-width: 480px) {
+    .download-hero h1 { font-size: clamp(2.35rem, 10vw, 3rem); overflow-wrap: anywhere; }
+    .release-header, .release-meta { flex-wrap: wrap; }
+    .release-title-block { min-width: 0; overflow-wrap: anywhere; }
+    .release-card { min-width: 0; padding-inline: 18px; }
+    .asset-grid, .asset-item { grid-template-columns: minmax(0, 1fr); }
+    .asset-size { overflow-wrap: anywhere; }
   }
 </style>

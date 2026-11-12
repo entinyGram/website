@@ -41,39 +41,64 @@ const formatRelativeTime = (iso: string) => {
 
 const cryptoWallets = [
   {
-    coin: "ETH",
-    icon: "tabler:brand-ethereum",
-    network: "Ethereum Mainnet",
-    address: "0x1D8cf5A876188256931a6D2FB1F4FAFCB5C03a99",
-    desc: uk ? "Нативний ETH у мережі Ethereum Mainnet." : "Native ETH on Ethereum Mainnet.",
+    name: "USDT",
+    network: "tron trc-20",
+    address: "TQxoxjRTRe6QZqcyapdA26XaAiaDmt1ZBU",
+    icon: "simple-icons:tether",
   },
   {
-    coin: "USDC",
-    icon: "tabler:coin",
-    network: "Base",
-    address: "0x1D8cf5A876188256931a6D2FB1F4FAFCB5C03a99",
-    desc: uk ? "Офіційний стейблкоїн USDC у мережі Base." : "Official USDC on Base network.",
+    name: "USDT",
+    network: "ton network",
+    address: "UQBVF34OLvKx8trJsMaJfjVOg0kdr75C463c53HfRYav3XyQ",
+    icon: "simple-icons:tether",
   },
   {
-    coin: "GRAM / TON",
+    name: "USDT",
+    network: "solana",
+    address: "Na3jT5GE73rfSD8RMNUC7VkjWF4jysRjkm8vw93xu94",
+    icon: "simple-icons:tether",
+  },
+  {
+    name: "USDT",
+    network: "ethereum · bsc · base",
+    address: "0x1D0b404e9C2aa1aE18824a2C7f2f428A279edF01",
+    icon: "simple-icons:tether",
+  },
+  {
+    name: "TON / GRAM",
+    network: "ton network",
+    address: "UQBVF34OLvKx8trJsMaJfjVOg0kdr75C463c53HfRYav3XyQ",
     icon: "tabler:diamond",
-    network: "TON network",
-    address: "UQBgCQmC-kT8W2AQfEUavuIszQEN-iuR8LUUNJkHeIN2oW5m",
-    desc: uk ? "Токени мережі The Open Network." : "Tokens on The Open Network (TON).",
   },
   {
-    coin: "SOL",
-    icon: "tabler:currency-solana",
-    network: "Solana Mainnet",
-    address: "BWKK9NwmMFMa4N4MbRYg8yNH2A3zNJxNYNxTBSNZAzXr",
-    desc: uk ? "Швидкі перекази у мережі Solana." : "Fast transfers via Solana Mainnet.",
-  },
-  {
-    coin: "BTC",
+    name: "BTC",
+    network: "bitcoin segwit",
+    address: "bc1qh4zs0adawjse4sj75klyp5qs2vlqcsd7y9sp36",
     icon: "tabler:currency-bitcoin",
-    network: "Bitcoin Native SegWit",
-    address: "bc1qk9n4mru8skrdw94k6g5s5wcm0ucwlrwqlgxjq7",
-    desc: uk ? "Біткоїн Bech32 Native SegWit." : "Native SegWit (Bech32) Bitcoin.",
+  },
+  {
+    name: "ETH",
+    network: "ethereum · base",
+    address: "0x1D0b404e9C2aa1aE18824a2C7f2f428A279edF01",
+    icon: "tabler:currency-ethereum",
+  },
+  {
+    name: "BNB",
+    network: "bsc",
+    address: "0x1D0b404e9C2aa1aE18824a2C7f2f428A279edF01",
+    icon: "simple-icons:bnbchain",
+  },
+  {
+    name: "SOL",
+    network: "solana mainnet",
+    address: "Na3jT5GE73rfSD8RMNUC7VkjWF4jysRjkm8vw93xu94",
+    icon: "tabler:currency-solana",
+  },
+  {
+    name: "TRX",
+    network: "tron",
+    address: "TQxoxjRTRe6QZqcyapdA26XaAiaDmt1ZBU",
+    icon: "cryptocurrency:trx",
   },
 ];
 ---
@@ -87,9 +112,9 @@ const cryptoWallets = [
 >
   <EntinyGramHeader active="donate" />
 
-  <main class="donate-page">
+  <main id="main-content" class="donate-page">
     <section class="donate-hero">
-      <h1>{uk ? "Підтримай проєкт." : "Keep entinyGram Alive."}</h1>
+      <h1>{uk ? "Підтримати entinyGram" : "Support entinyGram"}</h1>
       <p class="donate-hero-lead">
         {uk
           ? "entinyGram — повністю безкоштовний патчсет із відкритим кодом. Жодної реклами, трекерів, аналітики чи платних підписок. Усі внески йдуть на оплату серверів, автоматичних CI/CD збірок та підтримку нових функцій."
@@ -309,7 +334,7 @@ const cryptoWallets = [
           <div class="card-head">
             <div class="card-head-title">
               <span class="iconify" data-icon="tabler:coins" aria-hidden="true"></span>
-              <h2>{uk ? "Криптогаманці" : "Direct Crypto"}</h2>
+              <h2>{uk ? "Криптогаманці" : "Crypto wallets"}</h2>
             </div>
             <span class="head-note">{uk ? "Перевіряйте мережу" : "Check network"}</span>
           </div>
@@ -321,7 +346,7 @@ const cryptoWallets = [
                   <div class="crypto-title-row">
                     <span class="coin-badge">
                       <span class="iconify" data-icon={w.icon} aria-hidden="true"></span>
-                      <span>{w.coin}</span>
+                      <span>{w.name}</span>
                     </span>
                     <span class="network-badge">{w.network}</span>
                   </div>
@@ -329,8 +354,8 @@ const cryptoWallets = [
                     type="button"
                     class="copy-icon-btn copy-card-action"
                     data-copy={w.address}
-                    title={uk ? `Скопіювати ${w.coin} адресу` : `Copy ${w.coin} address`}
-                    aria-label={`Copy ${w.coin} address`}
+                    title={uk ? `Скопіювати ${w.name} адресу` : `Copy ${w.name} address`}
+                    aria-label={uk ? `Скопіювати адресу ${w.name} (${w.network})` : `Copy ${w.name} address (${w.network})`}
                   >
                     <span class="iconify" data-icon="tabler:copy" aria-hidden="true"></span>
                     <span>{uk ? "Копіювати" : "Copy"}</span>
@@ -339,7 +364,7 @@ const cryptoWallets = [
                 <div class="crypto-address-row">
                   <code class="crypto-code font-mono">{w.address}</code>
                 </div>
-                <p class="crypto-desc">{w.desc}</p>
+
               </div>
             ))}
           </div>
@@ -379,14 +404,13 @@ const cryptoWallets = [
       if (!text) return;
       try {
         await navigator.clipboard.writeText(text);
-        const originalText = btn.innerHTML;
         btn.classList.add("is-copied");
-        showToast("Скопійовано: " + text.slice(0, 16) + (text.length > 16 ? "…" : ""));
+        showToast(document.documentElement.lang === "uk" ? "Скопійовано в буфер" : "Copied to clipboard");
         setTimeout(() => {
           btn.classList.remove("is-copied");
         }, 1800);
-      } catch (err) {
-        showToast("Помилка копіювання");
+      } catch {
+        showToast(document.documentElement.lang === "uk" ? "Не вдалося скопіювати" : "Could not copy");
       }
     });
   });
@@ -402,14 +426,14 @@ const cryptoWallets = [
 
 <style>
   .donate-page {
-    --dp-bg: #ffffff;
-    --dp-card: #f7f7f7;
-    --dp-card-elevated: #ffffff;
-    --dp-ink: #0a0a0a;
-    --dp-muted: #666666;
-    --dp-line: #ebebeb;
-    --dp-accent: #f20c3c;
-    --dp-accent-hover: #d10932;
+    --dp-bg: var(--clr-bg);
+    --dp-card: var(--clr-surface);
+    --dp-card-elevated: var(--clr-elevated);
+    --dp-ink: var(--clr-text);
+    --dp-muted: var(--clr-text-muted);
+    --dp-line: var(--clr-border);
+    --dp-accent: var(--clr-link);
+    --dp-accent-hover: var(--clr-accent-hover);
     min-height: 80vh;
     padding-bottom: 7rem;
     background: var(--dp-bg);
@@ -420,16 +444,6 @@ const cryptoWallets = [
     box-sizing: border-box;
   }
 
-  :global([data-theme="dark"]) .donate-page {
-    --dp-bg: #030502;
-    --dp-card: #080b07;
-    --dp-card-elevated: #0e120d;
-    --dp-ink: #f0f2f0;
-    --dp-muted: #88908a;
-    --dp-line: #141813;
-    --dp-accent: #f20c3c;
-    --dp-accent-hover: #d10932;
-  }
 
   .donate-hero {
     max-width: 1200px;
@@ -654,8 +668,8 @@ const cryptoWallets = [
   }
 
   .eg-tech-btn.is-primary {
-    background: var(--dp-accent);
-    border-color: var(--dp-accent);
+    background: var(--clr-action);
+    border-color: var(--clr-action);
     color: #ffffff;
   }
   .eg-tech-btn.is-primary .eg-btn-icon {
@@ -812,7 +826,7 @@ const cryptoWallets = [
     color: #3d9a67;
   }
   .feed-time {
-    font-size: 0.74rem;
+    font-size: .9rem;
     color: var(--dp-muted);
   }
 
@@ -901,28 +915,10 @@ const cryptoWallets = [
   }
 
   /* Crypto List */
-  .crypto-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .crypto-item {
-    padding: 14px 16px;
-    border-radius: 6px;
-    border: 1px solid var(--dp-line);
-    background: var(--dp-bg);
-  }
-  .crypto-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 8px;
-  }
-  .crypto-title-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+  .crypto-list { display: grid; }
+  .crypto-item { padding: 14px 0; border-top: 1px solid var(--dp-line); min-width: 0; }
+  .crypto-top, .crypto-title-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .crypto-top { justify-content: space-between; margin-bottom: 8px; }
   .coin-badge {
     display: inline-flex;
     align-items: center;
@@ -941,7 +937,7 @@ const cryptoWallets = [
     color: var(--dp-accent);
   }
   .network-badge {
-    font-size: 0.74rem;
+    font-size: .9rem;
     color: var(--dp-muted);
   }
   .crypto-address-row {
@@ -954,14 +950,8 @@ const cryptoWallets = [
     border: 1px solid var(--dp-line);
     background: var(--dp-card);
     color: var(--dp-ink);
-    font-size: 0.76rem;
-    word-break: break-all;
-  }
-  .crypto-desc {
-    margin: 0;
-    font-size: 0.76rem;
-    color: var(--dp-muted);
-    line-height: 1.5;
+    font-size: .88rem;
+    overflow-wrap: anywhere;
   }
 
   /* Toast Notification */
@@ -1000,13 +990,20 @@ const cryptoWallets = [
     height: 16px;
   }
 
+  .wire-val { overflow-wrap: anywhere; }
+
   @media (max-width: 840px) {
     .sub-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: 24px;
     }
     .monobank-card, .bento-card {
       padding: 24px 20px;
     }
+  }
+  @media (max-width: 480px) {
+    .donate-container, .donate-hero { padding-inline: 18px; }
+    .monobank-card, .bento-card { min-width: 0; padding: 20px 16px; }
+    .card-head, .card-top-row, .card-copy-box, .wire-copyable { flex-wrap: wrap; }
   }
 </style>

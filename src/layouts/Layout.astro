@@ -23,7 +23,7 @@ const initialTheme = Astro.cookies.get("theme")?.value === "dark" ? "dark" : "li
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content={initialTheme === "dark" ? "#030502" : "#ffffff"} />
+    <meta name="theme-color" content={initialTheme === "dark" ? "#100d0e" : "#ffffff"} />
     <link rel="icon" type="image/svg+xml" href={favicon} />
     <link rel="alternate icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -43,6 +43,7 @@ const initialTheme = Astro.cookies.get("theme")?.value === "dark" ? "dark" : "li
     <script src="https://code.iconify.design/3/3.1.1/iconify.min.js" defer></script>
   </head>
   <body class="eg-body">
+    <a class="skip-link" href="#main-content">{lang === "uk" ? "До основного вмісту" : "Skip to content"}</a>
     <slot />
     <script is:inline src="/js/entinygram.js"></script>
     <Analytics />
@@ -50,12 +51,14 @@ const initialTheme = Astro.cookies.get("theme")?.value === "dark" ? "dark" : "li
 </html>
 
 <style is:global>
-  html:has(.eg-page), html:has(.feature-page), html:has(.faq-page), html:has(.downloads-page) { scroll-behavior:smooth; }
-  body.eg-body { min-height:100vh; margin:0; background:#fff; color:#0a0a0a; font-family:var(--font-main,"Overused Grotesk",sans-serif); line-height:1.5; transition:background-color .2s ease,color .2s ease; }
-  [data-theme="dark"] body.eg-body { background:#030502; color:#f0f2f0; }
+  html { font-size: 106.25%; }
+  body.eg-body { min-height:100vh; margin:0; background:var(--clr-bg); color:var(--clr-text); font-family:var(--font-main,"Overused Grotesk",sans-serif); line-height:1.5; transition:background-color .2s ease,color .2s ease; }
   body.eg-body *, body.eg-body *::before, body.eg-body *::after { box-sizing:border-box; }
   body.eg-body :focus-visible { outline:2px solid #f20c3c; outline-offset:2px; }
   [data-theme="dark"] body.eg-body :focus-visible { outline-color:#f20c3c; }
   body.eg-body ::selection { color:#fff; background:#f20c3c; }
   [data-theme="dark"] body.eg-body ::selection { background:#f20c3c; }
+  .skip-link { position:absolute; z-index:100; top:8px; left:8px; padding:10px 14px; background:var(--clr-active-bg); color:var(--clr-active-text); transform:translateY(-150%); }
+  .skip-link:focus { transform:none; }
+  @media (prefers-reduced-motion: reduce) { html, html:has(main) { scroll-behavior:auto; } }
 </style>

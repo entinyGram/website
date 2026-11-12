@@ -25,24 +25,20 @@ const uk = pageLang === "uk";
 
 <header class="eg-shell-header" id="egHeader">
   <a class="eg-shell-brand" href="/" aria-label="entinyGram home">
-    <svg class="eg-brand-glyph" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8">
-      <path d="M4 10a7.31 7.31 0 0 0 10 10Z" />
-      <path d="m9 15 3-3" />
-      <path d="M17 13a6 6 0 0 0-6-6" />
-      <path d="M21 13A10 10 0 0 0 11 3" />
-    </svg>
+    <img class="eg-brand-glyph" src="/branding/entinygram-mark.svg" alt="" width="42" height="42" />
+    <span class="eg-brand-name">entinyGram</span>
   </a>
 
   <nav class="eg-shell-nav" id="egNav" aria-label="entinyGram navigation">
-    <a class:list={{ "is-active": active === "features" }} href="/features" data-lang-key="eg_nav_features">Features</a>
-    <a class:list={{ "is-active": active === "changelog" }} href="/changelog" data-lang-key="eg_nav_changelog">Changelog</a>
-    <a class:list={{ "is-active": active === "docs" }} href="/docs" data-lang-key="eg_nav_docs">Docs</a>
-    <a class:list={{ "is-active": active === "faq" }} href="/faq" data-lang-key="eg_nav_faq">FAQ</a>
-    <a class:list={{ "is-active": active === "donate" }} href="/donate" data-lang-key="eg_nav_support">{uk ? "Підтримка" : "Support"}</a>
+    <a class:list={{ "is-active": active === "features" }} aria-current={active === "features" ? "page" : undefined} href="/features" data-lang-key="eg_nav_features">Features</a>
+    <a class:list={{ "is-active": active === "changelog" }} aria-current={active === "changelog" ? "page" : undefined} href="/changelog" data-lang-key="eg_nav_changelog">Changelog</a>
+    <a class:list={{ "is-active": active === "docs" }} aria-current={active === "docs" ? "page" : undefined} href="/docs" data-lang-key="eg_nav_docs">Docs</a>
+    <a class:list={{ "is-active": active === "faq" }} aria-current={active === "faq" ? "page" : undefined} href="/faq" data-lang-key="eg_nav_faq">FAQ</a>
+    <a class:list={{ "is-active": active === "donate" }} aria-current={active === "donate" ? "page" : undefined} href="/donate" data-lang-key="eg_nav_support">{uk ? "Підтримка" : "Support"}</a>
   </nav>
 
   <div class="eg-shell-actions">
-    <a class:list={["eg-shell-dl-btn", { "is-active": active === "downloads" }]} href="/downloads">
+    <a class:list={["eg-shell-dl-btn", { "is-active": active === "downloads" }]} href="/downloads" aria-label={uk ? "Завантаження" : "Downloads"} aria-current={active === "downloads" ? "page" : undefined}>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       <span data-lang-key="eg_nav_download">Downloads</span>
     </a>
@@ -68,7 +64,7 @@ const uk = pageLang === "uk";
     };
     burger.addEventListener("click", () => set(!header.classList.contains("is-open")));
     header.querySelectorAll(".eg-shell-nav a").forEach((link) => link.addEventListener("click", () => set(false)));
-    document.addEventListener("keydown", (event) => { if (event.key === "Escape") set(false); });
+    document.addEventListener("keydown", (event) => { if (event.key === "Escape" && header.classList.contains("is-open")) { set(false); burger.focus(); } });
     document.addEventListener("click", (event) => { if (!header.contains(event.target)) set(false); });
     window.matchMedia("(min-width: 901px)").addEventListener("change", (event) => { if (event.matches) set(false); });
 
@@ -88,20 +84,15 @@ const uk = pageLang === "uk";
   /* Top Announcement Bar ("плашка") */
   .eg-top-banner {
     width: 100%;
-    border-bottom: 1px solid var(--shell-line, #ebebeb);
-    background: var(--shell-bg, #ffffff);
+    border-bottom: 1px solid var(--clr-border);
+    background: var(--clr-surface);
     color: var(--shell-ink, #0a0a0a);
-    font-size: 0.82rem;
+    font-size: .9rem;
     font-weight: 500;
     position: relative;
     z-index: 30;
     font-family: var(--font-main, "Overused Grotesk", sans-serif);
     transition: background 0.15s ease, border-color 0.15s ease;
-  }
-  [data-theme="dark"] .eg-top-banner {
-    border-color: #141813;
-    background: #030502;
-    color: #f0f2f0;
   }
   .eg-top-banner-inner {
     max-width: 1320px;
@@ -127,13 +118,10 @@ const uk = pageLang === "uk";
   }
   .eg-banner-text {
     flex: 1;
-    color: var(--shell-muted, #666666);
+    color: var(--clr-text-muted);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-  [data-theme="dark"] .eg-banner-text {
-    color: #88908a;
   }
   .eg-banner-link {
     display: inline-flex;
@@ -141,7 +129,7 @@ const uk = pageLang === "uk";
     gap: 3px;
     padding: 3px 9px;
     border-radius: 4px;
-    background: var(--shell-accent, #f20c3c);
+    background: #bc1035;
     color: #ffffff !important;
     font-size: 0.78rem;
     font-weight: 500;
@@ -182,15 +170,16 @@ const uk = pageLang === "uk";
   }
 
   .eg-shell-header {
-    --shell-bg: #ffffff;
-    --shell-ink: #0a0a0a;
-    --shell-muted: #666666;
-    --shell-accent: #f20c3c;
-    --shell-line: #ebebeb;
-    --shell-hover: #f5f5f5;
+    --shell-bg:var(--clr-bg);
+    --shell-ink:var(--clr-text);
+    --shell-muted:var(--clr-text-muted);
+    --shell-accent:var(--clr-link);
+    --shell-line:var(--clr-border);
+    --shell-hover:var(--clr-hover);
     position: relative;
     z-index: 20;
     max-width: 1320px;
+    border-bottom: 1px solid var(--shell-line);
     height: 68px;
     margin: 0 auto;
     padding: 0 4vw;
@@ -202,14 +191,6 @@ const uk = pageLang === "uk";
     font-family: var(--font-main, "Overused Grotesk", sans-serif);
     transition: background 0.15s ease, border-color 0.15s ease;
   }
-  [data-theme="dark"] .eg-shell-header {
-    --shell-bg: #030502;
-    --shell-ink: #f0f2f0;
-    --shell-muted: #88908a;
-    --shell-accent: #f20c3c;
-    --shell-line: #141813;
-    --shell-hover: #0c100d;
-  }
   .eg-shell-header *, .eg-shell-header *::before, .eg-shell-header *::after { box-sizing: border-box; }
   
   .eg-shell-brand {
@@ -217,7 +198,12 @@ const uk = pageLang === "uk";
     align-items: center;
     color: var(--shell-ink);
     text-decoration: none;
-    transition: color 0.15s ease, transform 0.15s ease;
+    gap: 2px;
+    white-space: nowrap;
+    font-size: 1.16rem;
+    font-weight: 650;
+    letter-spacing: -.035em;
+    transition: color 0.15s ease;
   }
   .eg-shell-brand:hover {
     color: var(--shell-accent);
@@ -231,7 +217,7 @@ const uk = pageLang === "uk";
     align-items: center;
     gap: 24px;
     margin-left: 12px;
-    font-size: 0.88rem;
+    font-size: 1rem;
     font-weight: 500;
   }
   .eg-shell-nav a {
@@ -276,7 +262,7 @@ const uk = pageLang === "uk";
     align-items: center;
     gap: 7px;
     padding: 7px 14px;
-    font-size: 0.84rem;
+    font-size: .96rem;
     font-weight: 500;
     border-radius: 6px;
     border: 1px solid var(--shell-line);
@@ -362,23 +348,34 @@ const uk = pageLang === "uk";
   @media (max-width: 900px) {
     .eg-shell-burger { display: flex; }
     .eg-shell-nav {
-      position: fixed;
-      top: 68px;
+      position: absolute;
+      top: 100%;
       left: 0;
       right: 0;
-      bottom: 0;
+      max-height: calc(100dvh - 130px);
+      overflow-y: auto;
       background: var(--shell-bg);
       flex-direction: column;
       align-items: flex-start;
       padding: 32px 24px;
-      gap: 20px;
+      gap: 4px;
       display: none;
       margin-left: 0;
       border-top: 1px solid var(--shell-line);
       z-index: 50;
     }
+    .eg-shell-nav a { width: 100%; padding: 12px 0; }
     .eg-shell-header.is-open .eg-shell-nav { display: flex; }
     .eg-shell-nav a.is-active::after { display: none; }
     .eg-shell-nav a.is-active { color: var(--shell-accent); }
+  }
+  @media (max-width: 540px) {
+    .eg-shell-header { gap: 8px; }
+    .eg-top-banner-inner { gap: 8px; }
+    .eg-banner-text { white-space: normal; line-height: 1.2; }
+    .eg-shell-actions { gap: 6px; }
+    .eg-brand-name, .eg-shell-dl-btn span { display: none; }
+    .eg-shell-dl-btn { padding: 10px; }
+    .eg-shell-theme, .eg-shell-burger { width: 40px; height: 40px; }
   }
 </style>

@@ -47,7 +47,7 @@ const applicationJsonLd = {
   <div class="eg-page" id="entinygram-page">
     <EntinyGramHeader active="home" />
 
-    <main>
+    <main id="main-content">
       <section class="eg-hero" aria-labelledby="eg-title">
         <div class="eg-hero-copy">
           <h1 id="eg-title"><span data-lang-key="eg_hero_line1">{pageLang === "uk" ? "Налаштуй Telegram" : "Telegram,"}</span><br /><span class="eg-highlight" data-lang-key="eg_hero_line2">{pageLang === "uk" ? "під себе." : "your way."}</span></h1>
@@ -98,7 +98,6 @@ const applicationJsonLd = {
         </div>
 
         <div class="eg-hero-art" aria-label="Illustration of entinyGram interface settings">
-          <div class="eg-art-note eg-note-top"><span class="eg-note-dot"></span><span data-lang-key="eg_art_patchset">{pageLang === "uk" ? "Твій інтерфейс, налаштований." : "Your interface, tuned."}</span></div>
           <div class="eg-app-window">
             <div class="eg-app-topbar">
               <span class="eg-app-menu" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -118,32 +117,21 @@ const applicationJsonLd = {
             <div class="eg-app-tabs"><span class="eg-tab-active"></span><span></span><span></span><span></span></div>
           </div>
 
-          <div class="eg-art-note eg-note-bottom"><span class="eg-note-check" aria-hidden="true"></span><span data-lang-key="eg_art_control">{pageLang === "uk" ? "Кожна деталь під твоїм контролем" : "Every detail in your control"}</span></div>
-          <span class="eg-art-shape eg-shape-one" aria-hidden="true"></span>
-          <span class="eg-art-shape eg-shape-two" aria-hidden="true"></span>
         </div>
       </section>
 
       <section class="eg-showcase-wrap" id="features" aria-labelledby="eg-showcase-title">
         <div class="eg-showcase">
           <div class="eg-showcase-copy">
-            <h2 id="eg-showcase-title" data-lang-key="eg_showcase_title">{pageLang === "uk" ? "Зроби Telegram по-справжньому своїм." : "Make Telegram feel like yours."}</h2>
-            <p data-lang-key="eg_showcase_copy">{pageLang === "uk" ? "Дрібниці змінюють весь додаток. Формуй інтерфейс елементами в стилі Material 3." : "Small details change the whole app. Shape the interface with controls inspired by Material 3."}</p>
+            <h2 id="eg-showcase-title" data-lang-key="eg_showcase_title">{pageLang === "uk" ? "Налаштування Telegram під тебе" : "Telegram settings you can tune"}</h2>
+            <p data-lang-key="eg_showcase_copy">{pageLang === "uk" ? "Змінюй форму аватарів, переставляй нижні вкладки й налаштовуй приватність для окремих чатів." : "Change the shape of avatars, rearrange the bottom tabs and set privacy rules for individual chats."}</p>
             <a class="eg-inverse-link" href="/features"><span data-lang-key="entinygram_btn_features">{pageLang === "uk" ? "Усі можливості" : "All Features"}</span><span class="eg-arrow" aria-hidden="true"></span></a>
-            <div class="eg-showcase-pagination" aria-hidden="true"><span></span><span></span><span class="is-active"></span><span></span></div>
           </div>
 
           <div class="eg-settings-art">
             <div class="eg-settings-heading">
-              <span data-lang-key="eg_settings_title">{pageLang === "uk" ? "Інтерфейс" : "Interface"}</span>
-              <span class="eg-settings-section" data-lang-key="eg_settings_section">{pageLang === "uk" ? "Персоналізація" : "Personalization"}</span>
+              <span data-lang-key="eg_settings_title">{pageLang === "uk" ? "Попередній перегляд" : "Settings preview"}</span>
             </div>
-            <div class="eg-setting-range">
-              <div class="eg-setting-label"><label for="avatar-radius" data-lang-key="eg_avatar_rounding">{pageLang === "uk" ? "Форма аватара" : "Avatar shape"}</label><output id="avatar-radius-value">18</output></div>
-              <div class="eg-setting-label eg-setting-endpoints"><span data-lang-key="eg_shape_square">{pageLang === "uk" ? "Квадратний" : "Square"}</span><span data-lang-key="eg_shape_round">{pageLang === "uk" ? "Круглий" : "Round"}</span></div>
-              <md-slider id="avatar-radius" min="0" max="30" value="18" step="1" aria-label="Avatar corner radius"></md-slider>
-            </div>
-
             <div class="eg-settings-preview is-ghost-mode" id="settings-preview">
               <div class="eg-preview-toolbar">
                 <span class="eg-mini-menu" aria-hidden="true">☰</span>
@@ -160,11 +148,17 @@ const applicationJsonLd = {
                 <span class="eg-mini-search" aria-hidden="true"></span>
               </div>
               <div class="eg-preview-chat">
-                <span class="eg-preview-avatar"></span>
-                <span class="eg-preview-lines"><i></i><i></i></span>
-                <span class="eg-preview-time">now</span>
+                <span class="eg-preview-avatar"><img src="/branding/entinygram-mark.svg" alt="" width="44" height="44" /></span>
+                <div class="eg-preview-message"><strong>entinyGram</strong><span data-lang-key="eg_demo_chat">{pageLang === "uk" ? "Новий реліз уже доступний." : "The new release is available."}</span></div>
+                <time class="eg-preview-time">12:48</time>
               </div>
-              <div class="eg-alt-tabs" aria-hidden="true"><i></i><i></i><i></i></div>
+              <div class="eg-alt-tabs" aria-hidden="true"><span data-lang-key="eg_demo_chats">{pageLang === "uk" ? "Чати" : "Chats"}</span><span data-lang-key="eg_demo_feed">{pageLang === "uk" ? "Стрічка" : "Feed"}</span><span data-lang-key="eg_demo_saved">{pageLang === "uk" ? "Збережене" : "Saved"}</span></div>
+            </div>
+
+            <div class="eg-setting-range">
+              <div class="eg-setting-label"><label for="avatar-radius" data-lang-key="eg_avatar_rounding">{pageLang === "uk" ? "Форма аватара" : "Avatar shape"}</label><output id="avatar-radius-value">18</output></div>
+              <div class="eg-setting-label eg-setting-endpoints"><span data-lang-key="eg_shape_square">{pageLang === "uk" ? "Квадратний" : "Square"}</span><span data-lang-key="eg_shape_round">{pageLang === "uk" ? "Круглий" : "Round"}</span></div>
+              <md-slider id="avatar-radius" min="0" max="30" value="18" step="1" aria-label="Avatar corner radius"></md-slider>
             </div>
 
             <div class="eg-setting-list">
@@ -192,25 +186,24 @@ const applicationJsonLd = {
                 <md-switch id="alt-navigation" data-setting-switch="navigation" aria-label="Alternative navigation"></md-switch>
               </label>
             </div>
-            <div class="eg-demo-caption"><span class="eg-caption-pulse"></span><span data-lang-key="eg_demo_caption">{pageLang === "uk" ? "Живе прев’ю — спробуйте перемикачі" : "Live preview — try the controls"}</span></div>
           </div>
         </div>
       </section>
 
       <section class="eg-why" id="why" aria-labelledby="eg-why-title">
-        <div class="eg-why-copy"><h2 id="eg-why-title" data-lang-key="eg_why_title">{pageLang === "uk" ? "Чому ми створили цей форк." : "Why we made this fork."}</h2><p data-lang-key="eg_why_copy">{pageLang === "uk" ? "InuGram дає нам чисту основу на базі патчів. entinyGram розвиває її далі власними інструментами приватності, керуванням інтерфейсом та експериментами." : "InuGram gives us a clean, patch-based foundation. entinyGram carries that work forward with its own privacy tools, interface controls, and experiments the upstream project chooses not to include."}</p></div>
-        <a class="eg-why-link" href="/features"><span data-lang-key="eg_why_link">{pageLang === "uk" ? "Переглянути відмінності проєктів" : "See what belongs to each project"}</span><span class="eg-arrow" aria-hidden="true"></span></a>
+        <div class="eg-why-copy"><h2 id="eg-why-title" data-lang-key="eg_why_title">{pageLang === "uk" ? "Навіщо існує entinyGram" : "Why entinyGram exists"}</h2><p data-lang-key="eg_why_copy">{pageLang === "uk" ? "entinyGram бере за основу InuGram і додає Ghost Mode, локальний архів повідомлень та більше налаштувань для чатів." : "entinyGram builds on InuGram and adds Ghost Mode, a local message archive and more ways to change the chat interface."}</p></div>
+        <a class="eg-why-link" href="/features"><span data-lang-key="eg_why_link">{pageLang === "uk" ? "Переглянути можливості entinyGram" : "Explore entinyGram features"}</span><span class="eg-arrow" aria-hidden="true"></span></a>
       </section>
 
       <section class="eg-approach" id="approach" aria-labelledby="eg-approach-title">
         <div class="eg-approach-heading">
-          <h2 id="eg-approach-title" data-lang-key="entinygram_arch_title">{pageLang === "uk" ? "Патчсет, а не важкий форк." : "Patchset, not a heavy fork."}</h2>
-          <p data-lang-key="entinygram_arch_subtitle">{pageLang === "uk" ? "Побудований як атомарний набір патчів, що накладаються поверх офіційного Telegram Android." : "Built as an atomic collection of patches applied over official Telegram Android."}</p>
+          <h2 id="eg-approach-title" data-lang-key="entinygram_arch_title">{pageLang === "uk" ? "Як працює патчсет" : "How the patchset works"}</h2>
+          <p data-lang-key="entinygram_arch_subtitle">{pageLang === "uk" ? "Проєкт накладає стек патчів StGit поверх Telegram для Android." : "The project applies a stack of StGit patches to Telegram for Android."}</p>
         </div>
         <div class="eg-approach-detail">
           <span class="eg-detail-mark" aria-hidden="true">e/</span>
           <div>
-            <p data-lang-key="eg_approach_detail">{pageLang === "uk" ? "entinyGram базується на патчсеті InuGram і додає власний рівень персоналізації, приватності та експериментів." : "entinyGram builds on the InuGram patchset and adds its own layer of customization, privacy controls, and experiments."}</p>
+            <p data-lang-key="eg_approach_detail">{pageLang === "uk" ? "Кожен патч можна переглянути в репозиторії. Стек містить основу InuGram і доповнення entinyGram." : "Each patch can be inspected in the repository. The stack includes the InuGram base and entinyGram’s additions."}</p>
             <a class="eg-inline-arrow" href="https://github.com/entaytion/entinyGram" target="_blank" rel="noopener noreferrer"><span data-lang-key="eg_read_repository">{pageLang === "uk" ? "Переглянути репозиторій" : "Read the repository"}</span><span class="eg-arrow" aria-hidden="true"></span></a>
           </div>
         </div>
@@ -218,7 +211,7 @@ const applicationJsonLd = {
 
       <section class="eg-release-section" id="download" aria-labelledby="eg-release-title">
         <div class="eg-release-intro">
-          <h2 id="eg-release-title" data-lang-key="eg_release_title">{pageLang === "uk" ? "Готовий до використання." : "Ready when you are."}</h2>
+          <h2 id="eg-release-title" data-lang-key="eg_release_title">{pageLang === "uk" ? "Остання збірка для Android" : "Latest Android build"}</h2>
           <p data-lang-key="eg_release_copy">{pageLang === "uk" ? "Остання стабільна збірка прямо з GitHub Releases." : "The latest stable build, straight from GitHub Releases."}</p>
         </div>
 
@@ -310,16 +303,16 @@ const applicationJsonLd = {
 
   <style>
     .eg-page {
-      --eg-bg: #ffffff;
-      --eg-surface: #f7f7f7;
-      --eg-pink: rgba(242, 12, 60, 0.05);
-      --eg-ink: #0a0a0a;
-      --eg-muted: #666666;
+      --eg-bg: var(--clr-bg);
+      --eg-surface: var(--clr-surface);
+      --eg-pink: color-mix(in srgb, var(--eg-red) 5%, transparent);
+      --eg-ink: var(--clr-text);
+      --eg-muted: var(--clr-text-muted);
       --eg-soft: #888888;
-      --eg-red: #f20c3c;
-      --eg-red-dark: #d10932;
-      --eg-line: #ebebeb;
-      --md-sys-color-primary: #f20c3c;
+      --eg-red: var(--clr-link);
+      --eg-red-dark: var(--clr-accent-hover);
+      --eg-line: var(--clr-border);
+      --md-sys-color-primary: var(--clr-action);
       --md-sys-color-on-primary: #ffffff;
       --md-sys-color-surface: #f7f7f7;
       --md-sys-color-on-surface: #0a0a0a;
@@ -403,8 +396,8 @@ const applicationJsonLd = {
     
     /* Primary Accent Button - strictly white text & icon */
     .eg-btn-primary {
-      background: var(--eg-red) !important;
-      border-color: var(--eg-red) !important;
+      background: var(--clr-action) !important;
+      border-color: var(--clr-action) !important;
       color: #ffffff !important;
     }
     .eg-btn-primary .eg-btn-icon {
@@ -437,10 +430,9 @@ const applicationJsonLd = {
     .eg-arrow::before { content: ""; position: absolute; top: 2px; right: 2px; width: 7px; height: 7px; border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; }
     .eg-arrow::after { content: ""; position: absolute; left: 2px; bottom: 3px; width: 10px; height: 1.5px; background: currentColor; transform: rotate(-45deg); transform-origin: left center; }
     .eg-platform-note { display: flex; align-items: center; gap: 9px; margin-top: 42px; color: var(--eg-soft); font-size: .84rem; font-weight: 500; letter-spacing: .015em; }
-    .eg-status-dot, .eg-caption-pulse, .eg-note-dot { width: 8px; height: 8px; flex: 0 0 auto; background: #3d9a67; border-radius: 50%; }
+    .eg-status-dot { width: 8px; height: 8px; flex: 0 0 auto; background: #3d9a67; border-radius: 50%; }
 
     .eg-hero-art { min-height: 435px; display: grid; place-items: center; position: relative; isolation: isolate; }
-    .eg-hero-art::before { content: ""; position: absolute; z-index: -1; width: min(76%, 455px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(242, 12, 60, 0.08) 0%, transparent 70%); }
     .eg-app-window { width: min(76%, 420px); padding: 17px 18px 13px; border-radius: 12px; background: var(--eg-surface); border: 1px solid var(--eg-line); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04); }
     .eg-app-topbar { height: 43px; display: grid; grid-template-columns: 32px 1fr 32px; align-items: center; gap: 12px; padding: 0 7px 12px; border-bottom: 1px solid var(--eg-line); font-size: .96rem; }
     .eg-app-topbar strong { letter-spacing: -.03em; font-weight: 500; }
@@ -450,44 +442,33 @@ const applicationJsonLd = {
     .eg-app-search::after { content: ""; position: absolute; width: 7px; height: 2px; background: var(--eg-muted); right: -5px; bottom: -3px; transform: rotate(47deg); }
     .eg-chat-preview { display: grid; grid-template-columns: 39px 1fr auto; align-items: center; gap: 11px; padding: 14px 6px; border-bottom: 1px solid var(--eg-line); }
     .eg-chat-muted { opacity: 0.8; }
-    .eg-chat-avatar { width: 39px; aspect-ratio: 1; border-radius: 8px; display: grid; place-items: center; background: rgba(242, 12, 60, 0.1); color: var(--eg-red); font-size: 1.15rem; font-weight: 500; }
+    .eg-chat-avatar { width: 39px; aspect-ratio: 1; border-radius: 8px; display: grid; place-items: center; background: color-mix(in srgb, var(--eg-red) 10%, transparent); color: var(--eg-red); font-size: 1.15rem; font-weight: 500; }
     .eg-avatar-two { background: rgba(155, 93, 229, 0.12); color: #9b5de5; border-radius: 50%; }
     .eg-chat-copy { display: flex; min-width: 0; flex-direction: column; gap: 5px; font-size: .84rem; }
     .eg-chat-copy b { font-size: .88rem; font-weight: 500; }
-    .eg-chat-copy span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--eg-soft); font-size: .78rem; }
-    .eg-chat-time { align-self: start; padding-top: 2px; color: var(--eg-muted); font-size: .78rem; }
+    .eg-chat-copy span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--eg-soft); font-size: .88rem; }
+    .eg-chat-time { align-self: start; padding-top: 2px; color: var(--eg-muted); font-size: .88rem; }
     .eg-app-tabs { display: flex; justify-content: center; gap: 9px; padding-top: 17px; }
     .eg-app-tabs span { width: 6px; height: 6px; border-radius: 50%; background: var(--eg-line); }
     .eg-app-tabs .eg-tab-active { width: 20px; border-radius: 4px; background: var(--eg-red); }
-    .eg-art-note { position: absolute; z-index: 2; display: flex; align-items: center; gap: 8px; padding: 8px 14px; background: var(--eg-surface); border: 1px solid var(--eg-line); border-radius: 4px; font-size: .84rem; font-weight: 500; white-space: nowrap; }
-    .eg-note-top { top: 16%; right: 4%; }
-    .eg-note-bottom { bottom: 14%; left: 3%; }
-    .eg-note-check { width: 18px; height: 18px; display: grid; place-items: center; border-radius: 3px; background: rgba(242, 12, 60, 0.1); }
-    .eg-note-check::after { content: ""; width: 7px; height: 4px; border-right: 1.5px solid var(--eg-red); border-bottom: 1.5px solid var(--eg-red); transform: rotate(45deg) translate(-1px, -1px); }
-    .eg-art-shape { position: absolute; z-index: -1; border: 1.5px solid rgba(242, 12, 60, 0.15); border-radius: 50%; }
-    .eg-shape-one { width: 13px; height: 13px; top: 16%; left: 14%; }
-    .eg-shape-two { width: 22px; height: 22px; bottom: 15%; right: 10%; background: rgba(242, 12, 60, 0.08); }
 
     .eg-showcase-wrap { padding: 0 3.8vw; }
-    .eg-showcase { max-width: 1520px; min-height: 590px; margin: 0 auto; padding: 76px clamp(35px, 6vw, 110px); display: grid; grid-template-columns: minmax(0, .95fr) minmax(440px, .9fr); align-items: center; gap: 6vw; border-radius: 12px; background: #0c0e0c; color: #fff; border: 1px solid #1a1e1a; }
+    .eg-showcase { max-width: 1350px; margin: 0 auto; padding: clamp(32px, 6vw, 88px); display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1fr); align-items: center; gap: 6vw; border-radius: 16px; background: var(--clr-surface); color: var(--eg-ink); }
     .eg-showcase-copy { max-width: 490px; align-self: center; padding: 12px 0; }
-    .eg-showcase-copy h2 { max-width: 570px; margin: 0; font-size: clamp(3rem, 5.7vw, 6.5rem); line-height: .98; letter-spacing: -.03em; font-weight: 500; }
-    .eg-showcase-copy p { max-width: 420px; margin: 23px 0 0; color: #a0a6a0; font-size: clamp(1rem, 1.3vw, 1.15rem); line-height: 1.65; }
-    .eg-inverse-link { margin-top: 23px; color: var(--eg-red); }
-    .eg-inverse-link:hover { color: #ffffff; }
-    .eg-showcase-pagination { display: flex; gap: 7px; align-items: center; width: fit-content; margin-top: 62px; padding: 6px 9px; background: #1c221d; border-radius: 4px; }
-    .eg-showcase-pagination span { width: 7px; height: 7px; border-radius: 50%; background: #404842; }
-    .eg-showcase-pagination span.is-active { width: 9px; height: 9px; background: #fff; }
+    .eg-showcase-copy h2 { max-width: 570px; margin: 0; font-size: clamp(2.7rem, 5vw, 5rem); line-height: .98; letter-spacing: -.03em; font-weight: 500; }
+    .eg-showcase-copy p { max-width: 420px; margin: 23px 0 0; color: var(--eg-muted); font-size: clamp(1rem, 1.3vw, 1.15rem); line-height: 1.65; }
+    .eg-showcase .eg-inverse-link { margin-top: 23px; color: var(--clr-link); }
+    .eg-showcase .eg-inverse-link:hover { color: var(--eg-ink); }
 
-    .eg-settings-art { position: relative; z-index: 1; width: 100%; max-width: 530px; justify-self: end; margin: -30px 0; padding: 26px; border-radius: 12px; background: var(--eg-surface); color: var(--eg-ink); border: 1px solid var(--eg-line); box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08); }
+    .eg-settings-art { width: 100%; max-width: 530px; justify-self: end; padding: clamp(15px, 2.6vw, 30px); border: 1px solid var(--eg-line); border-radius: 16px; background: var(--clr-elevated); }
     .eg-settings-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 0 2px 18px; font-size: 1.35rem; font-weight: 500; letter-spacing: -.02em; }
-    .eg-settings-section { color: var(--eg-muted); font-size: .84rem; font-weight: 500; letter-spacing: 0; }
-    .eg-setting-range { padding: 17px 19px 13px; background: var(--eg-bg); border: 1px solid var(--eg-line); border-radius: 8px; }
+
+    .eg-setting-range { padding: 16px 0 8px; }
     .eg-setting-label { display: flex; align-items: center; gap: 9px; font-size: .85rem; font-weight: 500; }
-    .eg-setting-label output { padding: 3px 8px; border-radius: 4px; background: var(--eg-surface); border: 1px solid var(--eg-line); font-size: .78rem; font-weight: 500; font-variant-numeric: tabular-nums; }
-    .eg-setting-endpoints { justify-content: space-between; margin-top: 10px; color: var(--eg-muted); font-size: .78rem; font-weight: 500; }
+    .eg-setting-label output { padding: 3px 8px; border-radius: 4px; background: var(--eg-surface); border: 1px solid var(--eg-line); font-size: .88rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+    .eg-setting-endpoints { justify-content: space-between; margin-top: 10px; color: var(--eg-muted); font-size: .88rem; font-weight: 500; }
     .eg-setting-range md-slider { display: block; width: 100%; margin: 3px 0 -5px; --md-slider-active-track-color: var(--eg-red); --md-slider-handle-color: var(--eg-red); --md-slider-inactive-track-color: var(--eg-line); }
-    .eg-settings-preview { margin-top: 14px; padding: 12px 15px 9px; overflow: hidden; border: 1px solid var(--eg-line); border-radius: 8px; background: var(--eg-bg); transition: font-family 180ms ease; }
+    .eg-settings-preview { padding: 14px; border-radius: 12px; background: var(--eg-surface); border: 1px solid var(--eg-line); }
     .eg-settings-preview.use-system-font { font-family: system-ui, sans-serif; }
     .eg-preview-toolbar { display: flex; align-items: center; gap: 12px; min-height: 32px; padding-bottom: 10px; border-bottom: 1px solid var(--eg-line); font-size: .82rem; }
     .eg-preview-title { display: inline-flex; align-items: center; gap: 6px; }
@@ -498,26 +479,23 @@ const applicationJsonLd = {
     .eg-settings-preview.is-ghost-mode .eg-preview-monster { display: inline-flex; }
     .eg-mini-search { width: 15px; height: 15px; border: 1.8px solid var(--eg-muted); border-radius: 50%; position: relative; margin-left: auto; flex-shrink: 0; }
     .eg-mini-search::after { content: ""; position: absolute; width: 6px; height: 1.8px; right: -4px; bottom: -2px; transform: rotate(45deg); background: var(--eg-muted); }
-    .eg-preview-chat { display: grid; grid-template-columns: 31px 1fr auto; align-items: center; gap: 9px; padding: 11px 0 8px; border-bottom: 1px solid var(--eg-line); }
-    .eg-alt-tabs { display: none; grid-template-columns: repeat(3, 1fr); gap: 9px; padding: 9px 11px 1px; }
-    .eg-alt-tabs i { height: 4px; max-width: 30px; border-radius: 2px; background: var(--eg-line); }
-    .eg-alt-tabs i:first-child { background: var(--eg-red); }
+    .eg-preview-chat { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 12px 0 2px; }
+    .eg-alt-tabs { display: none; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--eg-line); color: var(--eg-muted); text-align: center; font-size: .88rem; }
+    .eg-alt-tabs span:first-child { color: var(--clr-link); font-weight: 650; }
     .eg-settings-preview.show-alt-navigation .eg-preview-toolbar { border-bottom: 1px solid var(--eg-line); box-shadow: inset 0 -2px var(--eg-red); }
     .eg-settings-preview.show-alt-navigation .eg-alt-tabs { display: grid; }
-    .eg-preview-avatar { width: 31px; height: 31px; border-radius: var(--avatar-radius, 24px); background: rgba(242, 12, 60, 0.15); transition: border-radius 100ms ease; }
-    .eg-preview-lines { display: flex; flex-direction: column; gap: 6px; }
-    .eg-preview-lines i { width: min(132px, 90%); height: 5px; background: var(--eg-line); border-radius: 2px; }
-    .eg-preview-lines i + i { width: min(102px, 70%); opacity: 0.6; }
-    .eg-preview-time { color: var(--eg-muted); font-size: .78rem; }
-    .eg-setting-list { margin-top: 14px; padding: 0 13px; border: 1px solid var(--eg-line); border-radius: 8px; background: var(--eg-bg); }
+    .eg-preview-avatar { display: grid; place-items: center; width: 44px; height: 44px; border-radius: var(--avatar-radius, 24px); background: #3a0b16; transition: border-radius 100ms ease; }
+    .eg-preview-avatar img { width: 36px; height: 36px; }
+    .eg-preview-message { display: grid; gap: 2px; min-width: 0; font-size: .95rem; }
+    .eg-preview-message span { color: var(--eg-muted); font-size: .9rem; }
+    .eg-preview-time { color: var(--eg-muted); font-size: .88rem; }
+    .eg-setting-list { border-top: 1px solid var(--eg-line); }
     .eg-setting-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 59px; cursor: pointer; }
     .eg-setting-row + .eg-setting-row { border-top: 1px solid var(--eg-line); }
     .eg-setting-row > span { display: flex; flex-direction: column; gap: 3px; }
-    .eg-setting-row b { font-size: .88rem; font-weight: 500; }
-    .eg-setting-row small { color: var(--eg-muted); font-size: .78rem; }
-    .eg-setting-row md-switch { flex: 0 0 auto; --md-switch-selected-track-color: var(--eg-red); --md-switch-selected-handle-color: #fff; --md-switch-selected-icon-color: var(--eg-red); }
-    .eg-demo-caption { display: flex; align-items: center; gap: 8px; margin: 14px 3px 0; color: var(--eg-muted); font-size: .78rem; font-weight: 500; }
-    .eg-caption-pulse { width: 7px; height: 7px; background: var(--eg-red); }
+    .eg-setting-row b { font-size: 1rem; font-weight: 500; }
+    .eg-setting-row small { color: var(--eg-muted); font-size: .88rem; }
+    .eg-setting-row md-switch { flex: 0 0 auto; --md-switch-selected-track-color: var(--clr-action); --md-switch-selected-handle-color: #fff; --md-switch-selected-icon-color: var(--eg-red); }
 
     .eg-approach { max-width: 1320px; margin: 0 auto; padding: 130px 7vw; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(280px, .8fr); gap: 10vw; align-items: center; }
     .eg-why { max-width:1320px; margin:0 auto; padding:105px 7vw 65px; display:flex; align-items:end; justify-content:space-between; gap:48px; }
@@ -536,14 +514,14 @@ const applicationJsonLd = {
     .eg-release-intro { max-width: 1200px; margin: 0 auto; }
     .eg-release-intro h2 { margin: 0; font-size: clamp(2.8rem, 5.2vw, 5.4rem); line-height: 1; letter-spacing: -.03em; font-weight: 500; }
     .eg-release-intro p { max-width: 65ch; margin: 17px 0 0; color: var(--eg-muted); font-size: 1rem; line-height: 1.65; }
-    .eg-release-card { max-width: 1200px; margin: 38px auto 0; padding: 24px 28px; display: grid; grid-template-columns: 54px 1fr auto; gap: 22px; align-items: center; background: var(--eg-bg); border: 1px solid var(--eg-line); border-radius: 8px; }
-    .eg-release-mark { width: 50px; height: 50px; display: grid; place-items: center; border-radius: 6px; background: var(--eg-red); color: #fff; font-size: 1.8rem; font-weight: 500; letter-spacing: -.02em; }
+    .eg-release-card { max-width: 1200px; margin: 38px auto 0; padding: 24px 28px; display: grid; grid-template-columns: 54px 1fr auto; gap: 22px; align-items: center; background: var(--clr-elevated); border: 1px solid var(--eg-line); border-radius: 8px; }
+    .eg-release-mark { width: 50px; height: 50px; display: grid; place-items: center; border-radius: 6px; background: var(--clr-action); color: #fff; font-size: 1.8rem; font-weight: 500; letter-spacing: -.02em; }
     .eg-release-info h3 { margin: 4px 0 2px; font-size: 1.12rem; letter-spacing: -.02em; font-weight: 500; }
-    .eg-release-info p { margin: 0; color: var(--eg-soft); font-size: .85rem; font-variant-numeric: tabular-nums; }
+    .eg-release-info p { margin: 0; color: var(--eg-muted); font-size: .85rem; font-variant-numeric: tabular-nums; }
     .eg-release-label { display: flex; align-items: center; gap: 8px; color: #3d9a67; font-size: .8rem; font-weight: 500; }
     .eg-release-label .eg-status-dot { width: 7px; height: 7px; }
     .eg-release-label .eg-dot-muted { background: var(--eg-muted); }
-    .eg-release-links { max-width: 1200px; margin: 19px auto 0; display: flex; flex-wrap: wrap; gap: 24px; color: var(--eg-soft); font-size: .85rem; font-weight: 500; }
+    .eg-release-links { max-width: 1200px; margin: 19px auto 0; display: flex; flex-wrap: wrap; gap: 24px; color: var(--eg-muted); font-size: .85rem; font-weight: 500; }
     .eg-release-links a:hover { color: var(--eg-red); }
     .eg-release-links a span { padding-left: 3px; }
     .eg-donate-pill { color: var(--eg-red) !important; font-weight: 500 !important; }
@@ -553,24 +531,24 @@ const applicationJsonLd = {
     .eg-community > p { margin: 0; color: var(--eg-muted); font-size: .9rem; font-weight: 500; }
     .eg-community-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
     .eg-community-links a { display: flex; flex-direction: column; gap: 8px; font-size: .84rem; font-weight: 500; }
-    .eg-community-links a span + span { color: var(--eg-soft); font-size: .78rem; font-weight: 500; }
+    .eg-community-links a span + span { color: var(--eg-soft); font-size: .88rem; font-weight: 500; }
     .eg-community-links a:hover span:first-child { color: var(--eg-red); }
 
     .eg-page :focus-visible { outline: 2px solid var(--eg-red); outline-offset: 3px; }
-    .eg-page ::selection { color: #fff; background: var(--eg-red); }
+    .eg-page ::selection { color: #fff; background: var(--clr-action); }
 
     /* Dark Mode - Near AMOLED #030502 */
     :global([data-theme="dark"]) .eg-page {
-      --eg-bg: #030502;
-      --eg-surface: #080b07;
-      --eg-pink: rgba(242, 12, 60, 0.08);
-      --eg-ink: #f0f2f0;
-      --eg-muted: #88908a;
+      --eg-bg: var(--clr-bg);
+      --eg-surface: var(--clr-surface);
+      --eg-pink: color-mix(in srgb, var(--eg-red) 8%, transparent);
+      --eg-ink: var(--clr-text);
+      --eg-muted: var(--clr-text-muted);
       --eg-soft: #5e6460;
-      --eg-red: #f20c3c;
-      --eg-red-dark: #d10932;
-      --eg-line: #141813;
-      --md-sys-color-primary: #f20c3c;
+      --eg-red: var(--clr-link);
+      --eg-red-dark: var(--clr-accent-hover);
+      --eg-line: var(--clr-border);
+      --md-sys-color-primary: var(--clr-action);
       --md-sys-color-on-primary: #ffffff;
       --md-sys-color-surface: #080b07;
       --md-sys-color-on-surface: #f0f2f0;
@@ -588,45 +566,23 @@ const applicationJsonLd = {
       background: rgba(255, 255, 255, 0.02);
     }
     :global([data-theme="dark"]) .eg-tech-btn:hover {
-      border-color: #f20c3c;
-      color: #f20c3c;
+      border-color: var(--eg-red);
+      color: var(--eg-red);
       background: #0e120d;
     }
     :global([data-theme="dark"]) .eg-tech-btn:hover .eg-btn-icon {
-      border-right-color: #f20c3c;
-      color: #f20c3c;
+      border-right-color: var(--eg-red);
+      color: var(--eg-red);
     }
     :global([data-theme="dark"]) .eg-btn-primary {
-      background: #f20c3c !important;
-      border-color: #f20c3c !important;
+      background: var(--clr-action) !important;
+      border-color: var(--clr-action) !important;
       color: #ffffff !important;
     }
     :global([data-theme="dark"]) .eg-btn-primary:hover {
-      background: #d10932 !important;
-      border-color: #d10932 !important;
+      background: var(--clr-accent-hover) !important;
+      border-color: var(--clr-accent-hover) !important;
       color: #ffffff !important;
-    }
-    :global([data-theme="dark"]) .eg-page .eg-app-window,
-    :global([data-theme="dark"]) .eg-page .eg-art-note {
-      background: #080b07;
-      border-color: #141813;
-      color: var(--eg-ink);
-    }
-    :global([data-theme="dark"]) .eg-page .eg-settings-art {
-      background: #080b07;
-      border-color: #141813;
-      color: #f0f2f0;
-    }
-    :global([data-theme="dark"]) .eg-page .eg-setting-range,
-    :global([data-theme="dark"]) .eg-page .eg-settings-preview,
-    :global([data-theme="dark"]) .eg-page .eg-setting-list,
-    :global([data-theme="dark"]) .eg-page .eg-release-card {
-      background: #050704;
-      border-color: #141813;
-      color: #f0f2f0;
-    }
-    :global([data-theme="dark"]) .eg-page .eg-release-section {
-      background: #030502;
     }
     :global([data-theme="dark"]) .eg-page .eg-setting-row + .eg-setting-row,
     :global([data-theme="dark"]) .eg-page .eg-app-topbar,
@@ -648,36 +604,33 @@ const applicationJsonLd = {
       .eg-hero h1 { font-size: clamp(3.6rem, 8vw, 6rem); }
       .eg-hero-art { min-height: 390px; }
       .eg-app-window { width: min(86%, 390px); }
-      .eg-note-top { right: -2%; }
-      .eg-showcase { grid-template-columns: .82fr 1fr; gap: 4vw; padding: 60px 5vw; }
+
+      .eg-showcase { grid-template-columns: minmax(0, .82fr) minmax(0, 1fr); gap: 4vw; padding: 60px 5vw; }
       .eg-settings-art { padding: 19px; }
       .eg-settings-heading { font-size: 1.15rem; }
       .eg-approach { padding-top: 100px; padding-bottom: 100px; gap: 6vw; }
     }
     @media (max-width: 640px) {
       .eg-hero { min-height: auto; grid-template-columns: 1fr; gap: 20px; padding: 65px 7vw 70px; }
-      .eg-hero h1 { font-size: clamp(4rem, 16vw, 6.2rem); }
+      .eg-hero h1 { font-size: clamp(2.9rem, 12vw, 5rem); }
       .eg-hero-description { max-width: 480px; margin-top: 20px; font-size: .98rem; }
       .eg-hero-btns { gap: 8px; margin-top: 20px; }
       .eg-platform-note { margin-top: 25px; }
       .eg-hero-art { min-height: 350px; margin-top: 4px; }
-      .eg-hero-art::before { width: min(78%, 340px); }
       .eg-app-window { width: min(78%, 345px); padding: 14px; }
-      .eg-note-top { top: 5%; right: 1%; }
-      .eg-note-bottom { bottom: 3%; left: 0; }
-      .eg-art-note { padding: 8px 12px; font-size: .78rem; }
+
       .eg-showcase-wrap { padding: 0 12px; }
-      .eg-showcase { min-height: auto; grid-template-columns: 1fr; gap: 52px; padding: 46px 22px 37px; border-radius: 12px; }
-      .eg-showcase-copy h2 { max-width: 430px; font-size: clamp(3.2rem, 12vw, 4.8rem); }
+      .eg-showcase { min-height: auto; grid-template-columns: 1fr; gap: 22px; padding: 32px 18px; border-radius: 12px; }
+      .eg-showcase-copy h2 { max-width: 430px; font-size: clamp(2.2rem, 8vw, 3.8rem); }
       .eg-showcase-copy p { font-size: .96rem; }
-      .eg-showcase-pagination { margin-top: 32px; }
+
       .eg-settings-art { width: calc(100% - 4px); max-width: 440px; justify-self: center; padding: 16px; margin: 0 0 4px; transform: none; border-radius: 12px; }
       .eg-settings-heading { font-size: 1.05rem; padding-bottom: 13px; }
-      .eg-settings-section { font-size: .75rem; }
+
       .eg-setting-range { padding: 13px 13px 9px; }
       .eg-setting-row { min-height: 55px; }
-      .eg-setting-row b { font-size: .82rem; }
-      .eg-setting-row small { font-size: .75rem; }
+      .eg-setting-row b { font-size: .98rem; }
+      .eg-setting-row small { font-size: .88rem; }
       .eg-approach { grid-template-columns: 1fr; gap: 38px; padding: 92px 7vw; }
       .eg-why { align-items:start; flex-direction:column; gap:24px; padding:78px 7vw 38px; }
       .eg-approach-heading h2 { font-size: clamp(3rem, 12vw, 4.3rem); }
@@ -687,7 +640,7 @@ const applicationJsonLd = {
       .eg-release-card { grid-template-columns: 48px 1fr; gap: 15px; padding: 19px; margin-top: 27px; border-radius: 8px; }
       .eg-release-mark { width: 44px; height: 44px; border-radius: 4px; font-size: 1.5rem; }
       .eg-release-card .eg-tech-btn { grid-column: 1 / -1; justify-self: stretch; }
-      .eg-release-links { gap: 16px; font-size: .78rem; }
+      .eg-release-links { gap: 16px; font-size: .88rem; }
       .eg-community { grid-template-columns: 1fr; gap: 21px; padding: 42px 7vw; }
       .eg-community-links { grid-template-columns: 1fr; gap: 17px; }
       .eg-community-links a { flex-direction: row; justify-content: space-between; align-items: center; }

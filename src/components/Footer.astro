@@ -1,19 +1,20 @@
 ---
+const uk = Astro.url.searchParams.get("lang") === "ua" || (Astro.url.searchParams.get("lang") !== "en" && Astro.cookies.get("lang")?.value === "ua");
 const year = new Date().getFullYear();
 ---
 
 <footer class="eg-shell-footer">
   <div class="eg-footer-brand">
-    <a href="/">entiny<span>Gram</span></a>
-    <span data-lang-key="eg_footer_tagline">Custom patchset for Telegram Android</span>
+    <a href="/"><img src="/branding/entinygram-mark.svg" alt="" width="38" height="38" />entinyGram</a>
+    <span data-lang-key="eg_footer_note">{uk ? "Незалежний патчсет для Telegram Android." : "An independent Telegram Android patchset."}</span>
   </div>
   <nav aria-label="entinyGram footer navigation">
     <a href="/features" data-lang-key="eg_nav_features">Features</a>
     <a href="/changelog" data-lang-key="eg_nav_changelog">Changelog</a>
     <a href="/faq" data-lang-key="eg_nav_faq">FAQ</a>
     <a href="/docs" data-lang-key="eg_nav_docs">Docs</a>
-    <a href="/branding">Branding</a>
-    <a href="/build">Build</a>
+    <a href="/branding">{uk ? "Брендинг" : "Branding"}</a>
+    <a href="/build">{uk ? "Збірка" : "Build"}</a>
     <a href="/downloads" data-lang-key="eg_nav_download">Downloads</a>
     <a href="/donate" style="color:var(--shell-accent); font-weight:500;" data-lang-key="eg_nav_donate">Support</a>
     <a href="https://github.com/entaytion/entinyGram" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
@@ -23,26 +24,21 @@ const year = new Date().getFullYear();
 
 <style is:global>
   .eg-shell-footer {
-    --shell-ink: #0a0a0a;
-    --shell-muted: #666666;
-    --shell-accent: #f20c3c;
-    --shell-line: #ebebeb;
+    --shell-ink:var(--clr-text);
+    --shell-muted:var(--clr-text-muted);
+    --shell-accent:var(--clr-link);
+    --shell-line:var(--clr-border);
     max-width: 1320px;
     min-height: 96px;
     margin: 0 auto;
-    padding: 24px 4vw;
+    padding: 38px 4vw;
     border-top: 1px solid var(--shell-line);
-    display: flex;
-    align-items: center;
-    gap: 32px;
+    display: grid;
+    grid-template-columns: minmax(160px, 1fr) 2fr auto;
+    align-items: start;
+    gap: 28px;
     color: var(--shell-muted);
     font-family: var(--font-main, "Overused Grotesk", sans-serif);
-  }
-  [data-theme="dark"] .eg-shell-footer {
-    --shell-ink: #f0f2f0;
-    --shell-muted: #88908a;
-    --shell-accent: #f20c3c;
-    --shell-line: #141813;
   }
   .eg-footer-brand {
     display: flex;
@@ -51,17 +47,17 @@ const year = new Date().getFullYear();
     margin-right: auto;
   }
   .eg-footer-brand > a {
+    display: flex;
+    align-items: center;
+    gap: 3px;
     color: var(--shell-ink);
     text-decoration: none;
     font-size: 1.05rem;
     font-weight: 500;
     letter-spacing: -0.02em;
   }
-  .eg-footer-brand > a span {
-    color: var(--shell-accent);
-  }
   .eg-footer-brand > span {
-    font-size: 0.8rem;
+    font-size: .9rem;
   }
   .eg-shell-footer nav {
     display: flex;
@@ -72,7 +68,7 @@ const year = new Date().getFullYear();
   .eg-shell-footer nav a {
     color: var(--shell-muted);
     text-decoration: none;
-    font-size: 0.82rem;
+    font-size: .94rem;
     font-weight: 500;
   }
   .eg-shell-footer nav a:hover {
@@ -84,17 +80,14 @@ const year = new Date().getFullYear();
   @media (max-width: 640px) {
     .eg-shell-footer {
       padding: 24px 6vw;
-      flex-wrap: wrap;
-      gap: 16px;
+      grid-template-columns: 1fr;
+      gap: 20px;
     }
     .eg-footer-brand {
       width: 100%;
     }
     .eg-shell-footer nav {
       gap: 14px;
-    }
-    .eg-shell-footer > small {
-      margin-left: auto;
     }
   }
 </style>

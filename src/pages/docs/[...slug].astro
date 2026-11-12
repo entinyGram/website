@@ -55,7 +55,7 @@ const ui = lang === "uk"
       </details>
     </aside>
 
-    <main class="docs-main">
+    <main id="main-content" class="docs-main">
       <article class="doc-body" set:html={html} />
       <footer class="doc-foot">
         <p>{ui.edit}</p>
@@ -130,8 +130,7 @@ const ui = lang === "uk"
 </script>
 
 <style is:global>
-  .docs-shell { --d-bg:#ffffff; --d-card:#f7f7f7; --d-ink:#0a0a0a; --d-muted:#666666; --d-line:#ebebeb; --d-accent:#f20c3c; --d-code:#0c0e0c; --d-code-bar:#141813; --d-code-ink:#f0f2f0; max-width:1440px; margin:0 auto; padding:10px 5.2vw 90px; display:grid; grid-template-columns:260px minmax(0,1fr) 220px; gap:44px; align-items:start; color:var(--d-ink); }
-  [data-theme="dark"] .docs-shell { --d-bg:#030502; --d-card:#080b07; --d-ink:#f0f2f0; --d-muted:#88908a; --d-line:#141813; --d-accent:#f20c3c; --d-code:#050704; --d-code-bar:#0e120d; }
+  .docs-shell { --d-bg: var(--clr-bg); --d-card: var(--clr-surface); --d-ink: var(--clr-text); --d-muted: var(--clr-text-muted); --d-line: var(--clr-border); --d-accent: var(--clr-link); --d-code: var(--clr-code); --d-code-bar: var(--clr-code-bar); --d-code-ink: var(--clr-code-text); max-width:1440px; margin:0 auto; padding:clamp(30px,5vw,72px) 5.2vw 90px; display:grid; grid-template-columns:260px minmax(0,1fr) 220px; gap:44px; align-items:start; color:var(--d-ink); }
   .docs-side, .docs-toc { position:sticky; top:18px; max-height:calc(100vh - 36px); overflow:auto; scrollbar-width:thin; }
   .docs-side-toggle summary { display:none; }
   .docs-search { display:flex; align-items:center; gap:8px; margin-bottom:18px; padding:9px 12px; border:1px solid var(--d-line); border-radius:12px; background:var(--d-card); color:var(--d-muted); }
@@ -145,14 +144,14 @@ const ui = lang === "uk"
   .docs-link.is-active { color:var(--d-accent); background:var(--d-card); }
   .docs-toc h2 { margin:0 0 10px; color:var(--d-muted); font-size:.72rem; font-weight:500; letter-spacing:.08em; text-transform:uppercase; }
   .docs-toc nav { display:flex; flex-direction:column; border-left:1px solid var(--d-line); }
-  .docs-toc-link { padding:5px 0 5px 14px; margin-left:-1px; border-left:2px solid transparent; color:var(--d-muted); font-size:.82rem; font-weight:500; line-height:1.35; text-decoration:none; }
-  .docs-toc-link.lv3 { padding-left:26px; font-size:.78rem; }
+  .docs-toc-link { padding:5px 0 5px 14px; margin-left:-1px; border-left:2px solid transparent; color:var(--d-muted); font-size:.94rem; font-weight:500; line-height:1.45; text-decoration:none; }
+  .docs-toc-link.lv3 { padding-left:26px; font-size:.88rem; }
   .docs-toc-link:hover { color:var(--d-ink); }
   .docs-toc-link.is-current { color:var(--d-accent); border-left-color:var(--d-accent); }
 
   .docs-main { min-width:0; }
-  .doc-body { max-width:780px; font-size:1rem; line-height:1.75; }
-  .doc-body h1 { margin:24px 0 18px; font-size:clamp(2.2rem,4.6vw,3.6rem); line-height:1.02; letter-spacing:-.035em; }
+  .doc-body { max-width:780px; font-size:1rem; line-height:1.75; overflow-wrap:anywhere; }
+  .doc-body h1 { margin:0 0 24px; padding-bottom:18px; border-bottom:1px solid var(--d-line); font-weight:560; font-size:clamp(2.2rem,4.6vw,3.6rem); line-height:1.02; letter-spacing:-.035em; }
   .doc-body h2 { position:relative; margin:54px 0 14px; padding-top:10px; font-size:1.7rem; line-height:1.15; letter-spacing:-.025em; scroll-margin-top:20px; }
   .doc-body h3 { position:relative; margin:34px 0 10px; font-size:1.2rem; letter-spacing:-.015em; scroll-margin-top:20px; }
   .doc-body h4 { margin:24px 0 8px; font-size:1rem; }

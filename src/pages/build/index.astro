@@ -28,7 +28,7 @@ const ui = lang === "uk"
 <Layout title={ui.title} description={ui.description} favicon="/favicon.svg" image="/og/entinygram-banner.png" lang={pageLang}>
   <EntinyGramHeader active="downloads" />
   <div class="build-shell">
-    <main class="build-main">
+    <main id="main-content" class="build-main">
       <article class="doc-body" set:html={html} />
       <footer class="doc-foot">
         <p>{ui.edit}</p>
@@ -57,18 +57,17 @@ const ui = lang === "uk"
 </script>
 
 <style is:global>
-  .build-shell { --d-bg:#fff; --d-card:#f7f7f7; --d-ink:#0a0a0a; --d-muted:#666666; --d-line:#ebebeb; --d-accent:#f20c3c; --d-code:#1d1716; --d-code-bar:#2a2220; --d-code-ink:#f3e9e6; max-width:1440px; margin:0 auto; padding:10px 5.2vw 90px; display:grid; grid-template-columns:minmax(0,1fr) 220px; gap:44px; align-items:start; color:var(--d-ink); }
-  [data-theme="dark"] .build-shell { --d-bg:#030502; --d-card:#080b07; --d-ink:#f0f2f0; --d-muted:#88908a; --d-line:#141813; --d-accent:#f20c3c; --d-code:#050704; --d-code-bar:#0d110b; }
+  .build-shell { --d-bg: var(--clr-bg); --d-card: var(--clr-surface); --d-ink: var(--clr-text); --d-muted: var(--clr-text-muted); --d-line: var(--clr-border); --d-accent: var(--clr-link); --d-code: var(--clr-code); --d-code-bar: var(--clr-code-bar); --d-code-ink: var(--clr-code-text); max-width:1440px; margin:0 auto; padding:clamp(30px,5vw,72px) 5.2vw 90px; display:grid; grid-template-columns:minmax(0,1fr) 220px; gap:44px; align-items:start; color:var(--d-ink); }
   .build-main { min-width:0; }
   .build-toc { position:sticky; top:18px; max-height:calc(100vh - 36px); overflow:auto; scrollbar-width:thin; }
   .build-toc h2 { margin:0 0 10px; color:var(--d-muted); font-size:.72rem; font-weight:500; letter-spacing:.08em; text-transform:uppercase; }
   .build-toc nav { display:flex; flex-direction:column; border-left:1px solid var(--d-line); }
-  .build-toc-link { padding:5px 0 5px 14px; margin-left:-1px; border-left:2px solid transparent; color:var(--d-muted); font-size:.82rem; font-weight:500; line-height:1.35; text-decoration:none; }
-  .build-toc-link.lv3 { padding-left:26px; font-size:.78rem; }
+  .build-toc-link { padding:5px 0 5px 14px; margin-left:-1px; border-left:2px solid transparent; color:var(--d-muted); font-size:.94rem; font-weight:500; line-height:1.45; text-decoration:none; }
+  .build-toc-link.lv3 { padding-left:26px; font-size:.88rem; }
   .build-toc-link:hover { color:var(--d-ink); }
   .build-toc-link.is-current { color:var(--d-accent); border-left-color:var(--d-accent); }
-  .doc-body { max-width:780px; font-size:1rem; line-height:1.75; }
-  .doc-body h1 { margin:24px 0 18px; font-size:clamp(2.2rem,4.6vw,3.6rem); line-height:1.02; letter-spacing:-.035em; font-weight:500; }
+  .doc-body { max-width:780px; font-size:1rem; line-height:1.75; overflow-wrap:anywhere; }
+  .doc-body h1 { margin:0 0 24px; padding-bottom:18px; border-bottom:1px solid var(--d-line); font-weight:560; font-size:clamp(2.2rem,4.6vw,3.6rem); line-height:1.02; letter-spacing:-.035em; }
   .doc-body h2 { position:relative; margin:54px 0 14px; padding-top:10px; font-size:1.7rem; line-height:1.15; letter-spacing:-.025em; font-weight:500; scroll-margin-top:20px; }
   .doc-body h3 { position:relative; margin:34px 0 10px; font-size:1.2rem; letter-spacing:-.015em; font-weight:500; scroll-margin-top:20px; }
   .doc-body h4 { margin:24px 0 8px; font-size:1rem; font-weight:500; }

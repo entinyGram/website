@@ -26,8 +26,8 @@ const pageLang = requestedLang === "ua" ? "uk" : requestedLang === "en" ? "en" :
 const uk = pageLang === "uk";
 const dateOptions: Intl.DateTimeFormatOptions = { year: "numeric", month: "long", day: "numeric" };
 const t = uk
-  ? { title: "Що нового.", intro: "Усі зміни в кожному релізі: нові можливості, покращення та виправлення.", latest: "Останній", pre: "Пре-реліз", empty: "Записів поки немає.", failed: "Не вдалося завантажити список. Спробуйте пізніше.", github: "Реліз на GitHub", all: "Усі релізи на GitHub ↗", more: (n: number) => `Ще ${n}`, news: "Нові можливості", fixes: "Виправлення", build: "збірка" }
-  : { title: "What's new.", intro: "Every change in every release: new features, improvements and fixes.", latest: "Latest", pre: "Pre-release", empty: "No entries yet.", failed: "The list could not load. Please try again later.", github: "Release on GitHub", all: "All releases on GitHub ↗", more: (n: number) => `Show ${n} more`, news: "New features", fixes: "Bug fixes", build: "build" };
+  ? { title: "Історія релізів", intro: "Усі зміни в кожному релізі: нові можливості, покращення та виправлення.", latest: "Останній", pre: "Пре-реліз", empty: "Записів поки немає.", failed: "Не вдалося завантажити список. Спробуйте пізніше.", github: "Реліз на GitHub", all: "Усі релізи на GitHub ↗", more: (n: number) => `Ще ${n}`, news: "Нові можливості", fixes: "Виправлення", build: "збірка" }
+  : { title: "Release notes", intro: "Every change in every release: new features, improvements and fixes.", latest: "Latest", pre: "Pre-release", empty: "No entries yet.", failed: "The list could not load. Please try again later.", github: "Release on GitHub", all: "All releases on GitHub ↗", more: (n: number) => `Show ${n} more`, news: "New features", fixes: "Bug fixes", build: "build" };
 
 const SHOWN = 7;
 
@@ -50,7 +50,7 @@ const releases = entries.map((entry, index) => {
 
 <Layout title={`${uk ? "Що нового" : "Changelog"} — entinyGram`} description={uk ? "Нові можливості та виправлення кожного релізу entinyGram." : "New features and fixes in every entinyGram release."} favicon="/favicon.svg" image="/og/entinygram-banner.png" lang={pageLang}>
   <EntinyGramHeader active="changelog" />
-  <main class="cl-page">
+  <main id="main-content" class="cl-page">
     <section class="cl-hero">
       <h1>{t.title}</h1>
       <p>{t.intro}</p>
@@ -96,7 +96,7 @@ const releases = entries.map((entry, index) => {
                   <li class="cl-item">
                     {item.name ? (
                       <>
-                        <span class="cl-item-name">{item.name}</span>
+                        <strong class="cl-item-name">{item.name}</strong>{" — "}
                         <span class="cl-item-desc">{item.html ? <span set:html={item.html} /> : item.text}</span>
                       </>
                     ) : (
@@ -108,7 +108,7 @@ const releases = entries.map((entry, index) => {
                   <section class={`cl-sec is-${section.kind}`}>
                     <header class="cl-sec-header">
                       <span class="cl-sec-dot" aria-hidden="true">●</span>
-                      <h3 class="cl-sec-title">{section.title}</h3>
+                      <h3 class="cl-sec-title">{section.title || (uk ? "Зміни" : "Changes")}</h3>
                       <span class="cl-sec-count">{count}</span>
                     </header>
                     <ul class="cl-items">{head.map(row)}</ul>
@@ -144,11 +144,11 @@ const releases = entries.map((entry, index) => {
 
 <style>
   .cl-page {
-    --c-bg: #ffffff;
-    --c-ink: #0a0a0a;
-    --c-muted: #666666;
-    --c-line: #ebebeb;
-    --c-accent: #f20c3c;
+    --c-bg: var(--clr-bg);
+    --c-ink: var(--clr-text);
+    --c-muted: var(--clr-text-muted);
+    --c-line: var(--clr-border);
+    --c-accent: var(--clr-link);
     min-height: 75vh;
     padding-bottom: 6rem;
     background: var(--c-bg);
@@ -157,13 +157,6 @@ const releases = entries.map((entry, index) => {
   }
   .cl-page *, .cl-page *::before, .cl-page *::after {
     box-sizing: border-box;
-  }
-  :global([data-theme="dark"]) .cl-page {
-    --c-bg: #030502;
-    --c-ink: #f0f2f0;
-    --c-muted: #88908a;
-    --c-line: #141813;
-    --c-accent: #f20c3c;
   }
 
   .cl-hero {
@@ -255,10 +248,10 @@ const releases = entries.map((entry, index) => {
   /* Release Article: Open Two-Column Technical Layout */
   .cl-release {
     display: grid;
-    grid-template-columns: 220px minmax(0, 1fr);
-    gap: 48px;
-    padding-bottom: 64px;
-    margin-bottom: 64px;
+    grid-template-columns: minmax(128px, 16%) minmax(0, 1fr);
+    gap: clamp(24px, 4vw, 54px);
+    padding-bottom: 38px;
+    margin-bottom: 42px;
     border-bottom: 1px solid var(--c-line);
   }
   .cl-release:last-child {
@@ -299,7 +292,7 @@ const releases = entries.map((entry, index) => {
     display: inline-block;
     padding: 3px 8px;
     border-radius: 4px;
-    background: var(--c-accent);
+    background: var(--clr-action);
     color: #ffffff;
     font-size: 0.72rem;
     font-weight: 500;
@@ -403,25 +396,15 @@ const releases = entries.map((entry, index) => {
     padding: 0;
   }
   .cl-item {
-    display: flex;
-    align-items: baseline;
-    gap: 20px;
-    padding: 13px 0;
+    padding: 12px 0;
     border-bottom: 1px solid var(--c-line);
-    font-size: 0.92rem;
-    line-height: 1.55;
-  }
-  .cl-item-name {
-    min-width: 170px;
-    max-width: 220px;
-    flex-shrink: 0;
-    font-weight: 500;
     color: var(--c-ink);
+    font-size: 1rem;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
   }
-  .cl-item-desc {
-    flex: 1;
-    color: var(--c-muted);
-  }
+  .cl-item-name { font-weight: 650; }
+  .cl-item-desc { color: var(--c-muted); }
   .cl-item-desc a {
     color: var(--c-accent);
     text-decoration: none;
@@ -430,7 +413,6 @@ const releases = entries.map((entry, index) => {
     text-decoration: underline;
   }
   .cl-item-full {
-    flex: 1;
     color: var(--c-ink);
   }
   .cl-item-full a {
@@ -476,14 +458,6 @@ const releases = entries.map((entry, index) => {
     }
     .cl-aside {
       position: static;
-    }
-    .cl-item {
-      flex-direction: column;
-      gap: 4px;
-    }
-    .cl-item-name {
-      min-width: 0;
-      max-width: 100%;
     }
   }
 </style>
