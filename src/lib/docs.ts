@@ -25,7 +25,7 @@ export const docGroups: DocGroup[] = [
   { id: "start", title: { en: "Getting started", uk: "Початок" } },
   { id: "core", title: { en: "Core concepts", uk: "Основи" } },
   { id: "unsafe", title: { en: "Low level", uk: "Низький рівень" } },
-  { id: "entiny", title: { en: "entinyGram SDK", uk: "entinyGram SDK" } },
+  { id: "entiny", title: { en: "entinyGram", uk: "entinyGram" } },
   { id: "ship", title: { en: "Publishing", uk: "Публікація" } },
   { id: "reference", title: { en: "Reference", uk: "Довідник" } },
 ];
@@ -44,13 +44,12 @@ export const docs: DocMeta[] = [
   { slug: "jvm", group: "unsafe", icon: "tabler:coffee", title: { en: "JVM reflection", uk: "JVM-рефлексія" }, summary: { en: "inu.jvm: classes, values, overloads, callbacks and defineClass.", uk: "inu.jvm: класи, значення, перевантаження, колбеки та defineClass." } },
   { slug: "xposed", group: "unsafe", icon: "tabler:plug-connected", title: { en: "Method hooks", uk: "Хуки методів" }, summary: { en: "Xposed-style hooks: phases, contexts, threads and filters.", uk: "Хуки у стилі Xposed: фази, контексти, потоки та фільтри." } },
   { slug: "routines", group: "unsafe", icon: "tabler:bolt", title: { en: "Routines", uk: "Routines" }, summary: { en: "A JS subset that runs in Java, for hot paths and privacy hooks.", uk: "Підмножина JS, що виконується в Java: для гарячих шляхів і приватності." } },
-  { slug: "entiny-sdk", group: "entiny", icon: "tabler:antenna", title: { en: "entinyGram SDK", uk: "entinyGram SDK" }, summary: { en: "withEntiny, embedding into settings, slots, pickers and requirements.", uk: "withEntiny, вбудовування в налаштування, слоти, пікери та залежності." } },
   { slug: "repositories", group: "entiny", icon: "tabler:building-store", title: { en: "Plugin repositories", uk: "Репозиторії плагінів" }, summary: { en: "Channels as repositories, plugin pages, updates and what a post needs.", uk: "Канали як репозиторії, сторінки плагінів, оновлення і що потрібно в пості." } },
   { slug: "publishing", group: "ship", icon: "tabler:send", title: { en: "Publishing a plugin", uk: "Публікація плагіна" }, summary: { en: "Send it to the bot, the review, rules, updates and post format.", uk: "Надіслати боту, перевірка, правила, оновлення та формат поста." } },
   { slug: "best-practices", group: "ship", icon: "tabler:checklist", title: { en: "Best practices", uk: "Добрі практики" }, summary: { en: "Performance, safety, testing and fixing the usual problems.", uk: "Продуктивність, безпека, тестування та типові проблеми." } },
   { slug: "examples", group: "reference", icon: "tabler:code", title: { en: "Worked examples", uk: "Приклади" }, summary: { en: "Real plugins explained: patterns worth copying, with links to the source.", uk: "Справжні плагіни з поясненнями: корисні прийоми й посилання на код." } },
   { slug: "api-reference", group: "reference", icon: "tabler:list-search", title: { en: "API reference", uk: "Довідник API" }, summary: { en: "A map of every call, generated from the typings, with grants and links.", uk: "Карта всіх викликів із типів: дозволи й посилання." } },
-  { slug: "source-map", group: "reference", icon: "tabler:git-fork", title: { en: "Source map", uk: "Карта коду" }, summary: { en: "Where the SDK, the CLI, the plugins and the host code live, and where to read them.", uk: "Де лежать SDK, CLI, плагіни та код хоста, і де їх читати." } },
+  { slug: "source-map", group: "reference", icon: "tabler:git-fork", title: { en: "Source map", uk: "Карта коду" }, summary: { en: "Where the CLI, the typings, the plugins and the host code live, and where to read them.", uk: "Де лежать CLI, типи, плагіни та код хоста, і де їх читати." } },
 ];
 
 const raw = import.meta.glob("/src/content/docs/*/*.md", { query: "?raw", import: "default", eager: true }) as Record<string, string>;

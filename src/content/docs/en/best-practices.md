@@ -98,8 +98,7 @@ It returns the platform, the app version and build, the plugin API level, the Te
 ## Work with Inugram and entinyGram
 
 - A plugin written for one runs on the other. Do not rely on entinyGram-only things without a fallback.
-- Use `withEntiny` for settings placement. It still installs on plain Inugram, where only the placement is skipped.
-- If the SDK bridge is missing, your plugin should keep working on its own page.
+- Put your settings on your own page with `inu.registerSettings`. Do not depend on the deprecated entinyGram SDK.
 - Guard anything experimental. APIs marked `@experimental` can change between releases.
 
 ## Publishing well

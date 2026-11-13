@@ -299,5 +299,5 @@ history.closed.then(() => console.log('left'))
 
 - [`sdk/types/common.d.ts`](https://github.com/entinyGram/plugins/blob/main/sdk/types/common.d.ts): the `inu.ui` and `inu.icons` namespaces, with every option
 - [`PluginUi.kt`](https://github.com/entaytion/entinyGram/blob/main/src/fork/helpers/plugins/ui/PluginUi.kt) and [`PluginSettingsActivity.kt`](https://github.com/entaytion/entinyGram/blob/main/src/fork/ui/settings/PluginSettingsActivity.kt): how a declarative page becomes a native screen
-- [`plugins/entiny-sdk/src/index.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/entiny-sdk/src/index.ts): a large real set of pages
+- [`plugins/features/doc-viewer/src/index.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/features/doc-viewer/src/index.ts): a large real settings page
 - [`ui.md`](https://github.com/teidesu/inugram/blob/main/sdk/docs/ui.md) in Inugram: the original page

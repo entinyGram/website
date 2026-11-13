@@ -2,7 +2,7 @@
 
 A plugin is one JavaScript file that adds something to the Telegram app on your phone. It can put a page into the settings, add a button to the chat menu, change how dates look, draw a map preview from another provider, translate text through a service of your choice, or hook into the app itself and change how a screen behaves.
 
-This documentation covers everything a plugin author needs: how plugins run, what the API gives you, how permissions work, how to ship a plugin to other people, and what the entinyGram SDK adds on top of the base plugin system.
+This documentation covers everything a plugin author needs: how plugins run, what the API gives you, how permissions work, how to ship a plugin to other people, and what entinyGram adds on top of the base plugin system.
 
 ## What a plugin is
 
@@ -63,12 +63,13 @@ The plugin engine, the `inu` API and the `inu` command line tool come from **Inu
 
 entinyGram adds a layer on top:
 
-- **The entinyGram SDK plugin** (`entinygram.sdk`) lets other plugins place their settings directly into the app's own screens.
 - **Plugin repositories** are built into the app: Telegram channels where plugin files are posted, with the project's own channel always there.
-- **The `@entiny/sdk` package** is what a plugin imports to ask for that placement: `withEntiny`, the `embed` function and the typed list of places a setting can go.
 - **A plugin channel and a submission bot**, so anyone can send a plugin for review and have it published.
 
-Everything entinyGram-specific is optional. A plugin that does not use `@entiny/sdk` is a plain Inugram plugin. One that does still installs on plain Inugram, where only the extra placement is skipped. See [the entinyGram SDK](/entinygram/docs/entiny-sdk).
+Plugins do not depend on anything from entinyGram except the app itself: each one registers its own settings page with `inu.registerSettings`, and the app lists it under **Settings → Plugins**. A plugin written this way is a plain Inugram plugin.
+
+> [!NOTE]
+> The entinyGram SDK (`entinygram.sdk` and `@entiny/sdk`) is deprecated. It carried too much responsibility: plugins broke or got overloaded because of it. New plugins must not use it; the official ones no longer do.
 
 ## Stability
 
@@ -87,7 +88,7 @@ Everything entinyGram-specific is optional. A plugin that does not use `@entiny/
 
 **Low level** covers the unsafe tools: [JVM reflection](/entinygram/docs/jvm), [method hooks](/entinygram/docs/xposed) and [routines](/entinygram/docs/routines). Read these only when the safe API cannot do what you want.
 
-**entinyGram SDK** explains [the SDK](/entinygram/docs/entiny-sdk) and [the plugin repositories](/entinygram/docs/repositories).
+**entinyGram** explains [the plugin repositories](/entinygram/docs/repositories).
 
 **Publishing** walks you through [sending a plugin to the catalog](/entinygram/docs/publishing) and ends with [best practices](/entinygram/docs/best-practices).
 
@@ -104,7 +105,6 @@ These pages explain concepts and reasons. For exact signatures, read the typings
 | Handle | A JavaScript object that stands for a live Java object. |
 | TL object | A Telegram API object, such as a message or a user. |
 | Routine | A small function compiled to run in Java without entering the JavaScript engine. |
-| SDK plugin | `entinygram.sdk`, the plugin that provides the settings placement. |
 | Repository | A Telegram channel the app reads plugins from, each `.inu.js` post being one release. |
 
 ## Source and further reading

@@ -34,7 +34,7 @@ Run through this list:
 - [ ] The grants are the narrowest that work. Run `inu check`.
 - [ ] The file is under 15 MB.
 - [ ] You tested a real install of the built file, not only a push from developer mode, so you saw the permission sheet users will see.
-- [ ] If the plugin needs the SDK, it uses `withEntiny`, which adds the requirement for you.
+- [ ] The plugin does not use the deprecated entinyGram SDK: it has no `@requires entinygram.sdk` line.
 - [ ] The build is not minified.
 
 ## The flow in detail
@@ -94,15 +94,13 @@ author: @you
 
 - what changed in this version
 
-‼️ does not work without entinyGramSDK (download)
-
 💡 Suggest a plugin
 ```
 
 - The title line has the name and the version.
 - The author line shows your name. For plugins from the community it is the author's name, so everyone is credited.
 - The notes come from your caption, or from the description if there is none.
-- If your plugin requires the SDK, a line with a link to download it is added.
+- If your plugin requires another plugin, a line with a link to download it is added.
 - A link to the source repository is shown for the project's own plugins.
 - A footer invites the next person to suggest a plugin.
 - The app reads the id, the permissions and the requirements from the header of the file itself, so the post needs nothing hidden. See [Plugin repositories](/entinygram/docs/repositories#for-plugin-authors-how-your-plugin-shows-up).

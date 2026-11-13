@@ -8,11 +8,10 @@ All of them live in one repository: [github.com/entinyGram/plugins](https://gith
 | --- | --- | --- |
 | [Calendar Systems](https://github.com/entinyGram/plugins/tree/main/plugins/features/calendar-systems) | shows dates in the Hijri, Persian, Hebrew and other calendars | routine hooks, shared state, one hook per method |
 | [Call Avatar](https://github.com/entinyGram/plugins/tree/main/plugins/features/call-avatar) | full screen caller photo in voice calls | touching native views, tidy cleanup, a plain settings page |
-| [Text Animation](https://github.com/entinyGram/plugins/tree/main/plugins/features/text-animation) | typing animation in the message field | a JavaScript draw hook, settings placed with `embed` |
-| [2GIS](https://github.com/entinyGram/plugins/tree/main/plugins/features/2gis) | map tiles and previews from 2GIS | a routine that shares state with JavaScript, a manifest with `withEntiny` |
+| [Text Animation](https://github.com/entinyGram/plugins/tree/main/plugins/features/text-animation) | typing animation in the message field | a JavaScript draw hook, a plain settings page |
+| [2GIS](https://github.com/entinyGram/plugins/tree/main/plugins/features/2gis) | map tiles and previews from 2GIS | a routine that shares state with JavaScript, a plain settings page |
 | [Doc Viewer](https://github.com/entinyGram/plugins/tree/main/plugins/features/doc-viewer) | opens PDF, DOCX, XLSX, code and archives inside the app | a big plugin split into modules, parsers, native views |
-| [entinyGram SDK](https://github.com/entinyGram/plugins/tree/main/plugins/core/sdk) | the settings placement engine | hooks on the app's own screens, a registry shared between plugins |
-| [No Vibration](https://github.com/entinyGram/plugins/tree/main/plugins/features/no-vibration) | turns off haptics and vibration | a short list of hooks behind SDK switches, based on a community plugin |
+| [No Vibration](https://github.com/entinyGram/plugins/tree/main/plugins/features/no-vibration) | turns off haptics and vibration | a short list of hooks behind switches, based on a community plugin |
 
 ## A minimal plugin
 
@@ -150,7 +149,7 @@ Things to copy:
 - Handles are compared with `.call('equals', …)`, never with `===`.
 - The settings page says honestly whether the hooks work: `supported ? 'supported' : 'unsupported'`.
 
-## Pattern: a JavaScript draw hook, with the settings in the app's own screen
+## Pattern: a JavaScript draw hook
 
 [Text Animation](https://github.com/entinyGram/plugins/blob/main/plugins/text-animation/src/index.ts) animates typing, so it needs to run on every draw of the message field. It uses a JavaScript hook with its own error handling:
 
@@ -170,55 +169,7 @@ unhook = inu.xposed.hookMethod(onDraw, {
 > [!WARNING]
 > A JavaScript hook on a drawing method is the expensive way to do this: every frame pays for a thread handoff. It is acceptable here because the work is small and only active while the user types. For anything that runs on every list item, use a routine, as Calendar Systems does.
 
-Its settings are placed in the app's own **Chats** screen with the [SDK](/entinygram/docs/entiny-sdk). The manifest asks for a row that opens the page and a switch at the end of the chat settings:
-
-```ts
-// inu.config.ts
-manifest: withEntiny({ /* id, name, grants… */ }, {
-  screen: ['category-chats'],
-  inline: [{ slot: 'category-chats.end', rows: ['enable'] }],
-}),
-```
-
-and the plugin answers for those rows with `embed`:
-
-```ts
-embed({
-  id: 'entinygram.text-animation',
-  name: 'Text animation',
-  placements: {
-    screen: ['category-chats'],
-    inline: [{ slot: 'category-chats.end', rows: ['enable'] }],
-  },
-  rows: () => [{ id: 'enable', type: 'check' as const, text: t('title'), checked: cfgBool('enable') }],
-  onEvent: (_row, value) => {
-    cfgSet('enable', value)
-    embedChanged()
-  },
-  open: () => { inu.ui.openPage(page) },
-})
-```
-
-One state, two views: the switch in the app's settings and the plugin's own page read the same stored value, and `embedChanged()` keeps them in step.
-
-## Pattern: a dialog from an embedded row
-
-An `embed` callback runs inside the hook the SDK put on the app's settings screen, which is not the plugin thread, and a dialog needs the plugin thread. So the callback hands the work over with a zero delay timer:
-
-```ts
-onEvent: (row) => {
-  if (row !== 'key') return
-  // a dialog needs the plugin thread, which the screen's hook is not on
-  setTimeout(async () => {
-    const value = await inu.ui.prompt({ title: 'API key', value: current, selectAll: true })
-    if (value === null) return
-    localStorage.setItem('apiKey', value.trim())
-    embedChanged()
-  }, 0)
-},
-```
-
-Any call that opens a dialog, a prompt or a chooser from an `embed` callback should be wrapped this way.
+Its settings live on the plugin's own page, registered with `inu.registerSettings`, so one stored value is the single source of truth.
 
 ## Pattern: hiding secrets in a settings row
 
@@ -286,7 +237,7 @@ function hook(className: string, method: string, before: (ctx: any) => void): vo
 hook('android.view.View', 'performHapticFeedback', (ctx: any) => ctx.setReturnValue(false))
 ```
 
-It works while the plugin is on, and the only way to get vibration back is to switch the plugin off. Switches in the app's settings, one for each kind of vibration, are a small improvement that fits the SDK well.
+It works while the plugin is on, and the only way to get vibration back is to switch the plugin off. A settings page with one switch for each kind of vibration is a small improvement.
 
 ### 1. Decide whose plugin it is
 
@@ -295,29 +246,25 @@ It works while the plugin is on, and the only way to get vibration back is to sw
 
 Either way, list what you changed in `CHANGELOG.md`. If the author asks for a change, or does not want the plugin reused, respect it.
 
-### 2. Ask for the placement
+### 2. Describe the plugin
 
-`withEntiny` adds the SDK requirement and the placement directives to the manifest. Here the switches go to the end of the Device section of Behavior:
+The manifest is an ordinary one:
 
 ```ts
 import { defineConfig } from '@inugram/cli'
-import { withEntiny } from '@entiny/sdk'
 
 export default defineConfig({
   plugins: {
     'no-vibration': {
       entry: 'src/index.ts',
-      manifest: withEntiny(
-        {
-          id: 'entinygram.no-vibration',
-          name: 'No Vibration',
-          author: 'entinyGram',
-          version: '1.0.0',
-          description: 'Turns off haptics, vibration and notification vibration, each on its own switch',
-          grants: ['unsafe.jvm', 'unsafe.xposed'],
-        },
-        { inline: [{ slot: 'behavior.device-section.end', rows: ['haptics', 'vibrator', 'notifications'] }] },
-      ),
+      manifest: {
+        id: 'entinygram.no-vibration',
+        name: 'No Vibration',
+        author: 'entinyGram',
+        version: '1.0.0',
+        description: 'Turns off haptics, vibration and notification vibration, each on its own switch',
+        grants: ['unsafe.jvm', 'unsafe.xposed'],
+      },
     },
   },
 })
@@ -328,8 +275,6 @@ export default defineConfig({
 Each hook looks at its switch when it runs, so turning one off takes effect at once, with no reload. The original `hook` calls stay as they were; only the wrapper takes a kind:
 
 ```ts
-import { embed, embedChanged } from '@entiny/sdk/embed'
-
 type Kind = 'haptics' | 'vibrator' | 'notifications'
 const KINDS: Kind[] = ['haptics', 'vibrator', 'notifications']
 const blocked = (kind: Kind): boolean => localStorage.getItem(`block.${kind}`) !== 'false'
@@ -344,23 +289,22 @@ function hook(kind: Kind, className: string, method: string, action: (ctx: any) 
 
 hook('haptics', 'android.view.View', 'performHapticFeedback', (ctx: any) => ctx.setReturnValue(false))
 
-embed({
-  id: 'entinygram.no-vibration',
-  name: 'No Vibration',
-  placements: { inline: [{ slot: 'behavior.device-section.end', rows: KINDS }] },
-  rows: () => KINDS.map(kind => ({ id: kind, type: 'check' as const, text: kind, checked: blocked(kind) })),
-  onEvent: (row, value) => {
-    localStorage.setItem(`block.${row}`, value)
-    embedChanged()
-  },
-})
+inu.registerSettings(inu.ui.settingsPage({
+  title: 'No Vibration',
+  items: () => KINDS.map(kind => inu.ui.check({
+    id: kind,
+    text: kind,
+    checked: blocked(kind),
+    onChange: (checked) => { localStorage.setItem(`block.${kind}`, String(checked)) },
+  })),
+}))
 ```
 
 Everything is blocked until the user says otherwise, which is what the original does. The real plugin also has translated texts and a short note under each switch; see its source for the full version.
 
 ### 4. Build and test
 
-`inu check` validates the manifest, `inu dev` pushes the plugin to the phone and reloads it as you edit. Test that each switch really turns its kind of vibration on and off, that the choice survives restarting the app, and that the plugin installs from a repository that carries the SDK (the app installs the SDK first). On plain Inugram the plugin still installs, and the switches simply do not appear.
+`inu check` validates the manifest, `inu dev` pushes the plugin to the phone and reloads it as you edit. Test that each switch really turns its kind of vibration on and off, that the choice survives restarting the app, and that the plugin installs from a repository on its own.
 
 Use this approach for any plugin you improve: change as little as possible, keep what the author wrote visible, and say where the plugin came from.
 
@@ -368,4 +312,4 @@ Use this approach for any plugin you improve: change as little as possible, keep
 
 - The typings that every one of these examples compile against: [`sdk/types`](https://github.com/entinyGram/plugins/tree/main/sdk/types).
 - A map of every call: [API reference](/entinygram/docs/api-reference).
-- Where each piece of the SDK lives: [Source map](/entinygram/docs/source-map).
+- Where each piece of the tooling lives: [Source map](/entinygram/docs/source-map).

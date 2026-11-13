@@ -111,8 +111,6 @@ The app, the plugin repositories and the publishing bot all read this block, so 
 - `@platform` is `android`.
 - Each `grants` item becomes one `@grant` line.
 
-Plugins that use the [entinyGram SDK](/entinygram/docs/entiny-sdk) also get a `@requires entinygram.sdk >=…` line, plus placement directives. Those come from `withEntiny`, never from hand editing.
-
 ## Building
 
 `inu build` type checks the project and bundles each plugin with [esbuild](https://esbuild.github.io/) into one `.inu.js` file in `outDir`. The bundle has no imports: everything you import is inlined.
@@ -193,5 +191,5 @@ A simple rule keeps plugins fast to load: do cheap work at the top level, regist
 - [`sdk/cli/src/utils/config.ts`](https://github.com/entinyGram/plugins/blob/main/sdk/cli/src/utils/config.ts): the `inu.config.ts` schema
 - [`sdk/cli/src/utils/manifest.ts`](https://github.com/entinyGram/plugins/blob/main/sdk/cli/src/utils/manifest.ts): the manifest schema, the header writer and the grant checks
 - [`sdk/cli/src/commands`](https://github.com/entinyGram/plugins/tree/main/sdk/cli/src/commands): what each command does
-- [`plugins/2gis/inu.config.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/2gis/inu.config.ts): a small real configuration with `withEntiny`
+- [`plugins/2gis/inu.config.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/2gis/inu.config.ts): a small real configuration
 - [`getting-started.md`](https://github.com/teidesu/inugram/blob/main/sdk/docs/getting-started.md) in Inugram

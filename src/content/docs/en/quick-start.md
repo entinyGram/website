@@ -180,7 +180,7 @@ echo 'localStorage.length' | inu eval hello -
 - Understand the file you just made: [Project and manifest](/entinygram/docs/project).
 - Draw richer screens: [UI](/entinygram/docs/ui).
 - Talk to Telegram: [Telegram API](/entinygram/docs/telegram).
-- Put your plugin's switches into the app's own settings: [the entinyGram SDK](/entinygram/docs/entiny-sdk).
+- Give your plugin a settings page: [UI](/entinygram/docs/ui).
 - Share it: [Publishing a plugin](/entinygram/docs/publishing).
 
 ## Source and further reading

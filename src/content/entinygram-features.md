@@ -134,7 +134,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 
 ### proxy, plugins & performance
 
-- **plugin market** — themed catalog with filters, version badges, authors and tags, a dedicated page and automatic sdk installation
+- **plugin market** — themed catalog with filters, version badges, authors and tags, a dedicated page
 - **osmdroid map view** — pure-java openstreetmap renderer replacing maplibre, about 12 MB less native code
 - **faster cold start**, locale caching and a smaller apk without android auto
 - **memory** — image caches freed shortly after minimize, closed chats and photo viewers no longer leak through the emoji panel

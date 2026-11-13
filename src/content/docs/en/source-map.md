@@ -1,12 +1,12 @@
 # Source map
 
-Where the code lives, and where to read it when these pages are not enough. The plugin system is open source in three places: the SDK and the plugins in one repository, the app side in the entinyGram client, and the original engine upstream in Inugram.
+Where the code lives, and where to read it when these pages are not enough. The plugin system is open source in three places: the typings, the command line tool and the plugins in one repository, the app side in the entinyGram client, and the original engine upstream in Inugram.
 
 ## The three repositories
 
 | Repository | What is in it |
 | --- | --- |
-| [entinyGram/plugins](https://github.com/entinyGram/plugins) | the SDK (typings, command line tool, `@entiny/sdk`), the official plugins, the catalog and the build scripts |
+| [entinyGram/plugins](https://github.com/entinyGram/plugins) | the typings, the command line tool, the official plugins, the catalog and the build scripts |
 | [entaytion/entinyGram](https://github.com/entaytion/entinyGram) | the entinyGram client: the patchset and the Kotlin code that hosts plugins inside the app |
 | [teidesu/inugram](https://github.com/teidesu/inugram) | Inugram, the project entinyGram is built on. The plugin engine, the API and the original docs come from here |
 
@@ -50,36 +50,15 @@ Everything a plugin author touches is in [`entinyGram/plugins`](https://github.c
 
 [`sdk/docs`](https://github.com/entinyGram/plugins/tree/main/sdk/docs) holds the plugin guides as they come from Inugram: [getting started](https://github.com/entinyGram/plugins/blob/main/sdk/docs/getting-started.md), [engine](https://github.com/entinyGram/plugins/blob/main/sdk/docs/engine.md), [grants](https://github.com/entinyGram/plugins/blob/main/sdk/docs/grants.md), [ui](https://github.com/entinyGram/plugins/blob/main/sdk/docs/ui.md), [telegram](https://github.com/entinyGram/plugins/blob/main/sdk/docs/telegram.md), [interception](https://github.com/entinyGram/plugins/blob/main/sdk/docs/interception.md), [io](https://github.com/entinyGram/plugins/blob/main/sdk/docs/io.md), [canvas](https://github.com/entinyGram/plugins/blob/main/sdk/docs/canvas.md), [jvm](https://github.com/entinyGram/plugins/blob/main/sdk/docs/jvm.md), [xposed](https://github.com/entinyGram/plugins/blob/main/sdk/docs/xposed.md) and [routines](https://github.com/entinyGram/plugins/blob/main/sdk/docs/routines.md). The pages you are reading explain the same ideas, with entinyGram's additions.
 
-### `sdk/entiny`: `@entiny/sdk`
-
-[`sdk/entiny`](https://github.com/entinyGram/plugins/tree/main/sdk/entiny) is the package a plugin imports to use the entinyGram SDK.
-
-| Path | Contents |
-| --- | --- |
-| [`src/index.ts`](https://github.com/entinyGram/plugins/blob/main/sdk/entiny/src/index.ts) | `withEntiny`, the `@requires` rule, the placement types, `SDK_VERSION` |
-| [`src/embed.ts`](https://github.com/entinyGram/plugins/blob/main/sdk/entiny/src/embed.ts) | the `embed` function and its row types, the contract with the SDK plugin |
-| [`src/slots.ts`](https://github.com/entinyGram/plugins/blob/main/sdk/entiny/src/slots.ts) | the typed list of places a setting can go |
-| [`slots.json`](https://github.com/entinyGram/plugins/blob/main/sdk/entiny/slots.json) | the same list as data: every screen, section, item and picker |
-| [`README.md`](https://github.com/entinyGram/plugins/blob/main/sdk/entiny/README.md) | short notes on placement |
-
 ### `plugins`: the official plugins
 
 [`plugins/`](https://github.com/entinyGram/plugins/tree/main/plugins) has one folder per plugin, each with an `inu.config.ts` and a `src`. They are the best examples of real code: see [Worked examples](/entinygram/docs/examples).
-
-The [SDK plugin](https://github.com/entinyGram/plugins/tree/main/plugins/core/sdk/src) is in `plugins/core/sdk/src`:
-
-| File | Contents |
-| --- | --- |
-| [`index.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/core/sdk/src/index.ts) | starts the embed engine |
-| [`embed/engine.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/core/sdk/src/embed/engine.ts) | the engine that draws other plugins' rows into the app's screens |
-| [`embed/strings.ts`](https://github.com/entinyGram/plugins/blob/main/plugins/core/sdk/src/embed/strings.ts) | finds which settings string a row shows, so a plugin can name a slot after it |
 
 ### The scripts
 
 | Path | Contents |
 | --- | --- |
 | [`scripts/pack-release.ts`](https://github.com/entinyGram/plugins/blob/main/scripts/pack-release.ts) | builds every plugin into `release/`, named and ready to post to the plugins channel |
-| [`scripts/generate-slots.ts`](https://github.com/entinyGram/plugins/blob/main/scripts/generate-slots.ts) | regenerates the slot list from the app's strings |
 
 ## The client
 
@@ -102,7 +81,7 @@ The user facing list of what entinyGram adds is [`FEATURES.md`](https://github.c
 The plugin engine, the `inu` API and the command line tool were written in [Inugram](https://github.com/teidesu/inugram). Its [`sdk`](https://github.com/teidesu/inugram/tree/main/sdk) folder holds the same three parts you saw above: [`cli`](https://github.com/teidesu/inugram/tree/main/sdk/cli), [`docs`](https://github.com/teidesu/inugram/tree/main/sdk/docs) and [`types`](https://github.com/teidesu/inugram/tree/main/sdk/types).
 
 > [!NOTE]
-> These pages are built on the Inugram plugin documentation, with entinyGram's additions: the SDK, the plugin repositories and publishing. Credit for the engine and the original guides goes to the Inugram authors.
+> These pages are built on the Inugram plugin documentation, with entinyGram's additions: the plugin repositories and publishing. Credit for the engine and the original guides goes to the Inugram authors.
 
 ## Finding what to hook
 

@@ -48,7 +48,7 @@ The app downloads the file through your Telegram account and opens the usual ins
 
 ### Requirements
 
-If a plugin needs another plugin, it says so with a `@requires` line. When the missing plugin is the entinyGram SDK and the same repository has it, the app installs the SDK first and then continues with your plugin. Any other missing requirement stops the install with a message that names it.
+If a plugin needs another plugin, it says so with a `@requires` line. A missing requirement stops the install with a message that names it.
 
 ## For plugin authors: how your plugin shows up
 
